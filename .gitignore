@@ -37,3 +37,4 @@ gradle/
 HELP.md
 mvnw
 mvnw.cmd
+*.iml
