@@ -7,9 +7,11 @@ public interface PoetAccessRouter {
 
     void setStorageLocation(String storageLocation);
 
+    void setDefaultModule(String module);
+
     void setSlicer(PoetAnnexSlicer slicer);
 
-    Navigation routing(String name);
+    Navigation routing(String name, String suffix);
 
-    Navigation routing(String name, String module);
+    Navigation routing(String module, String name, String suffix);
 }

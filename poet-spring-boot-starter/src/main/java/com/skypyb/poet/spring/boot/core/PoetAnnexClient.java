@@ -1,6 +1,7 @@
 package com.skypyb.poet.spring.boot.core;
 
 import com.skypyb.poet.spring.boot.core.model.PoetAnnex;
+import com.skypyb.poet.spring.boot.core.store.PoetAnnexNameGenerator;
 
 import java.io.InputStream;
 
@@ -13,11 +14,14 @@ import java.io.InputStream;
  */
 public interface PoetAnnexClient extends PoetAnnexClientContext {
 
-    PoetAnnex save(InputStream in);
+    /**
+     * 保存时的名字均为自动生成
+     *
+     * @see PoetAnnexClientContext#setNameGenerator(PoetAnnexNameGenerator)
+     */
+    PoetAnnex save(InputStream in, String suffix);
 
-    PoetAnnex save(InputStream in, String module);
-
-    PoetAnnex save(byte[] data);
+    PoetAnnex save(InputStream in, String suffix, String module);
 
     PoetAnnex save(byte[] data, String suffix);
 
