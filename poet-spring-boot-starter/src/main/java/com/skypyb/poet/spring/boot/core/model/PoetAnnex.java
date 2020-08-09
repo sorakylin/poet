@@ -10,6 +10,8 @@ public interface PoetAnnex extends Serializable {
 
     String getRealName();
 
+    void setRealName(String realName);
+
     String getModule();
 
     String getSuffix();

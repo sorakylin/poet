@@ -21,8 +21,6 @@ import java.util.Optional;
  */
 public class LocalFileServerClient implements PoetAnnexClient, PoetAnnexClientHttpSupport {
 
-    private static final int BUF_SIZE = 8 * 1024;
-
     private PoetAccessRouter router;
 
 
@@ -220,22 +218,14 @@ public class LocalFileServerClient implements PoetAnnexClient, PoetAnnexClientHt
         Path path = generatePath(routing);
 
         response.reset();// 清空输出流
+        response.setCharacterEncoding("UTF-8");
         response.setContentType("application/octet-stream;charset=UTF-8");
         response.setHeader("Content-Disposition", "attachment;filename=" + name);
         response.addHeader("Pargam", "no-cache");
         response.addHeader("Cache-Control", "no-cache");
 
-        try (final InputStream in = Files.newInputStream(path);
-             final ServletOutputStream out = response.getOutputStream()) {
-
-            int readLength;
-            byte[] buf = new byte[BUF_SIZE];
-
-            while (((readLength = in.read(buf)) != -1)) {
-                out.write(buf, 0, readLength);
-            }
-
-            out.flush();
+        try (ServletOutputStream out = response.getOutputStream()) {
+            Files.copy(path, out);
         } catch (IOException e) {
             AnnexOperationException ex = new AnnexOperationException("File download failed!", e);
             ex.setPath(routing.getPath());

@@ -13,12 +13,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class PoetBusinessResource {
 
-    @GetMapping("/{id}")
+    @GetMapping("/{name}")
     public PoetAnnex findAnnex(@PathVariable String id) {
         throw new UnsupportedOperationException();
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{name}")
     public PoetAnnex deleteAnnex(@PathVariable String id) {
         throw new UnsupportedOperationException();
     }
