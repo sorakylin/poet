@@ -1,4 +1,4 @@
-package com.skypyb.poet.spring.boot.core.resource;
+package com.skypyb.poet.spring.boot.web;
 
 import com.skypyb.poet.spring.boot.core.model.PoetAnnex;
 import org.springframework.web.bind.annotation.DeleteMapping;

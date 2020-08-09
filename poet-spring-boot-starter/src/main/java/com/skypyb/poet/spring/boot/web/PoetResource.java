@@ -1,4 +1,4 @@
-package com.skypyb.poet.spring.boot.core.resource;
+package com.skypyb.poet.spring.boot.web;
 
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
