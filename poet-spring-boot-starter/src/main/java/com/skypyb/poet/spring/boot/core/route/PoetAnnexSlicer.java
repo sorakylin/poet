@@ -1,8 +1,6 @@
-package com.skypyb.poet.spring.boot.core.client;
+package com.skypyb.poet.spring.boot.core.route;
 
 import com.skypyb.poet.spring.boot.core.model.PoetAnnex;
-
-import java.io.File;
 
 /**
  * 通过附件的元信息得到该附件的路径信息

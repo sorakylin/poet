@@ -1,4 +1,4 @@
-package com.skypyb.poet.spring.boot.core.client;
+package com.skypyb.poet.spring.boot.core;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletResponse;
  * 对于附件操作的支持
  * 包括下载、预览(指图片)、媒体播放支持
  */
-public interface PoetAnnexClientHttpSupport {
+public interface PoetAnnexClientHttpSupport extends PoetAnnexClientContext {
 
     void view(String name, HttpServletResponse response);
 

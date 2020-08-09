@@ -1,9 +1,7 @@
-package com.skypyb.poet.spring.boot.core.client;
+package com.skypyb.poet.spring.boot.core;
 
 import com.skypyb.poet.spring.boot.core.model.PoetAnnex;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
 
 /**
@@ -13,7 +11,7 @@ import java.io.InputStream;
  * 所有的操作若不指定模块会路由到默认的文件储存目录下
  * 保存附件时完毕后，所有流都会关掉
  */
-public interface PoetAnnexClient {
+public interface PoetAnnexClient extends PoetAnnexClientContext {
 
     PoetAnnex save(InputStream in);
 

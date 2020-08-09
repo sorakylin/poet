@@ -1,4 +1,4 @@
-package com.skypyb.poet.spring.boot.core.client.route;
+package com.skypyb.poet.spring.boot.core.route;
 
 import java.io.Serializable;
 import java.util.Objects;
