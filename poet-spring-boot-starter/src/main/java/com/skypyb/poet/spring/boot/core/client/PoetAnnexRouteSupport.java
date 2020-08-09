@@ -1,6 +1,4 @@
-package com.skypyb.poet.spring.boot.core;
-
-import com.skypyb.poet.spring.boot.core.route.PoetAccessRouter;
+package com.skypyb.poet.spring.boot.core.client;
 
 import java.util.Optional;
 

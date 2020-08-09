@@ -1,4 +1,4 @@
-package com.skypyb.poet.spring.boot.core;
+package com.skypyb.poet.spring.boot.core.client;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

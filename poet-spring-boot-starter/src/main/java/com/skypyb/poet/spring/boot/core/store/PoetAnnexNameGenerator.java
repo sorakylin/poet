@@ -1,7 +1,11 @@
 package com.skypyb.poet.spring.boot.core.store;
 
+import java.util.UUID;
+
 @FunctionalInterface
 public interface PoetAnnexNameGenerator {
+
+    PoetAnnexNameGenerator DEFAULT_NAME_GENERATOR = () -> UUID.randomUUID().toString().replaceAll("-", "");
 
     /**
      * 名字生成的时点为附件储存之间

@@ -1,7 +1,6 @@
-package com.skypyb.poet.spring.boot.core;
+package com.skypyb.poet.spring.boot.core.client;
 
 import com.skypyb.poet.spring.boot.core.model.PoetAnnex;
-import com.skypyb.poet.spring.boot.core.store.PoetAnnexNameGenerator;
 
 import java.io.InputStream;
 
@@ -33,4 +32,5 @@ public interface PoetAnnexClient extends PoetAnnexRouteSupport {
     byte[] getBytes(String name);
 
     byte[] getBytes(String name, String module);
+
 }

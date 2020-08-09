@@ -4,7 +4,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * 附件的下载、预览等操作的资源层，当然 也包括上传
+ * 附件的下载、预览、上传相关操作的资源层
  */
 //@RequestMapping("/poet")
 @RestController

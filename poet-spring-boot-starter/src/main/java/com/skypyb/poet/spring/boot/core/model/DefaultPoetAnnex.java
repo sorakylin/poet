@@ -1,7 +1,5 @@
 package com.skypyb.poet.spring.boot.core.model;
 
-import com.skypyb.poet.spring.boot.core.route.Navigation;
-
 public class DefaultPoetAnnex implements PoetAnnex {
 
     private String name;

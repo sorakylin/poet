@@ -1,4 +1,4 @@
-package com.skypyb.poet.spring.boot.core.route;
+package com.skypyb.poet.spring.boot.core.client;
 
 import com.skypyb.poet.spring.boot.core.model.PoetAnnex;
 
