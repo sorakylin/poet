@@ -11,7 +11,7 @@ public interface PoetAccessRouter {
 
     void setSlicer(PoetAnnexSlicer slicer);
 
-    Navigation routing(String name, String suffix);
+    Navigation routing(String name);
 
-    Navigation routing(String module, String name, String suffix);
+    Navigation routing(String module, String name);
 }

@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletResponse;
  * 对于附件操作的支持
  * 包括下载、预览(指图片)、媒体播放支持
  */
-public interface PoetAnnexClientHttpSupport extends PoetAnnexClientContext {
+public interface PoetAnnexClientHttpSupport extends PoetAnnexRouteSupport {
 
     void view(String name, HttpServletResponse response);
 

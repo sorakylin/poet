@@ -9,15 +9,10 @@ import java.util.Optional;
 
 public interface PoetAnnexClientContext {
 
-    //路由器
-    void setRouter(PoetAccessRouter router);
-
-    Optional<PoetAccessRouter> getRouter();
-
     //名字生成器
-    void setNameGenerator(PoetAnnexNameGenerator nameGenerator);
+    /*void setNameGenerator(PoetAnnexNameGenerator nameGenerator);
 
-    Optional<PoetAnnexNameGenerator> getNameGenerator();
+    Optional<PoetAnnexNameGenerator> getNameGenerator();*/
 
     //TODO 加密器
 

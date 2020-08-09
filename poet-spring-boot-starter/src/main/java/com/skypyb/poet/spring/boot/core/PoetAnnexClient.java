@@ -12,20 +12,15 @@ import java.io.InputStream;
  * 所有的操作若不指定模块会路由到默认的文件储存目录下
  * 保存附件时完毕后，所有流都会关掉
  */
-public interface PoetAnnexClient extends PoetAnnexClientContext {
+public interface PoetAnnexClient extends PoetAnnexRouteSupport {
 
-    /**
-     * 保存时的名字均为自动生成
-     *
-     * @see PoetAnnexClientContext#setNameGenerator(PoetAnnexNameGenerator)
-     */
-    PoetAnnex save(InputStream in, String suffix);
+    PoetAnnex save(InputStream in, String name);
 
-    PoetAnnex save(InputStream in, String suffix, String module);
+    PoetAnnex save(InputStream in, String name, String module);
 
-    PoetAnnex save(byte[] data, String suffix);
+    PoetAnnex save(byte[] data, String name);
 
-    PoetAnnex save(byte[] data, String suffix, String module);
+    PoetAnnex save(byte[] data, String name, String module);
 
     boolean exist(String name);
 
