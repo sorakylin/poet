@@ -6,11 +6,9 @@ public class DefaultPoetAnnex implements PoetAnnex {
 
     private String realName;
 
-    private String module;
-
     private String suffix;
 
-    private String path;
+    private String key;
 
     private Long length;
 
@@ -23,11 +21,10 @@ public class DefaultPoetAnnex implements PoetAnnex {
 
         DefaultPoetAnnex defaultPoetAnnex = new DefaultPoetAnnex();
         defaultPoetAnnex.setName(name);
-        defaultPoetAnnex.setModule(n.getModule());
-        defaultPoetAnnex.setPath(n.getPath());
+        defaultPoetAnnex.setKey(n.getPath());
 
         int suffixPoint = name.lastIndexOf(".");
-        if (suffixPoint > 0){
+        if (suffixPoint > 0) {
             defaultPoetAnnex.setSuffix(name.substring(suffixPoint));
         }
 
@@ -43,16 +40,13 @@ public class DefaultPoetAnnex implements PoetAnnex {
         this.realName = realName;
     }
 
-    public void setModule(String module) {
-        this.module = module;
-    }
 
     public void setSuffix(String suffix) {
         this.suffix = suffix;
     }
 
-    public void setPath(String path) {
-        this.path = path;
+    public void setKey(String key) {
+        this.key = key;
     }
 
     public void setLength(Long length) {
@@ -61,31 +55,29 @@ public class DefaultPoetAnnex implements PoetAnnex {
 
     @Override
     public String getName() {
-        return null;
+        return name;
     }
 
     @Override
     public String getRealName() {
-        return null;
+        return realName;
     }
 
-    @Override
-    public String getModule() {
-        return null;
-    }
 
     @Override
     public String getSuffix() {
-        return null;
+        return suffix;
     }
 
     @Override
-    public String getPath() {
-        return null;
+    public String getKey() {
+        return key;
     }
+
 
     @Override
     public Long getLength() {
-        return null;
+        return length;
     }
+
 }

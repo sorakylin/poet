@@ -1,6 +1,7 @@
 package com.skypyb.poet.spring.boot.core.client;
 
 import com.skypyb.poet.spring.boot.core.model.PoetAnnex;
+import com.skypyb.poet.spring.boot.core.store.PoetAnnexNameGenerator;
 
 /**
  * 通过附件的元信息得到该附件的路径信息
@@ -10,19 +11,21 @@ import com.skypyb.poet.spring.boot.core.model.PoetAnnex;
  * 2: ['default','module1','aaa','bbb','aaabbbxyz1.png']  -> /default/module1/aaa/bbb/aaabbbxyz1.png
  * 3: ['default','module1','2020','0809','aaabbbxyz1.png']  -> /default/module1/2020/0809/aaabbbxyz1.png
  * ..... 等
+ * <p>
+ * 注: 最终名字的生成会依靠 {@link PoetAnnexNameGenerator}
  */
 @FunctionalInterface
 public interface PoetAnnexSlicer {
 
     String DELIMITER = "/";//default unix separator
 
-    PoetAnnexSlicer DEFAULT_SLICER = (annex) -> new StringBuilder(annex.getModule())
+    PoetAnnexSlicer DEFAULT_SLICER = (m, n) -> new StringBuilder(m)
             .append(DELIMITER)
-            .append(annex.getName())
+            .append(n)
             .toString()
-            .replaceAll("//", "/")
-            .split("/");
+            .replaceAll(DELIMITER.concat(DELIMITER), DELIMITER)
+            .split(DELIMITER);
 
 
-    String[] slicePath(PoetAnnex annex);
+    String[] slicePath(String module, String name);
 }
