@@ -6,18 +6,19 @@ import com.skypyb.poet.spring.boot.core.model.Navigation;
 import com.skypyb.poet.spring.boot.core.store.PoetAnnexNameGenerator;
 import com.skypyb.poet.spring.boot.core.util.HttpResourceViewUtils;
 import com.skypyb.poet.spring.boot.core.util.StreamUtil;
-import com.sun.corba.se.spi.ior.ObjectId;
-import org.hibernate.validator.internal.util.classhierarchy.Filters;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.RandomAccessFile;
 import java.nio.file.*;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -179,7 +180,7 @@ public class LocalFileServerClient implements PoetAnnexClient, PoetAnnexClientHt
             response.reset();
 
             if (!Files.exists(path)) {
-                response.sendError(404);
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
 
@@ -197,10 +198,6 @@ public class LocalFileServerClient implements PoetAnnexClient, PoetAnnexClientHt
 
             try (ServletOutputStream out = response.getOutputStream()) {
                 Files.copy(path, out);
-            } catch (IOException e) {
-                AnnexOperationException ex = new AnnexOperationException("File download failed!", e);
-                ex.setPath(key);
-                throw ex;
             }
         } catch (Exception e) {
             AnnexOperationException ex = new AnnexOperationException("Failed to view file!", e);
@@ -220,7 +217,7 @@ public class LocalFileServerClient implements PoetAnnexClient, PoetAnnexClientHt
             response.reset();
 
             if (!Files.exists(path)) {
-                response.sendError(404);
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
 
@@ -241,11 +238,8 @@ public class LocalFileServerClient implements PoetAnnexClient, PoetAnnexClientHt
 
             try (ServletOutputStream out = response.getOutputStream()) {
                 Files.copy(path, out);
-            } catch (IOException e) {
-                AnnexOperationException ex = new AnnexOperationException("File download failed!", e);
-                ex.setPath(key);
-                throw ex;
             }
+
         } catch (Exception e) {
             AnnexOperationException ex = new AnnexOperationException("Failed to view media file!", e);
             ex.setPath(key);
@@ -256,8 +250,102 @@ public class LocalFileServerClient implements PoetAnnexClient, PoetAnnexClientHt
 
     @Override
     public void viewMedia(String key, HttpServletRequest request, HttpServletResponse response) {
-        //TODO
+        final Path path = Paths.get(router.formatKey(key));
 
+        final String[] split = key.split(router.getDelimiter());
+        final String name = split[split.length - 1];
+
+        try {
+            response.reset();
+
+            if (!Files.exists(path)) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
+
+            //多次断点请求的标识
+            String range = request.getHeader("Range");
+            if (!StringUtils.hasText(range)) range = request.getHeader("range");
+
+            final RandomAccessFile randomFile = new RandomAccessFile(path.toFile(), "r");//只读模式
+
+            long contentLength = randomFile.length();
+            long lastModified = Files.getLastModifiedTime(path).toMillis();
+
+            int start = 0, end = 0;
+            if (Objects.nonNull(range) && range.startsWith("bytes=")) {
+                String[] values = range.split("=")[1].split("-");
+                start = Integer.parseInt(values[0]);
+                if (values.length > 1) {
+                    end = Integer.parseInt(values[1]);
+                }
+            }
+
+            int requestSize = 0;
+            if (end != 0 && end > start) {
+                requestSize = end - start + 1;
+            } else {
+                requestSize = Integer.MAX_VALUE;
+            }
+
+            response.setContentType(HttpResourceViewUtils.getContentTypeForSuffix(name));
+            response.setHeader("Accept-Ranges", "bytes");
+            response.addHeader("ETag", HttpResourceViewUtils.getETag(lastModified, contentLength));
+            response.addHeader("Last-Modified", new Date(lastModified).toString());
+
+            //第一次请求返回content length来让客户端请求多次实际数据
+            if (range == null) {
+                response.setHeader("Content-length", String.valueOf(contentLength));
+            } else {
+                //以后的多次以断点续传的方式来返回
+                response.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT);//206
+                long requestStart = 0, requestEnd = 0;
+                String[] ranges = range.split("=");
+                if (ranges.length > 1) {
+                    String[] rangeDatas = ranges[1].split("-");
+                    requestStart = Integer.parseInt(rangeDatas[0]);
+                    if (rangeDatas.length > 1) {
+                        requestEnd = Integer.parseInt(rangeDatas[1]);
+                    }
+                }
+
+                long length = 0;
+                if (requestEnd > 0) {
+                    length = requestEnd - requestStart + 1;
+                    response.setHeader("Content-length", String.valueOf(length));
+                    response.setHeader("Content-Range", "bytes " + requestStart + "-" + requestEnd + "/" + contentLength);
+                } else {
+                    length = contentLength - requestStart;
+                    response.setHeader("Content-length", String.valueOf(length));
+                    response.setHeader("Content-Range", "bytes " + requestStart + "-" + (contentLength - 1) + "/" + contentLength);
+                }
+            }
+
+            ServletOutputStream out = response.getOutputStream();
+            byte[] buffer = new byte[4096];
+
+            int needSize = requestSize;
+            randomFile.seek(start);
+            while (needSize > 0) {
+                int len = randomFile.read(buffer);
+                if (needSize < buffer.length) {
+                    out.write(buffer, 0, needSize);
+                } else {
+                    out.write(buffer, 0, len);
+                    if (len < buffer.length) {
+                        break;
+                    }
+                }
+                needSize -= buffer.length;
+            }
+
+            StreamUtil.close(randomFile, out);//close...
+
+        } catch (Exception e) {
+            AnnexOperationException ex = new AnnexOperationException("Failed to view media file!", e);
+            ex.setPath(key);
+            throw ex;
+        }
     }
 
     @Override
