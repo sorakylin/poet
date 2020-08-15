@@ -1,10 +1,12 @@
 package com.skypyb.poet.spring.boot.autoconfigure;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
 
 @ConfigurationProperties(prefix = "poet")
+@Component("poetProperties")
 public class PoetProperties {
 
     //默认储存位置

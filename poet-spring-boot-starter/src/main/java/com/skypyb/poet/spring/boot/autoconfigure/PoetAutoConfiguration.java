@@ -60,22 +60,9 @@ public class PoetAutoConfiguration implements InitializingBean {
 
     @Bean
     @ConditionalOnMissingBean
-    @Order(Ordered.LOWEST_PRECEDENCE - 1)
     public PoetAnnexRepository poetAnnexRepository(JdbcTemplate jdbcTemplate) {
         JdbcPoetAnnexRepository repository = new JdbcPoetAnnexRepository();
         repository.setTableName(poetProperties.getTableName());
-        repository.setJdbcTemplate(jdbcTemplate);
-        return repository;
-    }
-
-    @Bean
-    @ConditionalOnMissingBean
-    @Order(Ordered.LOWEST_PRECEDENCE)
-    public PoetAnnexRepository poetAnnexRepository(DataSource dataSource) {
-        JdbcPoetAnnexRepository repository = new JdbcPoetAnnexRepository();
-        repository.setTableName(poetProperties.getTableName());
-        JdbcTemplate jdbcTemplate = new JdbcTemplate();
-        jdbcTemplate.setDataSource(dataSource);
         repository.setJdbcTemplate(jdbcTemplate);
         return repository;
     }
@@ -99,6 +86,7 @@ public class PoetAutoConfiguration implements InitializingBean {
 
     @Bean
     @ConditionalOnMissingBean
+    @DependsOn({"poetAnnexClient", "poetAnnexClientHttpSupport"})
     public PoetAnnexContext poetAnnexContext(PoetAnnexClient poetAnnexClient,
                                              PoetAnnexClientHttpSupport poetAnnexClientHttpSupport,
                                              PoetAnnexRepository poetAnnexRepository) {

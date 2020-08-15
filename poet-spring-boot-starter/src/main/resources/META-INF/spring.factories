@@ -1,3 +1,4 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.skypyb.poet.spring.boot.autoconfigure.PoetAutoConfiguration\
+  com.skypyb.poet.spring.boot.autoconfigure.PoetAutoConfiguration,\
+  com.skypyb.poet.spring.boot.web.PoetResource\
 

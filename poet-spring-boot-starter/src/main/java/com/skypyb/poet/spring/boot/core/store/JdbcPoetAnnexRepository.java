@@ -34,13 +34,13 @@ public class JdbcPoetAnnexRepository implements PoetAnnexRepository {
 
     @Override
     public void save(PoetAnnex annex) {
-        jdbcTemplate.update("INSERT INTO ?(`name`,`real_name`,`suffix`,`key`,`length`,`create_time`) VALUES (?,?,?,?,?,?)",
-                tableName, annex.getName(), annex.getRealName(), annex.getSuffix(), annex.getLength(), new Date());
+        jdbcTemplate.update("INSERT INTO " + tableName + "(`name`,`real_name`,`suffix`,`key`,`length`,`create_time`) VALUES (?,?,?,?,?,?)",
+                annex.getName(), annex.getRealName(), annex.getSuffix(), annex.getLength(), new Date());
     }
 
     @Override
     public int deleteByName(String name) {
-        return jdbcTemplate.update("DELETE FROM ? WHERE `name`=?", tableName, name);
+        return jdbcTemplate.update("DELETE FROM " + tableName + " WHERE `name`=?", name);
     }
 
     @Override
@@ -52,10 +52,11 @@ public class JdbcPoetAnnexRepository implements PoetAnnexRepository {
                 "    `suffix` AS suffix,\n" +
                 "    `key` AS `key`,\n" +
                 "    `length` AS `length`\n" +
-                "FROM ? \n" +
+                "FROM " + tableName + " \n" +
                 "WHERE `name`=?";
 
-        return jdbcTemplate.queryForObject(sql, new Object[]{tableName, name}, DefaultPoetAnnex.class);
+        final List<DefaultPoetAnnex> result = jdbcTemplate.queryForList(sql, new Object[]{name}, DefaultPoetAnnex.class);
+        return result.size() == 0 ? null : result.get(0);
     }
 
     @Override
@@ -66,11 +67,11 @@ public class JdbcPoetAnnexRepository implements PoetAnnexRepository {
                 "    `suffix` AS suffix,\n" +
                 "    `key` AS `key`,\n" +
                 "    `length` AS `length`\n" +
-                "FROM ? \n" +
+                "FROM " + tableName + " \n" +
                 "WHERE `name` IN (?)";
 
         final String namesString = names.stream().collect(Collectors.joining(","));
-        return jdbcTemplate.queryForList(sql, new Object[]{tableName, namesString}, DefaultPoetAnnex.class);
+        return jdbcTemplate.queryForList(sql, new Object[]{namesString}, DefaultPoetAnnex.class);
     }
 
 }
