@@ -5,7 +5,7 @@ import java.io.Serializable;
 
 public interface PoetAnnex extends Serializable {
 
-    //default name==uuid+suffix
+    //default name==uuid
     String getName();
 
     void setName(String name);

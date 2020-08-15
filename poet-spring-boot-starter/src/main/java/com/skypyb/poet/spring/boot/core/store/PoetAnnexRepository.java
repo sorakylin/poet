@@ -13,9 +13,9 @@ public interface PoetAnnexRepository {
 
     void save(PoetAnnex annex);
 
-    int deleteById(String id);
+    int deleteByName(String name);
 
-    PoetAnnex findById(String id);
+    PoetAnnex findByName(String name);
 
-    List<PoetAnnex> findByIds(Collection<String> ids);
+    List<PoetAnnex> findByNames(Collection<String> names);
 }

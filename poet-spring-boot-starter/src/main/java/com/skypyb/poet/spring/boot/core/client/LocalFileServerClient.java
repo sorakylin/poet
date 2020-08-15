@@ -113,58 +113,50 @@ public class LocalFileServerClient implements PoetAnnexClient, PoetAnnexClientHt
         return annex;
     }
 
-
-    @Override
-    public boolean exist(String name) {
-        return exist(name, null);
+    /**
+     * 保存时调用的方法, 根据指定路由地址生成本机路径
+     *
+     * @param routing 路由导航, 指示了一个地址
+     * @return java.nio.file.Path 标识的本机路径
+     */
+    private Path generatePath(Navigation routing) {
+        String[] fullPath = routing.getFullPath();
+        Path path = Paths.get(fullPath[0], Arrays.copyOfRange(fullPath, 1, fullPath.length));
+        return path;
     }
 
     @Override
-    public boolean exist(String name, String module) {
-        Navigation routing = router.routing(module, name);
-        Path path = generatePath(routing);
+    public boolean exist(String key) {
+        final Path path = Paths.get(router.formatKey(key));
         return Files.exists(path);
     }
 
-    @Override
-    public void delete(String name) {
-        delete(name, null);
-    }
 
     @Override
-    public void delete(String name, String module) {
-        Navigation routing = router.routing(module, name);
-        Path path = generatePath(routing);
-
+    public void delete(String key) {
+        final Path path = Paths.get(router.formatKey(key));
         try {
             Files.deleteIfExists(path);
         } catch (IOException e) {
             AnnexOperationException ex = new AnnexOperationException("Failed to delete file!", e);
-            ex.setPath(routing.getPath());
+            ex.setPath(key);
             throw ex;
         }
     }
 
-    @Override
-    public byte[] getBytes(String name) {
-        return getBytes(name, null);
-    }
 
     @Override
-    public byte[] getBytes(String name, String module) {
-        Navigation routing = router.routing(module, name);
-        Path path = generatePath(routing);
-
+    public byte[] getBytes(String key) {
+        final Path path = Paths.get(router.formatKey(key));
         //exist ?
 
         try {
             return Files.readAllBytes(path);
         } catch (IOException e) {
             AnnexOperationException ex = new AnnexOperationException("Failed to read file bytes!", e);
-            ex.setPath(routing.getPath());
+            ex.setPath(key);
             throw ex;
         }
-
     }
 
     //endregion
@@ -173,54 +165,38 @@ public class LocalFileServerClient implements PoetAnnexClient, PoetAnnexClientHt
     //region Implements PoetAnnexClientHttpSupport methods
 
     @Override
-    public void view(String name, HttpServletResponse response) {
+    public void view(String key, HttpServletResponse response) {
         //TODO
     }
 
     @Override
-    public void view(String name, String module, HttpServletResponse response) {
-        //TODO
-
-    }
-
-    @Override
-    public void viewMedia(String name, HttpServletResponse response) {
+    public void viewMedia(String key, HttpServletResponse response) {
         //TODO
 
     }
 
     @Override
-    public void viewMedia(String name, String module, HttpServletResponse response) {
+    public void viewMedia(String key, HttpServletRequest request, HttpServletResponse response) {
         //TODO
 
     }
 
     @Override
-    public void viewMedia(String name, HttpServletRequest request, HttpServletResponse response) {
-        //TODO
+    public void down(String key, HttpServletResponse response) {
 
+        final String delimiter = router.getDelimiter();
+        final String[] split = key.split(delimiter);
+        final String name = split[split.length - 1];
+        down(key, name, response);
     }
 
     @Override
-    public void viewMedia(String name, String module, HttpServletRequest request, HttpServletResponse response) {
-        //TODO
-
-    }
-
-    @Override
-    public void down(String name, HttpServletResponse response) {
-        down(name, null, response);
-    }
-
-    @Override
-    public void down(String name, String module, HttpServletResponse response) {
-        Navigation routing = router.routing(module, name);
-        Path path = generatePath(routing);
-
+    public void down(String key, String realName, HttpServletResponse response) {
+        final Path path = Paths.get(router.formatKey(key));
         response.reset();// 清空输出流
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/octet-stream;charset=UTF-8");
-        response.setHeader("Content-Disposition", "attachment;filename=" + name);
+        response.setHeader("Content-Disposition", "attachment;filename=" + realName);
         response.addHeader("Pargam", "no-cache");
         response.addHeader("Cache-Control", "no-cache");
 
@@ -228,7 +204,7 @@ public class LocalFileServerClient implements PoetAnnexClient, PoetAnnexClientHt
             Files.copy(path, out);
         } catch (IOException e) {
             AnnexOperationException ex = new AnnexOperationException("File download failed!", e);
-            ex.setPath(routing.getPath());
+            ex.setPath(key);
             throw ex;
         }
     }
@@ -236,9 +212,4 @@ public class LocalFileServerClient implements PoetAnnexClient, PoetAnnexClientHt
     //endregion
 
 
-    private Path generatePath(Navigation routing) {
-        String[] fullPath = routing.getFullPath();
-        Path path = Paths.get(fullPath[0], Arrays.copyOfRange(fullPath, 1, fullPath.length));
-        return path;
-    }
 }

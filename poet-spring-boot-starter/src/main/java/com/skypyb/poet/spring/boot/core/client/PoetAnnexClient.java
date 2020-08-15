@@ -27,16 +27,9 @@ public interface PoetAnnexClient extends PoetAnnexRouteSupport {
 
     PoetAnnex save(byte[] data, String name, String module);
 
-    boolean exist(String name);
+    boolean exist(String key);
 
-    boolean exist(String name, String module);
+    void delete(String key);
 
-    void delete(String name);
-
-    void delete(String name, String module);
-
-    byte[] getBytes(String name);
-
-    byte[] getBytes(String name, String module);
-
+    byte[] getBytes(String key);
 }

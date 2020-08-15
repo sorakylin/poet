@@ -21,7 +21,7 @@ import java.util.Optional;
 /**
  * 附件操作上下文, 拥有所有对附件操作的机能
  */
-public abstract class AbstractPoetAnnexContext implements ApplicationContextAware, PoetAnnexClient, PoetAnnexClientHttpSupport {
+public abstract class AbstractPoetAnnexContext implements ApplicationContextAware, PoetAnnexContext {
 
     private static ApplicationEventPublisher eventPublisher;
 
@@ -162,28 +162,13 @@ public abstract class AbstractPoetAnnexContext implements ApplicationContextAwar
     }
 
     @Override
-    public boolean exist(String name, String module) {
-        return annexClient.exist(name, module);
-    }
-
-    @Override
     public void delete(String name) {
         annexClient.delete(name);
     }
 
     @Override
-    public void delete(String name, String module) {
-        annexClient.delete(name, module);
-    }
-
-    @Override
     public byte[] getBytes(String name) {
         return annexClient.getBytes(name);
-    }
-
-    @Override
-    public byte[] getBytes(String name, String module) {
-        return annexClient.getBytes(name, module);
     }
 
     @Override
@@ -193,22 +178,9 @@ public abstract class AbstractPoetAnnexContext implements ApplicationContextAwar
     }
 
     @Override
-    public void view(String name, String module, HttpServletResponse response) {
-        checkHttpClientEnableState();
-        annexHttpClient.view(name, module, response);
-
-    }
-
-    @Override
     public void viewMedia(String name, HttpServletResponse response) {
         checkHttpClientEnableState();
         annexHttpClient.viewMedia(name, response);
-    }
-
-    @Override
-    public void viewMedia(String name, String module, HttpServletResponse response) {
-        checkHttpClientEnableState();
-        annexHttpClient.viewMedia(name, module, response);
     }
 
     @Override
@@ -216,12 +188,6 @@ public abstract class AbstractPoetAnnexContext implements ApplicationContextAwar
         checkHttpClientEnableState();
         annexHttpClient.viewMedia(name, request, response);
 
-    }
-
-    @Override
-    public void viewMedia(String name, String module, HttpServletRequest request, HttpServletResponse response) {
-        checkHttpClientEnableState();
-        annexHttpClient.viewMedia(name, module, request, response);
     }
 
     @Override

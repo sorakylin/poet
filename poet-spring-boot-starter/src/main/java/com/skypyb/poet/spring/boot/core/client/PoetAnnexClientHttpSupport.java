@@ -9,19 +9,13 @@ import javax.servlet.http.HttpServletResponse;
  */
 public interface PoetAnnexClientHttpSupport extends PoetAnnexRouteSupport {
 
-    void view(String name, HttpServletResponse response);
+    void view(String key, HttpServletResponse response);
 
-    void view(String name, String module, HttpServletResponse response);
+    void viewMedia(String key, HttpServletResponse response);
 
-    void viewMedia(String name, HttpServletResponse response);
+    void viewMedia(String key, HttpServletRequest request, HttpServletResponse response);
 
-    void viewMedia(String name, String module, HttpServletResponse response);
+    void down(String key, HttpServletResponse response);
 
-    void viewMedia(String name, HttpServletRequest request, HttpServletResponse response);
-
-    void viewMedia(String name, String module, HttpServletRequest request, HttpServletResponse response);
-
-    void down(String name, HttpServletResponse response);
-
-    void down(String name, String module, HttpServletResponse response);
+    void down(String key, String realName, HttpServletResponse response);
 }

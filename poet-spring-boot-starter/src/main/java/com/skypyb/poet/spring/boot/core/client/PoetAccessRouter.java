@@ -13,7 +13,12 @@ public interface PoetAccessRouter {
 
     void setSlicer(PoetAnnexSlicer slicer);
 
-    Navigation routing(String name);
+    //路径分割符
+    void setDelimiter();
+
+    String getDelimiter();
 
     Navigation routing(String module, String name);
+
+    String formatKey(String key);
 }
