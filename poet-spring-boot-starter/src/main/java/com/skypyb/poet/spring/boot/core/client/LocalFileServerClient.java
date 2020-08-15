@@ -4,7 +4,10 @@ import com.skypyb.poet.spring.boot.core.exception.AnnexOperationException;
 import com.skypyb.poet.spring.boot.core.model.DefaultPoetAnnex;
 import com.skypyb.poet.spring.boot.core.model.Navigation;
 import com.skypyb.poet.spring.boot.core.store.PoetAnnexNameGenerator;
+import com.skypyb.poet.spring.boot.core.util.HttpResourceViewUtils;
 import com.skypyb.poet.spring.boot.core.util.StreamUtil;
+import com.sun.corba.se.spi.ior.ObjectId;
+import org.hibernate.validator.internal.util.classhierarchy.Filters;
 import org.springframework.util.Assert;
 
 import javax.servlet.ServletOutputStream;
@@ -14,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.*;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Optional;
 
 /**
@@ -166,12 +170,87 @@ public class LocalFileServerClient implements PoetAnnexClient, PoetAnnexClientHt
 
     @Override
     public void view(String key, HttpServletResponse response) {
-        //TODO
+        final Path path = Paths.get(router.formatKey(key));
+
+        final String[] split = key.split(router.getDelimiter());
+        final String name = split[split.length - 1];
+
+        try {
+            response.reset();
+
+            if (!Files.exists(path)) {
+                response.sendError(404);
+                return;
+            }
+
+            long length = Files.size(path);
+            long lastModified = Files.getLastModifiedTime(path).toMillis();
+            long expires = System.currentTimeMillis() + 604800000L;
+
+            response.addHeader("Content-Type", HttpResourceViewUtils.getContentTypeForSuffix(name));
+            response.addHeader("Cache-Control", "max-age=315360000");
+            response.addHeader("Accept-Ranges", "bytes");
+            response.addHeader("ETag", HttpResourceViewUtils.getETag(lastModified, length));
+            response.addHeader("Last-Modified", new Date(lastModified).toString());
+            response.addHeader("Expires", (new Date(expires)).toString());
+            response.addHeader("Content-Length", String.valueOf(length));
+
+            try (ServletOutputStream out = response.getOutputStream()) {
+                Files.copy(path, out);
+            } catch (IOException e) {
+                AnnexOperationException ex = new AnnexOperationException("File download failed!", e);
+                ex.setPath(key);
+                throw ex;
+            }
+        } catch (Exception e) {
+            AnnexOperationException ex = new AnnexOperationException("Failed to view file!", e);
+            ex.setPath(key);
+            throw ex;
+        }
     }
 
     @Override
     public void viewMedia(String key, HttpServletResponse response) {
-        //TODO
+        final Path path = Paths.get(router.formatKey(key));
+
+        final String[] split = key.split(router.getDelimiter());
+        final String name = split[split.length - 1];
+
+        try {
+            response.reset();
+
+            if (!Files.exists(path)) {
+                response.sendError(404);
+                return;
+            }
+
+            long length = Files.size(path);
+            long lastModified = Files.getLastModifiedTime(path).toMillis();
+            long expires = System.currentTimeMillis() + 604800000L;
+
+            response.addHeader("Content-Type", HttpResourceViewUtils.getContentTypeForSuffix(name));
+            response.addHeader("Connection", "keep-alive");
+            response.addHeader("Cache-Control", "max-age=315360000");
+            response.addHeader("Content-Disposition", "inline;filename=\"" + name + "\"");
+            response.addHeader("Accept-Ranges", "bytes");
+            response.addHeader("ETag", HttpResourceViewUtils.getETag(lastModified, length));
+            response.addHeader("Last-Modified", new Date(lastModified).toString());
+            response.addHeader("Expires", (new Date(expires)).toString());
+            response.addHeader("Content-Range", "bytes 0-" + (length - 1L) + "/" + length);
+            response.addHeader("Content-Length", String.valueOf(length));
+
+            try (ServletOutputStream out = response.getOutputStream()) {
+                Files.copy(path, out);
+            } catch (IOException e) {
+                AnnexOperationException ex = new AnnexOperationException("File download failed!", e);
+                ex.setPath(key);
+                throw ex;
+            }
+        } catch (Exception e) {
+            AnnexOperationException ex = new AnnexOperationException("Failed to view media file!", e);
+            ex.setPath(key);
+            throw ex;
+        }
 
     }
 
