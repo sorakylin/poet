@@ -9,13 +9,14 @@ public class Navigation implements Serializable {
 
     private String module;
 
+    //path == key
     private String path;
 
     /**
      * fullPath 和 path 不同的是： fullPath包含文件系统基础路径,即存储路径
-     * 如果是unix系统, 则 fullPath[0] 最前面带个斜杠 ‘/’
+     * 如果是unix系统, 则最前面带个斜杠 ‘/’
      */
-    private String[] fullPath;
+    private String fullPath;
 
     public String getName() {
         return name;
@@ -41,11 +42,11 @@ public class Navigation implements Serializable {
         this.path = path;
     }
 
-    public String[] getFullPath() {
+    public String getFullPath() {
         return fullPath;
     }
 
-    public void setFullPath(String[] fullPath) {
+    public void setFullPath(String fullPath) {
         this.fullPath = fullPath;
     }
 

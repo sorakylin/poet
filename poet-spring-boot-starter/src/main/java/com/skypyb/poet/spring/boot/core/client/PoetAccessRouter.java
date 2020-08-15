@@ -14,7 +14,7 @@ public interface PoetAccessRouter {
     void setSlicer(PoetAnnexSlicer slicer);
 
     //路径分割符
-    void setDelimiter();
+    void setDelimiter(String delimiter);
 
     String getDelimiter();
 

@@ -197,9 +197,9 @@ public abstract class AbstractPoetAnnexContext implements ApplicationContextAwar
     }
 
     @Override
-    public void down(String name, String module, HttpServletResponse response) {
+    public void down(String name, String realName, HttpServletResponse response) {
         checkHttpClientEnableState();
-        annexHttpClient.down(name, response);
+        annexHttpClient.down(name, realName, response);
     }
 
     @Override

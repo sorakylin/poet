@@ -31,7 +31,7 @@ public class LocalFileServerClient implements PoetAnnexClient, PoetAnnexClientHt
 
     //region setter/getter
 
-    public LocalFileServerClient(PoetAccessRouter router, PoetAnnexNameGenerator nameGenerator) {
+    public LocalFileServerClient(PoetAccessRouter router) {
         Assert.notNull(router, "router not be null!");
         this.router = router;
     }
@@ -125,9 +125,8 @@ public class LocalFileServerClient implements PoetAnnexClient, PoetAnnexClientHt
      * @return java.nio.file.Path 标识的本机路径
      */
     private Path generatePath(Navigation routing) {
-        String[] fullPath = routing.getFullPath();
-        Path path = Paths.get(fullPath[0], Arrays.copyOfRange(fullPath, 1, fullPath.length));
-        return path;
+        String fullPath = routing.getFullPath();
+        return Paths.get(fullPath);
     }
 
     @Override

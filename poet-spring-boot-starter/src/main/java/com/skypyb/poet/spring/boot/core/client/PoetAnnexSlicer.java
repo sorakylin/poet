@@ -3,6 +3,8 @@ package com.skypyb.poet.spring.boot.core.client;
 import com.skypyb.poet.spring.boot.core.model.PoetAnnex;
 import com.skypyb.poet.spring.boot.core.store.PoetAnnexNameGenerator;
 
+import java.util.Objects;
+
 /**
  * 通过附件的元信息得到该附件的路径信息
  * 制定不同的策略来切成不同的路径，例:
@@ -19,9 +21,9 @@ public interface PoetAnnexSlicer {
 
     String DELIMITER = "/";//default unix separator
 
-    PoetAnnexSlicer DEFAULT_SLICER = (m, n) -> new StringBuilder(m)
+    PoetAnnexSlicer DEFAULT_SLICER = (m, n) -> new StringBuilder(Objects.isNull(m) ? "" : m)
             .append(DELIMITER)
-            .append(n)
+            .append(Objects.isNull(n) ? "" : n)
             .toString()
             .replaceAll(DELIMITER.concat(DELIMITER), DELIMITER)
             .split(DELIMITER);

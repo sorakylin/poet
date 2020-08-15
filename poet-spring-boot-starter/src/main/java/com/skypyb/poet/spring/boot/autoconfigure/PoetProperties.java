@@ -2,12 +2,24 @@ package com.skypyb.poet.spring.boot.autoconfigure;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import javax.validation.constraints.NotNull;
+
 @ConfigurationProperties(prefix = "poet")
 public class PoetProperties {
 
-    //储存位置
+    //默认储存位置
+    @NotNull
     private String storageLocation;
 
+    //web资源访问路径
+    private String webUrlPrefix = "/poet";
+
+    //默认模块, 在文件保存时若不指定则将直接保存到此模块之中
+    private String defaultModule;
+
+    //路径分隔符,  以本地文件系统作为附件储存库时可使用 '/', 适配 unix&win
+    @NotNull
+    private String pathDelimiter = "/";
 
 
     public String getStorageLocation() {
@@ -16,5 +28,29 @@ public class PoetProperties {
 
     public void setStorageLocation(String storageLocation) {
         this.storageLocation = storageLocation;
+    }
+
+    public String getWebUrlPrefix() {
+        return webUrlPrefix;
+    }
+
+    public void setWebUrlPrefix(String webUrlPrefix) {
+        this.webUrlPrefix = webUrlPrefix;
+    }
+
+    public String getDefaultModule() {
+        return defaultModule;
+    }
+
+    public void setDefaultModule(String defaultModule) {
+        this.defaultModule = defaultModule;
+    }
+
+    public String getPathDelimiter() {
+        return pathDelimiter;
+    }
+
+    public void setPathDelimiter(String pathDelimiter) {
+        this.pathDelimiter = pathDelimiter;
     }
 }
