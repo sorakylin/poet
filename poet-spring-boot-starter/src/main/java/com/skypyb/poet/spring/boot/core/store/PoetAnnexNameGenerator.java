@@ -10,7 +10,7 @@ public interface PoetAnnexNameGenerator {
     /**
      * 名字生成的时点为附件储存之间
      *
-     * @return 一个保证全局不会重名的名字
+     * @return 一个保证全局不会重名的名字, 不用带上后缀
      */
     String generate();
 }

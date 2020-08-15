@@ -5,8 +5,11 @@ import com.skypyb.poet.spring.boot.core.client.LocalFileServerClient;
 import com.skypyb.poet.spring.boot.core.client.PoetAccessRouter;
 import com.skypyb.poet.spring.boot.core.client.PoetAnnexClient;
 import com.skypyb.poet.spring.boot.core.client.PoetAnnexClientHttpSupport;
+import com.skypyb.poet.spring.boot.core.exception.AnnexOperationException;
 import com.skypyb.poet.spring.boot.core.model.PoetAnnex;
 import com.skypyb.poet.spring.boot.core.store.PoetAnnexNameGenerator;
+import com.skypyb.poet.spring.boot.core.store.PoetAnnexRepository;
+import com.skypyb.poet.spring.boot.core.util.HttpResourceViewUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -36,22 +39,15 @@ public abstract class AbstractPoetAnnexContext implements ApplicationContextAwar
      */
     private boolean enableHttpSupport = true;
 
-    /**
-     * 是否启用名字生成器, 若为false, 则所有操作的入参名字均直接作为文件保存时的名字
-     * 由于默认的附件客户端{@link LocalFileServerClient}相关操作均为覆盖操作, 不启用可能会引发一些预料之外的误操作。
-     * 需要调用方仔细斟酌
-     *
-     * @see this#getNameGenerator;
-     */
-    private boolean enableNameGenerator = true;
-
     //名字生成器
     abstract Optional<PoetAnnexNameGenerator> getNameGenerator();
+
+    //储存器
+    abstract Optional<PoetAnnexRepository> getRepository();
 
 
     //TODO 加密器
 
-    //TODO 储存器
 
     //TODO ACL 访问控制器  [write,read,info,delete,admin]
 
@@ -98,14 +94,6 @@ public abstract class AbstractPoetAnnexContext implements ApplicationContextAwar
         this.enableHttpSupport = enableHttpSupport;
     }
 
-    public boolean isEnableNameGenerator() {
-        return enableNameGenerator;
-    }
-
-    public void setEnableNameGenerator(boolean enableNameGenerator) {
-        this.enableNameGenerator = enableNameGenerator;
-    }
-
 
     private void checkHttpClientEnableState() {
         if (!enableHttpSupport || Objects.isNull(annexHttpClient)) {
@@ -114,7 +102,10 @@ public abstract class AbstractPoetAnnexContext implements ApplicationContextAwar
     }
 
     private String nameGenerator(String realName) {
-        return enableNameGenerator ? getNameGenerator().map(PoetAnnexNameGenerator::generate).orElse(realName) : realName;
+        return getNameGenerator()
+                .map(PoetAnnexNameGenerator::generate)
+                .map(name -> name.concat(HttpResourceViewUtils.splitSuffix(realName)))
+                .orElse(realName);
     }
 
     @Override
@@ -129,6 +120,7 @@ public abstract class AbstractPoetAnnexContext implements ApplicationContextAwar
     public PoetAnnex save(InputStream in, String name) {
         final PoetAnnex result = annexClient.save(in, nameGenerator(name));
         result.setRealName(name);
+        getRepository().ifPresent(r -> r.save(result));
         return result;
     }
 
@@ -136,7 +128,7 @@ public abstract class AbstractPoetAnnexContext implements ApplicationContextAwar
     public PoetAnnex save(InputStream in, String name, String module) {
         final PoetAnnex result = annexClient.save(in, nameGenerator(name), module);
         result.setRealName(name);
-
+        getRepository().ifPresent(r -> r.save(result));
         return result;
     }
 
@@ -144,7 +136,7 @@ public abstract class AbstractPoetAnnexContext implements ApplicationContextAwar
     public PoetAnnex save(byte[] data, String name) {
         final PoetAnnex result = annexClient.save(data, nameGenerator(name));
         result.setRealName(name);
-
+        getRepository().ifPresent(r -> r.save(result));
         return result;
     }
 
@@ -152,54 +144,94 @@ public abstract class AbstractPoetAnnexContext implements ApplicationContextAwar
     public PoetAnnex save(byte[] data, String name, String module) {
         final PoetAnnex result = annexClient.save(data, nameGenerator(name), module);
         result.setRealName(name);
-
+        getRepository().ifPresent(r -> r.save(result));
         return result;
     }
 
     @Override
     public boolean exist(String name) {
-        return annexClient.exist(name);
+        return getRepository().map(r -> r.findByName(name)).map(PoetAnnex::getKey).map(annexClient::exist).orElse(false);
     }
 
     @Override
     public void delete(String name) {
-        annexClient.delete(name);
+        Optional<PoetAnnex> annex = getRepository().map(r -> r.findByName(name));
+
+        annex.ifPresent(a -> {
+            getRepository().ifPresent(r -> r.deleteByName(a.getName()));
+            annexClient.delete(a.getKey());
+        });
+
     }
 
     @Override
     public byte[] getBytes(String name) {
-        return annexClient.getBytes(name);
+        Optional<PoetAnnex> annex = getRepository().map(r -> r.findByName(name));
+        if (!annex.isPresent()) {
+            throw new AnnexOperationException("File(" + name + ") does not exist!");
+        }
+
+        return annexClient.getBytes(annex.get().getKey());
     }
 
     @Override
     public void view(String name, HttpServletResponse response) {
         checkHttpClientEnableState();
-        annexHttpClient.view(name, response);
+
+        Optional<PoetAnnex> annex = getRepository().map(r -> r.findByName(name));
+        if (!annex.isPresent()) {
+            throw new AnnexOperationException("File(" + name + ") does not exist!");
+        }
+
+        annexHttpClient.view(annex.get().getKey(), response);
     }
 
     @Override
     public void viewMedia(String name, HttpServletResponse response) {
         checkHttpClientEnableState();
-        annexHttpClient.viewMedia(name, response);
+
+        Optional<PoetAnnex> annex = getRepository().map(r -> r.findByName(name));
+        if (!annex.isPresent()) {
+            throw new AnnexOperationException("File(" + name + ") does not exist!");
+        }
+
+        annexHttpClient.viewMedia(annex.get().getKey(), response);
     }
 
     @Override
     public void viewMedia(String name, HttpServletRequest request, HttpServletResponse response) {
         checkHttpClientEnableState();
-        annexHttpClient.viewMedia(name, request, response);
 
+        Optional<PoetAnnex> annex = getRepository().map(r -> r.findByName(name));
+        if (!annex.isPresent()) {
+            throw new AnnexOperationException("File(" + name + ") does not exist!");
+        }
+
+        annexHttpClient.viewMedia(annex.get().getKey(), request, response);
     }
 
     @Override
     public void down(String name, HttpServletResponse response) {
         checkHttpClientEnableState();
-        annexHttpClient.down(name, response);
+
+        Optional<PoetAnnex> annex = getRepository().map(r -> r.findByName(name));
+        if (!annex.isPresent()) {
+            throw new AnnexOperationException("File(" + name + ") does not exist!");
+        }
+
+        annexHttpClient.down(annex.get().getKey(), annex.get().getRealName(), response);
     }
 
     @Override
     public void down(String name, String realName, HttpServletResponse response) {
         checkHttpClientEnableState();
-        annexHttpClient.down(name, realName, response);
+
+        Optional<PoetAnnex> annex = getRepository().map(r -> r.findByName(name));
+        if (!annex.isPresent()) {
+            throw new AnnexOperationException("File(" + name + ") does not exist!");
+        }
+
+        annexHttpClient.down(annex.get().getKey(), realName, response);
     }
 
     @Override

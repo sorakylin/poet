@@ -17,5 +17,5 @@ public interface PoetAnnexRepository {
 
     PoetAnnex findByName(String name);
 
-    List<PoetAnnex> findByNames(Collection<String> names);
+    List<? extends PoetAnnex> findByNames(Collection<String> names);
 }

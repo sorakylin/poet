@@ -1,6 +1,7 @@
 package com.skypyb.poet.spring.boot.core.client;
 
 import com.skypyb.poet.spring.boot.core.model.Navigation;
+import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.util.Arrays;
@@ -40,6 +41,10 @@ public class DefaultPoetAccessRouter implements PoetAccessRouter {
 
     @Override
     public Navigation routing(String module, String name) {
+        if (!StringUtils.hasText(module)){
+            module = this.defaultModule;
+        }
+
         Navigation navigation = new Navigation();
         navigation.setName(name);
         navigation.setModule(module);
