@@ -21,13 +21,16 @@ public interface PoetAnnexSlicer {
 
     String DELIMITER = "/";//default unix separator
 
-    PoetAnnexSlicer DEFAULT_SLICER = (m, n) -> new StringBuilder(Objects.isNull(m) ? "" : m)
-            .append(DELIMITER)
-            .append(Objects.isNull(n) ? "" : n)
-            .toString()
-            .replaceAll(DELIMITER.concat(DELIMITER), DELIMITER)
-            .split(DELIMITER);
-
+    PoetAnnexSlicer DEFAULT_SLICER = slicer(DELIMITER);
 
     String[] slicePath(String module, String name);
+
+    static PoetAnnexSlicer slicer(String delimiter) {
+        return (m, n) -> new StringBuilder(Objects.isNull(m) ? "" : m)
+                .append(delimiter)
+                .append(Objects.isNull(n) ? "" : n)
+                .toString()
+                .replaceAll(delimiter.concat(delimiter), delimiter)
+                .split(delimiter);
+    }
 }

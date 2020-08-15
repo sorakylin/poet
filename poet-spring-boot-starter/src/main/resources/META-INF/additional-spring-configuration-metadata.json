@@ -1,0 +1,44 @@
+{
+  "groups": [
+    {
+      "name": "poet",
+      "sourceType": "com.skypyb.poet.spring.boot.autoconfigure.PoetProperties",
+      "type": "com.skypyb.poet.spring.boot.autoconfigure.PoetProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "poet.storageLocation",
+      "sourceType": "com.skypyb.poet.spring.boot.autoconfigure.PoetProperties",
+      "type": "java.lang.String",
+      "description": "文件默认默认储存位置, 非空."
+    },
+    {
+      "name": "poet.webUrlPrefix",
+      "sourceType": "com.skypyb.poet.spring.boot.autoconfigure.PoetProperties",
+      "type": "java.lang.String",
+      "defaultValue": "/poet",
+      "description": "web资源接口请求路径前缀."
+    },
+    {
+      "name": "poet.defaultModule",
+      "sourceType": "com.skypyb.poet.spring.boot.autoconfigure.PoetProperties",
+      "type": "java.lang.String",
+      "description": "默认模块, 在文件保存时若不指定则将直接保存到此模块之中."
+    },
+    {
+      "name": "poet.pathDelimiter",
+      "sourceType": "com.skypyb.poet.spring.boot.autoconfigure.PoetProperties",
+      "type": "java.lang.String",
+      "defaultValue": "/",
+      "description": "路径分隔符,  以本地文件系统作为附件储存库时可使用 '/', 适配 unix&win."
+    },
+    {
+      "name": "poet.tableName",
+      "sourceType": "com.skypyb.poet.spring.boot.autoconfigure.PoetProperties",
+      "type": "java.lang.String",
+      "defaultValue": "tb_poet_annex",
+      "description": "储存附件信息的表名."
+    }
+  ]
+}

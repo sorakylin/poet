@@ -11,7 +11,7 @@ public class PoetProperties {
     @NotNull
     private String storageLocation;
 
-    //web资源访问路径
+    //web资源接口请求路径前缀
     private String webUrlPrefix = "/poet";
 
     //默认模块, 在文件保存时若不指定则将直接保存到此模块之中
@@ -21,6 +21,9 @@ public class PoetProperties {
     @NotNull
     private String pathDelimiter = "/";
 
+    //储存附件信息的表名
+    @NotNull
+    private String tableName = "tb_poet_annex";
 
     public String getStorageLocation() {
         return storageLocation;
@@ -52,5 +55,13 @@ public class PoetProperties {
 
     public void setPathDelimiter(String pathDelimiter) {
         this.pathDelimiter = pathDelimiter;
+    }
+
+    public String getTableName() {
+        return tableName;
+    }
+
+    public void setTableName(String tableName) {
+        this.tableName = tableName;
     }
 }

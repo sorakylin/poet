@@ -1,0 +1,36 @@
+{
+  "groups": [
+    {
+      "name": "poet",
+      "sourceType": "com.skypyb.poet.spring.boot.autoconfigure.PoetProperties",
+      "type": "com.skypyb.poet.spring.boot.autoconfigure.PoetProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "poet.storageLocation",
+      "sourceType": "com.skypyb.poet.spring.boot.autoconfigure.PoetProperties",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "poet.webUrlPrefix",
+      "sourceType": "com.skypyb.poet.spring.boot.autoconfigure.PoetProperties",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "poet.defaultModule",
+      "sourceType": "com.skypyb.poet.spring.boot.autoconfigure.PoetProperties",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "poet.pathDelimiter",
+      "sourceType": "com.skypyb.poet.spring.boot.autoconfigure.PoetProperties",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "poet.tableName",
+      "sourceType": "com.skypyb.poet.spring.boot.autoconfigure.PoetProperties",
+      "type": "java.lang.String"
+    }
+  ]
+}
