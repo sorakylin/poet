@@ -1,13 +1,18 @@
 package com.skypyb.poet.spring.boot.core.client;
 
 import com.skypyb.poet.spring.boot.core.model.Navigation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
 public class DefaultPoetAccessRouter implements PoetAccessRouter {
+
+    private static Logger logger = LoggerFactory.getLogger(DefaultPoetAccessRouter.class);
 
     private PoetAnnexSlicer slicer = PoetAnnexSlicer.DEFAULT_SLICER;
     private String delimiter = PoetAnnexSlicer.DELIMITER;
@@ -41,7 +46,7 @@ public class DefaultPoetAccessRouter implements PoetAccessRouter {
 
     @Override
     public Navigation routing(String module, String name) {
-        if (!StringUtils.hasText(module)){
+        if (!StringUtils.hasText(module)) {
             module = this.defaultModule;
         }
 
@@ -71,9 +76,9 @@ public class DefaultPoetAccessRouter implements PoetAccessRouter {
     @Override
     public String formatKey(String key) {
         String path = this.storageLocation.concat(key);
-
-        path = path.replaceAll(this.delimiter, File.separator);
-        path = path.replaceAll(File.separator.concat(File.separator), File.separator);
+        logger.debug("Poet format key result: {}.", key);
+        path = path.replaceAll(this.delimiter, Matcher.quoteReplacement(File.separator));
+        path = path.replaceAll(File.separator.concat(File.separator), Matcher.quoteReplacement(File.separator));
 
         return path;
     }

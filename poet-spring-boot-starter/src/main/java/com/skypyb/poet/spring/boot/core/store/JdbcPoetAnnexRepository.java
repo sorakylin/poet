@@ -35,7 +35,7 @@ public class JdbcPoetAnnexRepository implements PoetAnnexRepository {
     @Override
     public void save(PoetAnnex annex) {
         jdbcTemplate.update("INSERT INTO " + tableName + "(`name`,`real_name`,`suffix`,`key`,`length`,`create_time`) VALUES (?,?,?,?,?,?)",
-                annex.getName(), annex.getRealName(), annex.getSuffix(), annex.getLength(), new Date());
+                annex.getName(), annex.getRealName(), annex.getSuffix(), annex.getKey(), annex.getLength(), new Date());
     }
 
     @Override
