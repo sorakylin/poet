@@ -56,7 +56,7 @@ public class DefaultPoetAccessRouter implements PoetAccessRouter {
 
         final String[] pathArray = this.slicer.slicePath(module, name);
 
-        final String path = Arrays.stream(pathArray).collect(Collectors.joining(delimiter, "/", ""));
+        final String path = Arrays.stream(pathArray).collect(Collectors.joining(delimiter));
         navigation.setPath(path);
 
         final String fullPath = formatKey(path);

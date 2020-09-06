@@ -104,7 +104,7 @@ public abstract class AbstractPoetAnnexContext implements ApplicationContextAwar
     private String nameGenerator(String realName) {
         return getNameGenerator()
                 .map(PoetAnnexNameGenerator::generate)
-                .map(name -> name.concat(HttpResourceViewUtils.splitSuffix(realName)))
+                .map(name -> new StringBuilder(name).append(".").append(HttpResourceViewUtils.splitSuffix(realName)).toString())
                 .orElse(realName);
     }
 

@@ -1008,7 +1008,8 @@ public class HttpResourceViewUtils {
     public static String splitSuffix(String fileName) {
         if (!StringUtils.hasText(fileName)) return "";
 
-        if (fileName.indexOf(".") == -1) return fileName;
+        //未知后缀
+        if (fileName.indexOf(".") == -1) return "unknown";
         if (fileName.lastIndexOf(".") == 0) return fileName.substring(1);
 
         final String[] split = fileName.split("\\.");

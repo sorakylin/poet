@@ -25,7 +25,8 @@ public class DefaultPoetAnnex implements PoetAnnex {
 
         int suffixPoint = name.lastIndexOf(".");
         if (suffixPoint > 0) {
-            defaultPoetAnnex.setSuffix(name.substring(suffixPoint));
+            //后缀名保存时不保留 "."
+            defaultPoetAnnex.setSuffix(name.substring(suffixPoint + 1));
         }
 
         return defaultPoetAnnex;

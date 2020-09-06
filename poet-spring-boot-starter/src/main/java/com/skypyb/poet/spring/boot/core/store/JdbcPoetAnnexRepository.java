@@ -34,26 +34,26 @@ public class JdbcPoetAnnexRepository implements PoetAnnexRepository {
 
     @Override
     public void save(PoetAnnex annex) {
-        jdbcTemplate.update("INSERT INTO " + tableName + "(`name`,`real_name`,`suffix`,`key`,`length`,`create_time`) VALUES (?,?,?,?,?,?)",
+        jdbcTemplate.update("INSERT INTO " + tableName + "(name,real_name,suffix,key,length,create_time) VALUES (?,?,?,?,?,?)",
                 annex.getName(), annex.getRealName(), annex.getSuffix(), annex.getKey(), annex.getLength(), new Date());
     }
 
     @Override
     public int deleteByName(String name) {
-        return jdbcTemplate.update("DELETE FROM " + tableName + " WHERE `name`=?", name);
+        return jdbcTemplate.update("DELETE FROM " + tableName + " WHERE name=?", name);
     }
 
     @Override
     public PoetAnnex findByName(String name) {
 
         final String sql = "SELECT \n" +
-                "    `name` AS `name`,\n" +
-                "    `real_name` AS `realName`,\n" +
-                "    `suffix` AS suffix,\n" +
-                "    `key` AS `key`,\n" +
-                "    `length` AS `length`\n" +
+                "    name AS name,\n" +
+                "    real_name AS realName,\n" +
+                "    suffix AS suffix,\n" +
+                "    key AS key,\n" +
+                "    length AS length\n" +
                 "FROM " + tableName + " \n" +
-                "WHERE `name`=?";
+                "WHERE name=?";
 
         final List<DefaultPoetAnnex> result = jdbcTemplate.queryForList(sql, new Object[]{name}, DefaultPoetAnnex.class);
         return result.size() == 0 ? null : result.get(0);
@@ -62,13 +62,13 @@ public class JdbcPoetAnnexRepository implements PoetAnnexRepository {
     @Override
     public List<? extends PoetAnnex> findByNames(Collection<String> names) {
         final String sql = "SELECT \n" +
-                "    `name` AS `name`,\n" +
-                "    `real_name` AS `realName`,\n" +
-                "    `suffix` AS suffix,\n" +
-                "    `key` AS `key`,\n" +
-                "    `length` AS `length`\n" +
+                "    name AS name,\n" +
+                "    real_name AS realName,\n" +
+                "    suffix AS suffix,\n" +
+                "    key AS key,\n" +
+                "    length AS length\n" +
                 "FROM " + tableName + " \n" +
-                "WHERE `name` IN (?)";
+                "WHERE name IN (?)";
 
         final String namesString = names.stream().collect(Collectors.joining(","));
         return jdbcTemplate.queryForList(sql, new Object[]{namesString}, DefaultPoetAnnex.class);
