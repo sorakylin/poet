@@ -1,8 +1,10 @@
 package com.skypyb.poet.spring.boot.web;
 
 import com.skypyb.poet.spring.boot.autoconfigure.PoetAutoConfiguration;
+import com.skypyb.poet.spring.boot.autoconfigure.PoetProperties;
 import com.skypyb.poet.spring.boot.core.PoetAnnexContext;
 import com.skypyb.poet.spring.boot.core.model.PoetAnnex;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -23,8 +25,10 @@ import java.io.IOException;
 @RestController
 public class PoetResource {
 
-    @Resource
+    @Autowired
     private PoetAnnexContext poetAnnexContext;
+    @Autowired
+    private PoetProperties poetProperties;
 
     private HttpServletResponse res() {
         ServletRequestAttributes attributes = (ServletRequestAttributes)

@@ -13,6 +13,9 @@ public class PoetProperties {
     @NotNull
     private String storageLocation;
 
+    //是否启用web资源层
+    private Boolean enableWebResource = true;
+
     //web资源接口请求路径前缀
     private String webUrlPrefix = "/poet";
 

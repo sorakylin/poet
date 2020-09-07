@@ -2,6 +2,7 @@ package com.skypyb.poet.spring.boot.core.store;
 
 import com.skypyb.poet.spring.boot.core.model.DefaultPoetAnnex;
 import com.skypyb.poet.spring.boot.core.model.PoetAnnex;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.Collection;
@@ -9,7 +10,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class JdbcPoetAnnexRepository implements PoetAnnexRepository {
+public class PostgresPoetAnnexRepository implements PoetAnnexRepository {
 
     private JdbcTemplate jdbcTemplate;
 
@@ -55,7 +56,7 @@ public class JdbcPoetAnnexRepository implements PoetAnnexRepository {
                 "FROM " + tableName + " \n" +
                 "WHERE name=?";
 
-        final List<DefaultPoetAnnex> result = jdbcTemplate.queryForList(sql, new Object[]{name}, DefaultPoetAnnex.class);
+        final List<DefaultPoetAnnex> result = jdbcTemplate.query(sql, new Object[]{name}, new BeanPropertyRowMapper<>(DefaultPoetAnnex.class));
         return result.size() == 0 ? null : result.get(0);
     }
 
@@ -71,7 +72,7 @@ public class JdbcPoetAnnexRepository implements PoetAnnexRepository {
                 "WHERE name IN (?)";
 
         final String namesString = names.stream().collect(Collectors.joining(","));
-        return jdbcTemplate.queryForList(sql, new Object[]{namesString}, DefaultPoetAnnex.class);
+        return jdbcTemplate.query(sql, new Object[]{namesString}, new BeanPropertyRowMapper<>(DefaultPoetAnnex.class));
     }
 
 }

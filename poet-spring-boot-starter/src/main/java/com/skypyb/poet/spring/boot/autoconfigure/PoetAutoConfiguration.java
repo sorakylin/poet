@@ -3,7 +3,7 @@ package com.skypyb.poet.spring.boot.autoconfigure;
 import com.skypyb.poet.spring.boot.core.DefaultPoetAnnexContext;
 import com.skypyb.poet.spring.boot.core.PoetAnnexContext;
 import com.skypyb.poet.spring.boot.core.client.*;
-import com.skypyb.poet.spring.boot.core.store.JdbcPoetAnnexRepository;
+import com.skypyb.poet.spring.boot.core.store.PostgresPoetAnnexRepository;
 import com.skypyb.poet.spring.boot.core.store.PoetAnnexRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,8 +16,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
@@ -61,7 +59,7 @@ public class PoetAutoConfiguration implements InitializingBean {
     @Bean
     @ConditionalOnMissingBean
     public PoetAnnexRepository poetAnnexRepository(JdbcTemplate jdbcTemplate) {
-        JdbcPoetAnnexRepository repository = new JdbcPoetAnnexRepository();
+        PostgresPoetAnnexRepository repository = new PostgresPoetAnnexRepository();
         repository.setTableName(poetProperties.getTableName());
         repository.setJdbcTemplate(jdbcTemplate);
         return repository;

@@ -3,7 +3,6 @@ package com.skypyb.poet.spring.boot.core.client;
 import com.skypyb.poet.spring.boot.core.exception.AnnexOperationException;
 import com.skypyb.poet.spring.boot.core.model.DefaultPoetAnnex;
 import com.skypyb.poet.spring.boot.core.model.Navigation;
-import com.skypyb.poet.spring.boot.core.store.PoetAnnexNameGenerator;
 import com.skypyb.poet.spring.boot.core.util.HttpResourceViewUtils;
 import com.skypyb.poet.spring.boot.core.util.StreamUtil;
 import org.springframework.util.Assert;
@@ -16,7 +15,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.nio.file.*;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Objects;
 import java.util.Optional;
@@ -65,6 +63,9 @@ public class LocalFileServerClient implements PoetAnnexClient, PoetAnnexClientHt
         Path path = generatePath(routing);
 
         try {
+            if (!Files.exists(path.getParent())){
+                Files.createDirectories(path.getParent());
+            }
             //创建、覆盖
             Files.copy(in, path);
         } catch (IOException e) {
@@ -99,6 +100,9 @@ public class LocalFileServerClient implements PoetAnnexClient, PoetAnnexClientHt
         Path path = generatePath(routing);
 
         try {
+            if (!Files.exists(path.getParent())){
+                Files.createDirectories(path.getParent());
+            }
             //创建、覆盖
             Files.write(path, data);
         } catch (IOException e) {

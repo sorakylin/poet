@@ -21,7 +21,7 @@ public class DefaultPoetAccessRouter implements PoetAccessRouter {
 
     @Override
     public void setStorageLocation(String storageLocation) {
-        this.storageLocation = storageLocation;
+        this.storageLocation = storageLocation.endsWith(delimiter) ? storageLocation.substring(0, storageLocation.length() - 1) : storageLocation;
     }
 
     @Override
@@ -75,7 +75,9 @@ public class DefaultPoetAccessRouter implements PoetAccessRouter {
      */
     @Override
     public String formatKey(String key) {
-        String path = this.storageLocation.concat(key);
+        if (key.startsWith(delimiter)) key = key.substring(1);
+
+        String path = this.storageLocation.concat(delimiter).concat(key);
         logger.debug("Poet format key result: {}.", key);
         path = path.replaceAll(this.delimiter, Matcher.quoteReplacement(File.separator));
         path = path.replaceAll(File.separator.concat(File.separator), Matcher.quoteReplacement(File.separator));
