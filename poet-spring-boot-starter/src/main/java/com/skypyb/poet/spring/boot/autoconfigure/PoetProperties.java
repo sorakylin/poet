@@ -38,6 +38,14 @@ public class PoetProperties {
         this.storageLocation = storageLocation;
     }
 
+    public Boolean getEnableWebResource() {
+        return enableWebResource;
+    }
+
+    public void setEnableWebResource(Boolean enableWebResource) {
+        this.enableWebResource = enableWebResource;
+    }
+
     public String getWebUrlPrefix() {
         return webUrlPrefix;
     }

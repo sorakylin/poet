@@ -10,9 +10,11 @@ public class DefaultPoetAnnexContext extends AbstractPoetAnnexContext {
 
     private PoetAnnexRepository repository;
 
+    private PoetAnnexNameGenerator nameGenerator;
+
     @Override
     Optional<PoetAnnexNameGenerator> getNameGenerator() {
-        return Optional.of(PoetAnnexNameGenerator.DEFAULT_NAME_GENERATOR);
+        return Optional.ofNullable(nameGenerator);
     }
 
     @Override
@@ -22,5 +24,9 @@ public class DefaultPoetAnnexContext extends AbstractPoetAnnexContext {
 
     public void setRepository(PoetAnnexRepository repository) {
         this.repository = repository;
+    }
+
+    public void setNameGenerator(PoetAnnexNameGenerator nameGenerator) {
+        this.nameGenerator = nameGenerator;
     }
 }

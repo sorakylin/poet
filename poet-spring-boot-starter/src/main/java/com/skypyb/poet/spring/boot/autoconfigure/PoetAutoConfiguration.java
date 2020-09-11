@@ -3,11 +3,13 @@ package com.skypyb.poet.spring.boot.autoconfigure;
 import com.skypyb.poet.spring.boot.core.DefaultPoetAnnexContext;
 import com.skypyb.poet.spring.boot.core.PoetAnnexContext;
 import com.skypyb.poet.spring.boot.core.client.*;
+import com.skypyb.poet.spring.boot.core.store.PoetAnnexNameGenerator;
 import com.skypyb.poet.spring.boot.core.store.PostgresPoetAnnexRepository;
 import com.skypyb.poet.spring.boot.core.store.PoetAnnexRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
@@ -47,12 +49,12 @@ public class PoetAutoConfiguration implements InitializingBean {
 
     @Bean
     @ConditionalOnMissingBean
-    public PoetAccessRouter poetAccessRouter() {
+    public PoetAccessRouter poetAccessRouter(@Nullable PoetAnnexSlicer slicer) {
         PoetAccessRouter router = new DefaultPoetAccessRouter();
         router.setDefaultModule(poetProperties.getDefaultModule());
         router.setStorageLocation(poetProperties.getStorageLocation());
         router.setDelimiter(poetProperties.getPathDelimiter());
-        router.setSlicer(PoetAnnexSlicer.slicer(poetProperties.getPathDelimiter()));
+        router.setSlicer(Objects.isNull(slicer) ? PoetAnnexSlicer.DEFAULT_SLICER : slicer);
         return router;
     }
 
@@ -87,10 +89,12 @@ public class PoetAutoConfiguration implements InitializingBean {
     @DependsOn({"poetAnnexClient", "poetAnnexClientHttpSupport"})
     public PoetAnnexContext poetAnnexContext(PoetAnnexClient poetAnnexClient,
                                              PoetAnnexClientHttpSupport poetAnnexClientHttpSupport,
-                                             PoetAnnexRepository poetAnnexRepository) {
+                                             PoetAnnexRepository poetAnnexRepository,
+                                             @Nullable PoetAnnexNameGenerator nameGenerator) {
         DefaultPoetAnnexContext context = new DefaultPoetAnnexContext();
         context.configure(poetAnnexClient, poetAnnexClientHttpSupport);
         context.setRepository(poetAnnexRepository);
+        context.setNameGenerator(Objects.isNull(nameGenerator) ? PoetAnnexNameGenerator.DEFAULT_NAME_GENERATOR : nameGenerator);
         return context;
     }
 }
