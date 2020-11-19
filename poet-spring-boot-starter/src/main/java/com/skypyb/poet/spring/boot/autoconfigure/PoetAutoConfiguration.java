@@ -3,8 +3,8 @@ package com.skypyb.poet.spring.boot.autoconfigure;
 import com.skypyb.poet.spring.boot.core.DefaultPoetAnnexContext;
 import com.skypyb.poet.spring.boot.core.PoetAnnexContext;
 import com.skypyb.poet.spring.boot.core.client.*;
+import com.skypyb.poet.spring.boot.core.store.MySQLPoetAnnexRepository;
 import com.skypyb.poet.spring.boot.core.store.PoetAnnexNameGenerator;
-import com.skypyb.poet.spring.boot.core.store.PostgresPoetAnnexRepository;
 import com.skypyb.poet.spring.boot.core.store.PoetAnnexRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,11 +73,15 @@ public class PoetAutoConfiguration implements InitializingBean {
         return router;
     }
 
+    /**
+     * 默认使用MySQL数据库
+     * 使用其他数据库的需要自行配置
+     */
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnProperty(name = "poet.enableDBStore", havingValue = "true")
     public PoetAnnexRepository poetAnnexRepository(@NotNull JdbcTemplate jdbcTemplate) {
-        PostgresPoetAnnexRepository repository = new PostgresPoetAnnexRepository(jdbcTemplate);
+        MySQLPoetAnnexRepository repository = new MySQLPoetAnnexRepository(jdbcTemplate);
         repository.setTableName(poetProperties.getTableName());
         return repository;
     }

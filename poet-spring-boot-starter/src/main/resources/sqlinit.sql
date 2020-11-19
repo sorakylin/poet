@@ -7,7 +7,8 @@ create table poet_annex
     `key`         varchar(512) not null,
     `length`      bigint       not null,
     `create_time` datetime     not null
-) comment 'poet 附件支持' engine INNODB;
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT ='poet 附件支持';
 
 
 -- postgres

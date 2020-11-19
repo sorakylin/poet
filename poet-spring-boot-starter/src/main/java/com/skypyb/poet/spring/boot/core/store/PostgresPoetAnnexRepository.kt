@@ -5,7 +5,6 @@ import com.skypyb.poet.spring.boot.core.model.PoetAnnex
 import org.springframework.jdbc.core.BeanPropertyRowMapper
 import org.springframework.jdbc.core.JdbcTemplate
 import java.util.*
-import java.util.stream.Collectors
 
 class PostgresPoetAnnexRepository(jdbcTemplate: JdbcTemplate) : PoetAnnexRepository {
     val jdbcTemplate = jdbcTemplate
@@ -42,7 +41,7 @@ class PostgresPoetAnnexRepository(jdbcTemplate: JdbcTemplate) : PoetAnnexReposit
                 "    length AS length\n" +
                 "FROM $tableName \n" +
                 "WHERE name IN (?)"
-        val namesString = names.stream().collect(Collectors.joining(","))
+        val namesString: String = names.joinToString(",")
         return jdbcTemplate.query(sql, arrayOf(namesString), BeanPropertyRowMapper(DefaultPoetAnnex::class.java))
     }
 }
