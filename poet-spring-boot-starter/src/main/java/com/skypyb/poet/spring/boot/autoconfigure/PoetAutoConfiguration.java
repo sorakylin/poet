@@ -23,7 +23,13 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
 import javax.sql.DataSource;
+import javax.validation.ConstraintViolation;
+import javax.validation.ValidationException;
+import javax.validation.Validator;
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Configuration
 @ConditionalOnSingleCandidate(DataSource.class)
@@ -34,6 +40,8 @@ public class PoetAutoConfiguration implements InitializingBean {
     private static final Logger logger = LoggerFactory.getLogger(PoetAutoConfiguration.class);
     private PoetProperties poetProperties;
 
+    @Autowired
+    private Validator validator;
 
     public PoetAutoConfiguration(PoetProperties poetProperties) {
         this.poetProperties = poetProperties;
@@ -41,9 +49,15 @@ public class PoetAutoConfiguration implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        Assert.notNull(poetProperties.getStorageLocation(), "Storage location not be null!");
-        Assert.notNull(poetProperties.getPathDelimiter(), "Path delimiter not be null!");
+        Set<ConstraintViolation<PoetProperties>> validate = validator.validate(poetProperties);
+        if (validate != null && !validate.isEmpty()) {
+            String message = validate.stream().map(v -> v.getMessage()).collect(Collectors.joining(" | "));
+            throw new ValidationException(message);
+        }
+
+        //?
         Assert.notNull(poetProperties.getTableName(), "Table name not be null!");
+
         logger.info("======= Poet annex auto configuration success =======");
     }
 
@@ -60,10 +74,9 @@ public class PoetAutoConfiguration implements InitializingBean {
 
     @Bean
     @ConditionalOnMissingBean
-    public PoetAnnexRepository poetAnnexRepository(JdbcTemplate jdbcTemplate) {
-        PostgresPoetAnnexRepository repository = new PostgresPoetAnnexRepository();
+    public PoetAnnexRepository poetAnnexRepository(@NotNull JdbcTemplate jdbcTemplate) {
+        PostgresPoetAnnexRepository repository = new PostgresPoetAnnexRepository(jdbcTemplate);
         repository.setTableName(poetProperties.getTableName());
-        repository.setJdbcTemplate(jdbcTemplate);
         return repository;
     }
 
@@ -89,11 +102,11 @@ public class PoetAutoConfiguration implements InitializingBean {
     @DependsOn({"poetAnnexClient", "poetAnnexClientHttpSupport"})
     public PoetAnnexContext poetAnnexContext(PoetAnnexClient poetAnnexClient,
                                              PoetAnnexClientHttpSupport poetAnnexClientHttpSupport,
-                                             PoetAnnexRepository poetAnnexRepository,
+                                             @Nullable PoetAnnexRepository poetAnnexRepository,
                                              @Nullable PoetAnnexNameGenerator nameGenerator) {
         DefaultPoetAnnexContext context = new DefaultPoetAnnexContext();
         context.configure(poetAnnexClient, poetAnnexClientHttpSupport);
-        context.setRepository(poetAnnexRepository);
+        context.setRepository(Objects.isNull(poetAnnexRepository) ? null : poetAnnexRepository);
         context.setNameGenerator(Objects.isNull(nameGenerator) ? PoetAnnexNameGenerator.DEFAULT_NAME_GENERATOR : nameGenerator);
         return context;
     }

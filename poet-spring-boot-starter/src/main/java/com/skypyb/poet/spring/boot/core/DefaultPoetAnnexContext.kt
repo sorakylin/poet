@@ -1,32 +1,29 @@
-package com.skypyb.poet.spring.boot.core;
+package com.skypyb.poet.spring.boot.core
 
-import com.skypyb.poet.spring.boot.core.store.PoetAnnexNameGenerator;
-import com.skypyb.poet.spring.boot.core.store.PoetAnnexRepository;
+import com.skypyb.poet.spring.boot.core.store.PoetAnnexNameGenerator
+import com.skypyb.poet.spring.boot.core.store.PoetAnnexRepository
+import org.springframework.util.Assert
+import java.util.*
 
-import java.util.Optional;
+class DefaultPoetAnnexContext : AbstractPoetAnnexContext() {
+    
+    private var repository: Optional<PoetAnnexRepository>? = null
+    private var nameGenerator: PoetAnnexNameGenerator? = null
 
-
-public class DefaultPoetAnnexContext extends AbstractPoetAnnexContext {
-
-    private PoetAnnexRepository repository;
-
-    private PoetAnnexNameGenerator nameGenerator;
-
-    @Override
-    Optional<PoetAnnexNameGenerator> getNameGenerator() {
-        return Optional.ofNullable(nameGenerator);
+    public override fun getNameGenerator(): Optional<PoetAnnexNameGenerator> {
+        return Optional.ofNullable(nameGenerator)
     }
 
-    @Override
-    Optional<PoetAnnexRepository> getRepository() {
-        return Optional.ofNullable(repository);
+    public override fun getRepository(): Optional<PoetAnnexRepository> {
+        return repository!!
     }
 
-    public void setRepository(PoetAnnexRepository repository) {
-        this.repository = repository;
+    fun setRepository(repository: PoetAnnexRepository?) {
+        this.repository = Optional.ofNullable(repository)
     }
 
-    public void setNameGenerator(PoetAnnexNameGenerator nameGenerator) {
-        this.nameGenerator = nameGenerator;
+    fun setNameGenerator(nameGenerator: PoetAnnexNameGenerator?) {
+        Assert.notNull(nameGenerator, "nameGenerator not be null!")
+        this.nameGenerator = nameGenerator
     }
 }

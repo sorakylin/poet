@@ -2,13 +2,14 @@ package com.skypyb.poet.spring.boot.autoconfigure
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.stereotype.Component
+import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
 
 @ConfigurationProperties(prefix = "poet")
 @Component("poetProperties")
 class PoetProperties {
     //默认储存位置
-    var storageLocation: @NotNull String? = null
+    var storageLocation: @NotBlank(message = "Storage location not be empty!") String? = null
 
     //是否启用web资源层
     var enableWebResource = true
@@ -20,8 +21,8 @@ class PoetProperties {
     var defaultModule: String? = null
 
     //路径分隔符,  以本地文件系统作为附件储存库时可使用 '/', 适配 unix&win
-    var pathDelimiter: @NotNull String? = "/"
+    var pathDelimiter: @NotBlank(message = "Path delimiter not be empty!") String? = "/"
 
     //储存附件信息的表名
-    var tableName: @NotNull String? = "tb_poet_annex"
+    var tableName: @NotNull String? = "poet_annex"
 }

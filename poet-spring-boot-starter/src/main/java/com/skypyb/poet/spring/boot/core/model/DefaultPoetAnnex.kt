@@ -1,84 +1,68 @@
-package com.skypyb.poet.spring.boot.core.model;
+package com.skypyb.poet.spring.boot.core.model
 
-public class DefaultPoetAnnex implements PoetAnnex {
+class DefaultPoetAnnex : PoetAnnex {
 
-    private String name;
+    private var name: String? = null
+    private var realName: String? = null
+    private var suffix: String? = null
+    private var key: String? = null
+    private var length: Long? = null
 
-    private String realName;
 
-    private String suffix;
+    override fun setName(name: String) {
+        this.name = name
+    }
 
-    private String key;
+    override fun setRealName(realName: String) {
+        this.realName = realName
+    }
 
-    private Long length;
+    override fun setSuffix(suffix: String) {
+        this.suffix = suffix
+    }
 
-    /**
-     * 没有 realName&length
-     */
-    public static DefaultPoetAnnex of(Navigation n) {
+    override fun setKey(key: String) {
+        this.key = key
+    }
 
-        String name = n.getName();
+    override fun setLength(length: Long) {
+        this.length = length
+    }
 
-        DefaultPoetAnnex defaultPoetAnnex = new DefaultPoetAnnex();
-        defaultPoetAnnex.setName(name);
-        defaultPoetAnnex.setKey(n.getPath());
+    override fun getName(): String {
+        return name!!
+    }
 
-        int suffixPoint = name.lastIndexOf(".");
-        if (suffixPoint > 0) {
-            //后缀名保存时不保留 "."
-            defaultPoetAnnex.setSuffix(name.substring(suffixPoint + 1));
+    override fun getRealName(): String {
+        return realName!!
+    }
+
+    override fun getSuffix(): String {
+        return suffix!!
+    }
+
+    override fun getKey(): String {
+        return key!!
+    }
+
+    override fun getLength(): Long {
+        return length!!
+    }
+
+    companion object {
+        /**
+         * 没有 realName&length
+         */
+        fun of(n: Navigation): DefaultPoetAnnex {
+            val name = n.name
+            val defaultPoetAnnex = DefaultPoetAnnex()
+            defaultPoetAnnex.setName(name!!)
+            defaultPoetAnnex.setKey(n.path!!)
+            val suffixPoint = name.lastIndexOf(".")
+            if (suffixPoint > 0) { //后缀名保存时不保留 "."
+                defaultPoetAnnex.setSuffix(name.substring(suffixPoint + 1))
+            }
+            return defaultPoetAnnex
         }
-
-        return defaultPoetAnnex;
     }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public void setRealName(String realName) {
-        this.realName = realName;
-    }
-
-
-    public void setSuffix(String suffix) {
-        this.suffix = suffix;
-    }
-
-    public void setKey(String key) {
-        this.key = key;
-    }
-
-    public void setLength(Long length) {
-        this.length = length;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public String getRealName() {
-        return realName;
-    }
-
-
-    @Override
-    public String getSuffix() {
-        return suffix;
-    }
-
-    @Override
-    public String getKey() {
-        return key;
-    }
-
-
-    @Override
-    public Long getLength() {
-        return length;
-    }
-
 }

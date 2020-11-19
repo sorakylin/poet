@@ -1,5 +1,5 @@
 -- mysql
-create table tb_poet_annex
+create table poet_annex
 (
     name        varchar(56)  not null primary key,
     real_name   varchar(56)  null,
@@ -11,7 +11,7 @@ create table tb_poet_annex
 
 
 -- postgres
-create table tb_poet_annex
+create table poet_annex
 (
     name        varchar(56)  not null primary key,
     real_name   varchar(56)  null,

@@ -45,12 +45,6 @@ public abstract class AbstractPoetAnnexContext implements ApplicationContextAwar
     //储存器
     abstract Optional<PoetAnnexRepository> getRepository();
 
-
-    //TODO 加密器
-
-
-    //TODO ACL 访问控制器  [write,read,info,delete,admin]
-
     /**
      * 启动功能前必须要调用的核心配置方法
      *

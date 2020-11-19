@@ -63,7 +63,7 @@ public class LocalFileServerClient implements PoetAnnexClient, PoetAnnexClientHt
         Path path = generatePath(routing);
 
         try {
-            if (!Files.exists(path.getParent())){
+            if (!Files.exists(path.getParent())) {
                 Files.createDirectories(path.getParent());
             }
             //创建、覆盖
@@ -76,7 +76,7 @@ public class LocalFileServerClient implements PoetAnnexClient, PoetAnnexClientHt
             StreamUtil.close(in);
         }
 
-        DefaultPoetAnnex annex = DefaultPoetAnnex.of(routing);
+        DefaultPoetAnnex annex = DefaultPoetAnnex.Companion.of(routing);
 
         try {
             annex.setLength(Files.size(path));
@@ -100,7 +100,7 @@ public class LocalFileServerClient implements PoetAnnexClient, PoetAnnexClientHt
         Path path = generatePath(routing);
 
         try {
-            if (!Files.exists(path.getParent())){
+            if (!Files.exists(path.getParent())) {
                 Files.createDirectories(path.getParent());
             }
             //创建、覆盖
@@ -109,7 +109,7 @@ public class LocalFileServerClient implements PoetAnnexClient, PoetAnnexClientHt
             e.printStackTrace();
         }
 
-        DefaultPoetAnnex annex = DefaultPoetAnnex.of(routing);
+        DefaultPoetAnnex annex = DefaultPoetAnnex.Companion.of(routing);
 
         try {
             annex.setLength(Files.size(path));
