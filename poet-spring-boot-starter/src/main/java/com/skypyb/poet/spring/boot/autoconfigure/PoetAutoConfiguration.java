@@ -12,6 +12,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -55,8 +56,8 @@ public class PoetAutoConfiguration implements InitializingBean {
             throw new ValidationException(message);
         }
 
-        //?
-        Assert.notNull(poetProperties.getTableName(), "Table name not be null!");
+        if (poetProperties.getEnableDBStore())
+            Assert.notNull(poetProperties.getTableName(), "Table name not be null!");
 
         logger.info("======= Poet annex auto configuration success =======");
     }
@@ -74,6 +75,7 @@ public class PoetAutoConfiguration implements InitializingBean {
 
     @Bean
     @ConditionalOnMissingBean
+    @ConditionalOnProperty(name = "poet.enableDBStore", havingValue = "true")
     public PoetAnnexRepository poetAnnexRepository(@NotNull JdbcTemplate jdbcTemplate) {
         PostgresPoetAnnexRepository repository = new PostgresPoetAnnexRepository(jdbcTemplate);
         repository.setTableName(poetProperties.getTableName());

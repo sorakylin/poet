@@ -7,22 +7,26 @@ import javax.validation.constraints.NotNull
 
 @ConfigurationProperties(prefix = "poet")
 @Component("poetProperties")
-class PoetProperties {
-    //默认储存位置
-    var storageLocation: @NotBlank(message = "Storage location not be empty!") String? = null
+data class PoetProperties(
 
-    //是否启用web资源层
-    var enableWebResource = true
+        //默认储存位置
+        var storageLocation: @NotBlank(message = "Storage location not be empty!") String? = null,
 
-    //web资源接口请求路径前缀
-    var webUrlPrefix = "/poet"
+        //是否启用web端点
+        var enableWebResource: Boolean = true,
 
-    //默认模块, 在文件保存时若不指定则将直接保存到此模块之中
-    var defaultModule: String? = null
+        //是否使用DB储存附件信息
+        var enableDBStore: Boolean = true,
 
-    //路径分隔符,  以本地文件系统作为附件储存库时可使用 '/', 适配 unix&win
-    var pathDelimiter: @NotBlank(message = "Path delimiter not be empty!") String? = "/"
+        //web资源接口请求路径前缀
+        var webUrlPrefix: String = "/poet",
 
-    //储存附件信息的表名
-    var tableName: @NotNull String? = "poet_annex"
-}
+        //默认模块, 在文件保存时若不指定则将直接保存到此模块之中
+        var defaultModule: String? = null,
+
+        //路径分隔符,  以本地文件系统作为附件储存库时可使用 '/', 适配 unix&win
+        var pathDelimiter: @NotBlank(message = "Path delimiter not be empty!") String? = "/",
+
+        //储存附件信息的表名
+        var tableName: @NotNull String? = "poet_annex"
+)

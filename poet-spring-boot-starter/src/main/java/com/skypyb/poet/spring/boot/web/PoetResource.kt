@@ -4,6 +4,7 @@ import com.skypyb.poet.spring.boot.autoconfigure.PoetProperties
 import com.skypyb.poet.spring.boot.core.PoetAnnexContext
 import com.skypyb.poet.spring.boot.core.exception.AnnexAccessException
 import com.skypyb.poet.spring.boot.core.model.PoetAnnex
+import com.skypyb.poet.spring.boot.core.store.PoetAnnexRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.context.request.RequestContextHolder
@@ -23,9 +24,11 @@ import javax.servlet.http.HttpServletResponse
 class PoetResource {
 
     @Autowired
-    private val poetAnnexContext: PoetAnnexContext? = null
+    private var poetAnnexContext: PoetAnnexContext? = null
     @Autowired
-    private val poetProperties: PoetProperties? = null
+    private var poetAnnexRepository: PoetAnnexRepository? = null
+    @Autowired
+    private var poetProperties: PoetProperties? = null
 
     private fun res(): HttpServletResponse {
         val attributes = RequestContextHolder.getRequestAttributes() as ServletRequestAttributes
@@ -68,20 +71,23 @@ class PoetResource {
     @GetMapping("/bs/{name}")
     fun findAnnex(@PathVariable name: String?): PoetAnnex {
         validateEnable()
-        throw UnsupportedOperationException()
+        val annex = poetAnnexRepository!!.findByName(name)
+        return annex
     }
 
     @DeleteMapping("/bs/{name}")
     fun deleteAnnex(@PathVariable name: String?): PoetAnnex {
         validateEnable()
-        throw UnsupportedOperationException()
+        val annex = poetAnnexRepository!!.findByName(name)
+        annex?.let { poetAnnexRepository!!.deleteByName(it.name) }
+        return annex
     }
 
     //endregion
 
 
     private fun validateEnable(): Unit {
-        if (poetProperties!!.enableWebResource) {
+        if (poetProperties!!.enableWebResource && poetProperties!!.enableDBStore) {
             return
         }
         throw AnnexAccessException("prohibit")

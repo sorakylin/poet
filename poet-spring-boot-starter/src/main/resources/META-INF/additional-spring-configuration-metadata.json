@@ -14,6 +14,13 @@
       "description": "文件默认默认储存位置, 非空."
     },
     {
+      "name": "poet.enableDBStore",
+      "sourceType": "com.skypyb.poet.spring.boot.autoconfigure.PoetProperties",
+      "type": "java.lang.Boolean",
+      "defaultValue": true,
+      "description": "是否使用DB储存附件信息."
+    },
+    {
       "name": "poet.enableWebResource",
       "sourceType": "com.skypyb.poet.spring.boot.autoconfigure.PoetProperties",
       "type": "java.lang.Boolean",

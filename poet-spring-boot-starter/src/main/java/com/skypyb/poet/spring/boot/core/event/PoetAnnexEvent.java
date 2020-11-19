@@ -31,11 +31,4 @@ public abstract class PoetAnnexEvent extends ApplicationEvent {
     public boolean hasAnnexMetaInfo() {
         return false;
     }
-
-    public final HttpServletRequest getHttpRequest() {
-        ServletRequestAttributes attributes = (ServletRequestAttributes)
-                RequestContextHolder.getRequestAttributes();
-        HttpServletRequest request = attributes.getRequest();
-        return request;
-    }
 }
