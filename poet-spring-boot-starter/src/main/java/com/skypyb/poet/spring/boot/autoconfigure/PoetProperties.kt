@@ -1,80 +1,27 @@
-package com.skypyb.poet.spring.boot.autoconfigure;
+package com.skypyb.poet.spring.boot.autoconfigure
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
-
-import javax.validation.constraints.NotNull;
+import org.springframework.boot.context.properties.ConfigurationProperties
+import org.springframework.stereotype.Component
+import javax.validation.constraints.NotNull
 
 @ConfigurationProperties(prefix = "poet")
 @Component("poetProperties")
-public class PoetProperties {
-
+class PoetProperties {
     //默认储存位置
-    @NotNull
-    private String storageLocation;
+    var storageLocation: @NotNull String? = null
 
     //是否启用web资源层
-    private Boolean enableWebResource = true;
+    var enableWebResource = true
 
     //web资源接口请求路径前缀
-    private String webUrlPrefix = "/poet";
+    var webUrlPrefix = "/poet"
 
     //默认模块, 在文件保存时若不指定则将直接保存到此模块之中
-    private String defaultModule;
+    var defaultModule: String? = null
 
     //路径分隔符,  以本地文件系统作为附件储存库时可使用 '/', 适配 unix&win
-    @NotNull
-    private String pathDelimiter = "/";
+    var pathDelimiter: @NotNull String? = "/"
 
     //储存附件信息的表名
-    @NotNull
-    private String tableName = "tb_poet_annex";
-
-    public String getStorageLocation() {
-        return storageLocation;
-    }
-
-    public void setStorageLocation(String storageLocation) {
-        this.storageLocation = storageLocation;
-    }
-
-    public Boolean getEnableWebResource() {
-        return enableWebResource;
-    }
-
-    public void setEnableWebResource(Boolean enableWebResource) {
-        this.enableWebResource = enableWebResource;
-    }
-
-    public String getWebUrlPrefix() {
-        return webUrlPrefix;
-    }
-
-    public void setWebUrlPrefix(String webUrlPrefix) {
-        this.webUrlPrefix = webUrlPrefix;
-    }
-
-    public String getDefaultModule() {
-        return defaultModule;
-    }
-
-    public void setDefaultModule(String defaultModule) {
-        this.defaultModule = defaultModule;
-    }
-
-    public String getPathDelimiter() {
-        return pathDelimiter;
-    }
-
-    public void setPathDelimiter(String pathDelimiter) {
-        this.pathDelimiter = pathDelimiter;
-    }
-
-    public String getTableName() {
-        return tableName;
-    }
-
-    public void setTableName(String tableName) {
-        this.tableName = tableName;
-    }
+    var tableName: @NotNull String? = "tb_poet_annex"
 }
