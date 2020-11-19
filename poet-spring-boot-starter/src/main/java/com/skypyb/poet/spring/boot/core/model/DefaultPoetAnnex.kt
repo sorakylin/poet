@@ -53,6 +53,7 @@ class DefaultPoetAnnex : PoetAnnex {
         /**
          * 没有 realName&length
          */
+        @JvmStatic
         fun of(n: Navigation): DefaultPoetAnnex {
             val name = n.name
             val defaultPoetAnnex = DefaultPoetAnnex()

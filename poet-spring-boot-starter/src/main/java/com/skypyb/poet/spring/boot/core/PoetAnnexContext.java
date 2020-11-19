@@ -32,12 +32,6 @@ public interface PoetAnnexContext {
     PoetAnnex save(byte[] data, String name, String module);
 
 
-    void setRouter(PoetAccessRouter router);
-
-
-    Optional<PoetAccessRouter> getRouter();
-
-
     boolean exist(String name);
 
 

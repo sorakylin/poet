@@ -6,7 +6,7 @@ import org.springframework.util.Assert
 import java.util.*
 
 class DefaultPoetAnnexContext : AbstractPoetAnnexContext() {
-    
+
     private var repository: Optional<PoetAnnexRepository>? = null
     private var nameGenerator: PoetAnnexNameGenerator? = null
 

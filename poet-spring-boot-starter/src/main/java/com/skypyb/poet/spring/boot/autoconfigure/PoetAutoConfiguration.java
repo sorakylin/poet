@@ -87,6 +87,7 @@ public class PoetAutoConfiguration implements InitializingBean {
     }
 
     @Bean
+    @DependsOn("poetAnnexClient")
     @ConditionalOnMissingBean
     public PoetAnnexClientHttpSupport poetAnnexClientHttpSupport(@Nullable PoetAnnexClient client,
                                                                  PoetAccessRouter poetAccessRouter) {

@@ -1,24 +1,26 @@
-package com.skypyb.poet.spring.boot.core.util;
+package com.skypyb.poet.spring.boot.core.util
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Objects;
+import java.io.Closeable
+import java.io.IOException
 
-public class StreamUtil {
 
-    public static void close(Closeable closeable) {
-        if (Objects.isNull(closeable)) return;
+class StreamUtil {
 
-        try {
-            closeable.close();
-        } catch (IOException e) {
-            //忽略
+    companion object {
+        @JvmStatic
+        fun close(closeable: Closeable) {
+            if (closeable == null) return
+            try {
+                closeable.close()
+            } catch (e: IOException) { //忽略
+            }
+        }
+
+        @JvmStatic
+        fun close(vararg closeable: Closeable) {
+            if (closeable == null) return
+            closeable.forEach { close(it) }
         }
     }
 
-    public static void close(Closeable... closeable) {
-        if (Objects.isNull(closeable)) return;
-        Arrays.stream(closeable).forEach(StreamUtil::close);
-    }
 }

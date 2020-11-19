@@ -76,7 +76,7 @@ public class LocalFileServerClient implements PoetAnnexClient, PoetAnnexClientHt
             StreamUtil.close(in);
         }
 
-        DefaultPoetAnnex annex = DefaultPoetAnnex.Companion.of(routing);
+        DefaultPoetAnnex annex = DefaultPoetAnnex.of(routing);
 
         try {
             annex.setLength(Files.size(path));
@@ -109,7 +109,7 @@ public class LocalFileServerClient implements PoetAnnexClient, PoetAnnexClientHt
             e.printStackTrace();
         }
 
-        DefaultPoetAnnex annex = DefaultPoetAnnex.Companion.of(routing);
+        DefaultPoetAnnex annex = DefaultPoetAnnex.of(routing);
 
         try {
             annex.setLength(Files.size(path));

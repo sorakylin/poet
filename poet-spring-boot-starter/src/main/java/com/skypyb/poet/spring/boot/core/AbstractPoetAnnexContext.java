@@ -228,18 +228,4 @@ public abstract class AbstractPoetAnnexContext implements ApplicationContextAwar
         annexHttpClient.down(annex.get().getKey(), realName, response);
     }
 
-    @Override
-    public void setRouter(PoetAccessRouter router) {
-        checkHttpClientEnableState();
-        annexClient.setRouter(router);
-        if (Objects.nonNull(annexHttpClient)) {
-            annexHttpClient.setRouter(router);
-        }
-    }
-
-    @Override
-    public Optional<PoetAccessRouter> getRouter() {
-        return annexClient.getRouter();
-    }
-
 }
