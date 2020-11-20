@@ -36,9 +36,9 @@ class DefaultPoetAccessRouter : PoetAccessRouter {
         return delimiter
     }
 
-    override fun routing(module: String, name: String): Navigation {
+    override fun routing(module: String?, name: String): Navigation {
 
-        val practicalModule: String = module.ifBlank { defaultModule ?: "" }
+        val practicalModule: String = module ?: defaultModule ?: ""
 
         val path = slicer.slicePath(practicalModule, name).joinToString(delimiter)
 

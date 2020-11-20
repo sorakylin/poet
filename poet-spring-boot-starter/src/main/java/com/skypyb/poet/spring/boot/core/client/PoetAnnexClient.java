@@ -3,6 +3,7 @@ package com.skypyb.poet.spring.boot.core.client;
 import com.skypyb.poet.spring.boot.core.model.PoetAnnex;
 import com.skypyb.poet.spring.boot.core.store.PoetAnnexNameGenerator;
 
+import javax.annotation.Nullable;
 import java.io.InputStream;
 
 /**
@@ -17,15 +18,15 @@ import java.io.InputStream;
  * 具体生成策略 , 将配合 :{@link PoetAnnexSlicer}
  * 注: 最终名字的生成会依靠 {@link PoetAnnexNameGenerator}
  */
-public interface PoetAnnexClient extends PoetAnnexRouteSupport {
+public interface PoetAnnexClient {
 
     PoetAnnex save(InputStream in, String name);
 
-    PoetAnnex save(InputStream in, String name, String module);
+    PoetAnnex save(InputStream in, String name, @Nullable String module);
 
     PoetAnnex save(byte[] data, String name);
 
-    PoetAnnex save(byte[] data, String name, String module);
+    PoetAnnex save(byte[] data, String name, @Nullable String module);
 
     boolean exist(String key);
 
