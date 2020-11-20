@@ -21,9 +21,10 @@ import javax.servlet.http.HttpServletResponse
  */
 abstract class AbstractPoetAnnexContext : ApplicationContextAware, PoetAnnexContext {
 
-    var annexClient: PoetAnnexClient? = null
+    lateinit var annexClient: PoetAnnexClient
 
-    var annexHttpClient: PoetAnnexClientHttpSupport? = null
+    lateinit var annexHttpClient: PoetAnnexClientHttpSupport
+    
     /**
      * 是否启用Http支持， 若为false, 则Http相关的操作接口无法使用。 调用时会抛出 [UnsupportedOperationException]
      *
@@ -43,7 +44,7 @@ abstract class AbstractPoetAnnexContext : ApplicationContextAware, PoetAnnexCont
      * @param annexClient     附件基础操作支持
      * @param annexHttpClient 附件Http相关操作支持
      */
-    fun configure(annexClient: PoetAnnexClient?, annexHttpClient: PoetAnnexClientHttpSupport?) {
+    fun configure(annexClient: PoetAnnexClient, annexHttpClient: PoetAnnexClientHttpSupport) {
         this.annexClient = annexClient
         this.annexHttpClient = annexHttpClient
     }
@@ -66,28 +67,28 @@ abstract class AbstractPoetAnnexContext : ApplicationContextAware, PoetAnnexCont
     }
 
     override fun save(`in`: InputStream, name: String): PoetAnnex {
-        val result = annexClient!!.save(`in`, nameGenerator(name))
+        val result = annexClient.save(`in`, nameGenerator(name))
         result.realName = name
         repository?.save(result)
         return result
     }
 
     override fun save(`in`: InputStream, name: String, module: String): PoetAnnex {
-        val result = annexClient!!.save(`in`, nameGenerator(name), module)
+        val result = annexClient.save(`in`, nameGenerator(name), module)
         result.realName = name
         repository?.save(result)
         return result
     }
 
     override fun save(data: ByteArray, name: String): PoetAnnex {
-        val result = annexClient!!.save(data, nameGenerator(name))
+        val result = annexClient.save(data, nameGenerator(name))
         result.realName = name
         repository?.save(result)
         return result
     }
 
     override fun save(data: ByteArray, name: String, module: String): PoetAnnex {
-        val result = annexClient!!.save(data, nameGenerator(name), module)
+        val result = annexClient.save(data, nameGenerator(name), module)
         result.realName = name
         repository?.save(result)
         return result
@@ -110,42 +111,42 @@ abstract class AbstractPoetAnnexContext : ApplicationContextAware, PoetAnnexCont
 
     override fun getBytes(name: String): ByteArray {
         val annex = findAnnex(name)
-        return annexClient!!.getBytes(annex.key)
+        return annexClient.getBytes(annex.key)
     }
 
     override fun view(name: String, response: HttpServletResponse) {
         checkHttpClientEnableState()
         val annex = findAnnex(name)
 
-        annexHttpClient!!.view(annex.key, response)
+        annexHttpClient.view(annex.key, response)
     }
 
     override fun viewMedia(name: String, response: HttpServletResponse) {
         checkHttpClientEnableState()
         val annex = findAnnex(name)
 
-        annexHttpClient!!.viewMedia(annex.key, response)
+        annexHttpClient.viewMedia(annex.key, response)
     }
 
     override fun viewMedia(name: String, request: HttpServletRequest, response: HttpServletResponse) {
         checkHttpClientEnableState()
         val annex = findAnnex(name)
 
-        annexHttpClient!!.viewMedia(annex.key, request, response)
+        annexHttpClient.viewMedia(annex.key, request, response)
     }
 
     override fun down(name: String, response: HttpServletResponse) {
         checkHttpClientEnableState()
         val annex = findAnnex(name)
 
-        annexHttpClient!!.down(annex.key, annex.realName, response)
+        annexHttpClient.down(annex.key, annex.realName, response)
     }
 
     override fun down(name: String, realName: String, response: HttpServletResponse) {
         checkHttpClientEnableState()
         val annex = findAnnex(name)
 
-        annexHttpClient!!.down(annex.key, realName, response)
+        annexHttpClient.down(annex.key, realName, response)
     }
 
     companion object {

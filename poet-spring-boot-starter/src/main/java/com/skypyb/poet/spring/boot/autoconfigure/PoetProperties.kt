@@ -25,8 +25,8 @@ data class PoetProperties(
         var defaultModule: String? = null,
 
         //路径分隔符,  以本地文件系统作为附件储存库时可使用 '/', 适配 unix&win
-        var pathDelimiter: @NotBlank(message = "Path delimiter not be empty!") String? = "/",
+        var pathDelimiter: String = "/",
 
         //储存附件信息的表名
-        var tableName: @NotNull String? = "poet_annex"
+        var tableName: String = "poet_annex"
 )

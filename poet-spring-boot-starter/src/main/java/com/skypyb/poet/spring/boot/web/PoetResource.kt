@@ -24,11 +24,12 @@ import javax.servlet.http.HttpServletResponse
 class PoetResource {
 
     @Autowired
-    private var poetAnnexContext: PoetAnnexContext? = null
+    private lateinit var poetAnnexContext: PoetAnnexContext
+    @Autowired
+    private lateinit var poetProperties: PoetProperties
+
     @Autowired
     private var poetAnnexRepository: PoetAnnexRepository? = null
-    @Autowired
-    private var poetProperties: PoetProperties? = null
 
     private fun res(): HttpServletResponse {
         val attributes = RequestContextHolder.getRequestAttributes() as ServletRequestAttributes
@@ -44,19 +45,19 @@ class PoetResource {
     @GetMapping("/view/{name}")
     fun fileView(@PathVariable name: String, response: HttpServletResponse?) {
         validateEnable()
-        poetAnnexContext!!.view(name, res())
+        poetAnnexContext.view(name, res())
     }
 
     @GetMapping("/view-media/{name}")
     fun mediaFileView(@PathVariable name: String?) {
         validateEnable()
-        poetAnnexContext!!.viewMedia(name, req(), res())
+        poetAnnexContext.viewMedia(name, req(), res())
     }
 
     @GetMapping("/download/{name}")
     fun download(@PathVariable name: String?) {
         validateEnable()
-        poetAnnexContext!!.down(name, res())
+        poetAnnexContext.down(name, res())
     }
 
     @RequestMapping("/up")
@@ -64,7 +65,7 @@ class PoetResource {
     fun upload(@RequestParam("file") file: MultipartFile,
                @RequestParam(value = "module", required = false) module: String?): PoetAnnex {
         validateEnable()
-        return poetAnnexContext!!.save(file.inputStream, file.originalFilename, module)
+        return poetAnnexContext.save(file.inputStream, file.originalFilename, module)
     }
 
     //region -- Business
@@ -86,8 +87,8 @@ class PoetResource {
     //endregion
 
 
-    private fun validateEnable(): Unit {
-        if (poetProperties!!.enableWebResource && poetProperties!!.enableDBStore) {
+    private fun validateEnable() {
+        if (poetProperties.enableWebResource && poetProperties.enableDBStore) {
             return
         }
         throw AnnexAccessException("prohibit")

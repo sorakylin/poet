@@ -6,7 +6,6 @@ import java.util.*
 object HttpResourceViewUtils {
 
     //http://svn.apache.org/repos/asf/httpd/httpd/trunk/docs/conf/mime.types
-    @JvmField
     private val MIME_TYPE_MAP = HashMap<String, String>()
 
     @JvmStatic
