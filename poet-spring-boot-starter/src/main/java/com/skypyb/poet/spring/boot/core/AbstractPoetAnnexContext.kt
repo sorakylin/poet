@@ -1,49 +1,41 @@
-package com.skypyb.poet.spring.boot.core;
+package com.skypyb.poet.spring.boot.core
 
-
-import com.skypyb.poet.spring.boot.core.client.LocalFileServerClient;
-import com.skypyb.poet.spring.boot.core.client.PoetAccessRouter;
-import com.skypyb.poet.spring.boot.core.client.PoetAnnexClient;
-import com.skypyb.poet.spring.boot.core.client.PoetAnnexClientHttpSupport;
-import com.skypyb.poet.spring.boot.core.exception.AnnexOperationException;
-import com.skypyb.poet.spring.boot.core.model.PoetAnnex;
-import com.skypyb.poet.spring.boot.core.store.PoetAnnexNameGenerator;
-import com.skypyb.poet.spring.boot.core.store.PoetAnnexRepository;
-import com.skypyb.poet.spring.boot.core.util.HttpResourceViewUtils;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.ApplicationEventPublisher;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.InputStream;
-import java.util.Objects;
-import java.util.Optional;
+import com.skypyb.poet.spring.boot.core.client.PoetAnnexClient
+import com.skypyb.poet.spring.boot.core.client.PoetAnnexClientHttpSupport
+import com.skypyb.poet.spring.boot.core.exception.AnnexOperationException
+import com.skypyb.poet.spring.boot.core.model.PoetAnnex
+import com.skypyb.poet.spring.boot.core.store.PoetAnnexNameGenerator
+import com.skypyb.poet.spring.boot.core.store.PoetAnnexRepository
+import com.skypyb.poet.spring.boot.core.util.HttpResourceViewUtils.splitSuffix
+import org.springframework.beans.BeansException
+import org.springframework.context.ApplicationContext
+import org.springframework.context.ApplicationContextAware
+import org.springframework.context.ApplicationEventPublisher
+import java.io.InputStream
+import java.util.*
+import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
 
 /**
  * 附件操作上下文, 拥有所有对附件操作的机能
  */
-public abstract class AbstractPoetAnnexContext implements ApplicationContextAware, PoetAnnexContext {
+abstract class AbstractPoetAnnexContext : ApplicationContextAware, PoetAnnexContext {
 
-    private static ApplicationEventPublisher eventPublisher;
+    var annexClient: PoetAnnexClient? = null
 
-    private PoetAnnexClient annexClient;
-
-    private PoetAnnexClientHttpSupport annexHttpClient;
-
+    var annexHttpClient: PoetAnnexClientHttpSupport? = null
     /**
-     * 是否启用Http支持， 若为false, 则Http相关的操作接口无法使用。 调用时会抛出 {@link UnsupportedOperationException}
+     * 是否启用Http支持， 若为false, 则Http相关的操作接口无法使用。 调用时会抛出 [UnsupportedOperationException]
      *
      * @see PoetAnnexClientHttpSupport
      */
-    private boolean enableHttpSupport = true;
+    var isEnableHttpSupport = true
 
     //名字生成器
-    abstract Optional<PoetAnnexNameGenerator> getNameGenerator();
+    abstract var nameGenerator: PoetAnnexNameGenerator?
 
     //储存器
-    abstract Optional<PoetAnnexRepository> getRepository();
+    abstract var repository: PoetAnnexRepository?
 
     /**
      * 启动功能前必须要调用的核心配置方法
@@ -51,181 +43,112 @@ public abstract class AbstractPoetAnnexContext implements ApplicationContextAwar
      * @param annexClient     附件基础操作支持
      * @param annexHttpClient 附件Http相关操作支持
      */
-    public void configure(PoetAnnexClient annexClient, PoetAnnexClientHttpSupport annexHttpClient) {
-        this.annexClient = annexClient;
-        this.annexHttpClient = annexHttpClient;
+    fun configure(annexClient: PoetAnnexClient?, annexHttpClient: PoetAnnexClientHttpSupport?) {
+        this.annexClient = annexClient
+        this.annexHttpClient = annexHttpClient
     }
 
-    public static ApplicationEventPublisher getEventPublisher() {
-        return eventPublisher;
+    private fun checkHttpClientEnableState() = if (!isEnableHttpSupport || Objects.isNull(annexHttpClient))
+        throw UnsupportedOperationException("HTTP support is not enabled!") else Unit
+
+
+    private fun nameGenerator(realName: String): String {
+        return nameGenerator?.generate()
+                ?.let { StringBuilder(it).append(".").append(splitSuffix(realName)).toString() }
+                ?: realName
     }
 
-    public static void setEventPublisher(ApplicationEventPublisher eventPublisher) {
-        AbstractPoetAnnexContext.eventPublisher = eventPublisher;
-    }
-
-    public PoetAnnexClient getAnnexClient() {
-        return annexClient;
-    }
-
-    public void setAnnexClient(PoetAnnexClient annexClient) {
-        this.annexClient = annexClient;
-    }
-
-    public PoetAnnexClientHttpSupport getAnnexHttpClient() {
-        return annexHttpClient;
-    }
-
-    public void setAnnexHttpClient(PoetAnnexClientHttpSupport annexHttpClient) {
-        this.annexHttpClient = annexHttpClient;
-    }
-
-    public boolean isEnableHttpSupport() {
-        return enableHttpSupport;
-    }
-
-    public void setEnableHttpSupport(boolean enableHttpSupport) {
-        this.enableHttpSupport = enableHttpSupport;
-    }
-
-
-    private void checkHttpClientEnableState() {
-        if (!enableHttpSupport || Objects.isNull(annexHttpClient)) {
-            throw new UnsupportedOperationException("HTTP support is not enabled!");
+    @Throws(BeansException::class)
+    override fun setApplicationContext(applicationContext: ApplicationContext) {
+        if (eventPublisher == null) {
+            eventPublisher = applicationContext
         }
     }
 
-    private String nameGenerator(String realName) {
-        return getNameGenerator()
-                .map(PoetAnnexNameGenerator::generate)
-                .map(name -> new StringBuilder(name).append(".").append(HttpResourceViewUtils.splitSuffix(realName)).toString())
-                .orElse(realName);
+    override fun save(`in`: InputStream, name: String): PoetAnnex {
+        val result = annexClient!!.save(`in`, nameGenerator(name))
+        result.realName = name
+        repository?.save(result)
+        return result
     }
 
-    @Override
-    public final void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        if (AbstractPoetAnnexContext.eventPublisher == null) {
-            AbstractPoetAnnexContext.eventPublisher = applicationContext;
-        }
+    override fun save(`in`: InputStream, name: String, module: String): PoetAnnex {
+        val result = annexClient!!.save(`in`, nameGenerator(name), module)
+        result.realName = name
+        repository?.save(result)
+        return result
     }
 
-
-    @Override
-    public PoetAnnex save(InputStream in, String name) {
-        final PoetAnnex result = annexClient.save(in, nameGenerator(name));
-        result.setRealName(name);
-        getRepository().ifPresent(r -> r.save(result));
-        return result;
+    override fun save(data: ByteArray, name: String): PoetAnnex {
+        val result = annexClient!!.save(data, nameGenerator(name))
+        result.realName = name
+        repository?.save(result)
+        return result
     }
 
-    @Override
-    public PoetAnnex save(InputStream in, String name, String module) {
-        final PoetAnnex result = annexClient.save(in, nameGenerator(name), module);
-        result.setRealName(name);
-        getRepository().ifPresent(r -> r.save(result));
-        return result;
+    override fun save(data: ByteArray, name: String, module: String): PoetAnnex {
+        val result = annexClient!!.save(data, nameGenerator(name), module)
+        result.realName = name
+        repository?.save(result)
+        return result
     }
 
-    @Override
-    public PoetAnnex save(byte[] data, String name) {
-        final PoetAnnex result = annexClient.save(data, nameGenerator(name));
-        result.setRealName(name);
-        getRepository().ifPresent(r -> r.save(result));
-        return result;
+    override fun exist(name: String): Boolean {
+        return repository?.findByName(name)?.key?.let { annexClient?.exist(it) ?: false } ?: false
     }
 
-    @Override
-    public PoetAnnex save(byte[] data, String name, String module) {
-        final PoetAnnex result = annexClient.save(data, nameGenerator(name), module);
-        result.setRealName(name);
-        getRepository().ifPresent(r -> r.save(result));
-        return result;
+    override fun delete(name: String) {
+        repository?.findByName(name)?.let { repository!!.deleteByName(it.name); annexClient?.delete(it.key) }
     }
 
-    @Override
-    public boolean exist(String name) {
-        return getRepository().map(r -> r.findByName(name)).map(PoetAnnex::getKey).map(annexClient::exist).orElse(false);
+    /**
+     * 根据名字去DB查附件信息
+     * 如果禁用了DB之类的则会直接报错， 下边的所有方法都不能用
+     */
+    private fun findAnnex(name: String): PoetAnnex = repository?.findByName(name)
+            ?: throw AnnexOperationException("File($name) does not exist!")
+
+    override fun getBytes(name: String): ByteArray {
+        val annex = findAnnex(name)
+        return annexClient!!.getBytes(annex.key)
     }
 
-    @Override
-    public void delete(String name) {
-        Optional<PoetAnnex> annex = getRepository().map(r -> r.findByName(name));
+    override fun view(name: String, response: HttpServletResponse) {
+        checkHttpClientEnableState()
+        val annex = findAnnex(name)
 
-        annex.ifPresent(a -> {
-            getRepository().ifPresent(r -> r.deleteByName(a.getName()));
-            annexClient.delete(a.getKey());
-        });
-
+        annexHttpClient!!.view(annex.key, response)
     }
 
-    @Override
-    public byte[] getBytes(String name) {
-        Optional<PoetAnnex> annex = getRepository().map(r -> r.findByName(name));
-        if (!annex.isPresent()) {
-            throw new AnnexOperationException("File(" + name + ") does not exist!");
-        }
+    override fun viewMedia(name: String, response: HttpServletResponse) {
+        checkHttpClientEnableState()
+        val annex = findAnnex(name)
 
-        return annexClient.getBytes(annex.get().getKey());
+        annexHttpClient!!.viewMedia(annex.key, response)
     }
 
-    @Override
-    public void view(String name, HttpServletResponse response) {
-        checkHttpClientEnableState();
+    override fun viewMedia(name: String, request: HttpServletRequest, response: HttpServletResponse) {
+        checkHttpClientEnableState()
+        val annex = findAnnex(name)
 
-        Optional<PoetAnnex> annex = getRepository().map(r -> r.findByName(name));
-        if (!annex.isPresent()) {
-            throw new AnnexOperationException("File(" + name + ") does not exist!");
-        }
-
-        annexHttpClient.view(annex.get().getKey(), response);
+        annexHttpClient!!.viewMedia(annex.key, request, response)
     }
 
-    @Override
-    public void viewMedia(String name, HttpServletResponse response) {
-        checkHttpClientEnableState();
+    override fun down(name: String, response: HttpServletResponse) {
+        checkHttpClientEnableState()
+        val annex = findAnnex(name)
 
-        Optional<PoetAnnex> annex = getRepository().map(r -> r.findByName(name));
-        if (!annex.isPresent()) {
-            throw new AnnexOperationException("File(" + name + ") does not exist!");
-        }
-
-        annexHttpClient.viewMedia(annex.get().getKey(), response);
+        annexHttpClient!!.down(annex.key, annex.realName, response)
     }
 
-    @Override
-    public void viewMedia(String name, HttpServletRequest request, HttpServletResponse response) {
-        checkHttpClientEnableState();
+    override fun down(name: String, realName: String, response: HttpServletResponse) {
+        checkHttpClientEnableState()
+        val annex = findAnnex(name)
 
-        Optional<PoetAnnex> annex = getRepository().map(r -> r.findByName(name));
-        if (!annex.isPresent()) {
-            throw new AnnexOperationException("File(" + name + ") does not exist!");
-        }
-
-        annexHttpClient.viewMedia(annex.get().getKey(), request, response);
+        annexHttpClient!!.down(annex.key, realName, response)
     }
 
-    @Override
-    public void down(String name, HttpServletResponse response) {
-        checkHttpClientEnableState();
-
-        Optional<PoetAnnex> annex = getRepository().map(r -> r.findByName(name));
-        if (!annex.isPresent()) {
-            throw new AnnexOperationException("File(" + name + ") does not exist!");
-        }
-
-        annexHttpClient.down(annex.get().getKey(), annex.get().getRealName(), response);
+    companion object {
+        private var eventPublisher: ApplicationEventPublisher? = null
     }
-
-    @Override
-    public void down(String name, String realName, HttpServletResponse response) {
-        checkHttpClientEnableState();
-
-        Optional<PoetAnnex> annex = getRepository().map(r -> r.findByName(name));
-        if (!annex.isPresent()) {
-            throw new AnnexOperationException("File(" + name + ") does not exist!");
-        }
-
-        annexHttpClient.down(annex.get().getKey(), realName, response);
-    }
-
 }
