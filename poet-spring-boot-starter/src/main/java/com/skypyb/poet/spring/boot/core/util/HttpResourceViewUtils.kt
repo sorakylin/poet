@@ -1,1022 +1,1013 @@
-package com.skypyb.poet.spring.boot.core.util;
+package com.skypyb.poet.spring.boot.core.util
 
+import org.springframework.util.StringUtils
+import java.util.*
 
-import org.springframework.util.StringUtils;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Properties;
-
-public class HttpResourceViewUtils {
-
+object HttpResourceViewUtils {
     //http://svn.apache.org/repos/asf/httpd/httpd/trunk/docs/conf/mime.types
-    private static final HashMap<String, String> MIME_TYPE_MAP = new HashMap<>();
+    private val MIME_TYPE_MAP = HashMap<String, String>()
 
-    static {
-        MIME_TYPE_MAP.put("3dml", "text/vnd.in3d.3dml");
-        MIME_TYPE_MAP.put("3ds", "image/x-3ds");
-        MIME_TYPE_MAP.put("3g2", "video/3gpp2");
-        MIME_TYPE_MAP.put("3gp", "video/3gpp");
-        MIME_TYPE_MAP.put("7z", "application/x-7z-compressed");
-        MIME_TYPE_MAP.put("aab", "application/x-authorware-bin");
-        MIME_TYPE_MAP.put("aac", "audio/x-aac");
-        MIME_TYPE_MAP.put("aam", "application/x-authorware-map");
-        MIME_TYPE_MAP.put("aas", "application/x-authorware-seg");
-        MIME_TYPE_MAP.put("abw", "application/x-abiword");
-        MIME_TYPE_MAP.put("ac", "application/pkix-attr-cert");
-        MIME_TYPE_MAP.put("acc", "application/vnd.americandynamics.acc");
-        MIME_TYPE_MAP.put("ace", "application/x-ace-compressed");
-        MIME_TYPE_MAP.put("acu", "application/vnd.acucobol");
-        MIME_TYPE_MAP.put("acutc", "application/vnd.acucorp");
-        MIME_TYPE_MAP.put("adp", "audio/adpcm");
-        MIME_TYPE_MAP.put("aep", "application/vnd.audiograph");
-        MIME_TYPE_MAP.put("afm", "application/x-font-type1");
-        MIME_TYPE_MAP.put("afp", "application/vnd.ibm.modcap");
-        MIME_TYPE_MAP.put("ahead", "application/vnd.ahead.space");
-        MIME_TYPE_MAP.put("ai", "application/postscript");
-        MIME_TYPE_MAP.put("aif", "audio/x-aiff");
-        MIME_TYPE_MAP.put("aifc", "audio/x-aiff");
-        MIME_TYPE_MAP.put("aiff", "audio/x-aiff");
-        MIME_TYPE_MAP.put("air", "application/vnd.adobe.air-application-installer-package+zip");
-        MIME_TYPE_MAP.put("ait", "application/vnd.dvb.ait");
-        MIME_TYPE_MAP.put("ami", "application/vnd.amiga.ami");
-        MIME_TYPE_MAP.put("apk", "application/vnd.android.package-archive");
-        MIME_TYPE_MAP.put("appcache", "text/cache-manifest");
-        MIME_TYPE_MAP.put("application", "application/x-ms-application");
-        MIME_TYPE_MAP.put("apr", "application/vnd.lotus-approach");
-        MIME_TYPE_MAP.put("arc", "application/x-freearc");
-        MIME_TYPE_MAP.put("asc", "application/pgp-signature");
-        MIME_TYPE_MAP.put("asf", "video/x-ms-asf");
-        MIME_TYPE_MAP.put("asm", "text/x-asm");
-        MIME_TYPE_MAP.put("aso", "application/vnd.accpac.simply.aso");
-        MIME_TYPE_MAP.put("asx", "video/x-ms-asf");
-        MIME_TYPE_MAP.put("atc", "application/vnd.acucorp");
-        MIME_TYPE_MAP.put("atom", "application/atom+xml");
-        MIME_TYPE_MAP.put("atomcat", "application/atomcat+xml");
-        MIME_TYPE_MAP.put("atomsvc", "application/atomsvc+xml");
-        MIME_TYPE_MAP.put("atx", "application/vnd.antix.game-component");
-        MIME_TYPE_MAP.put("au", "audio/basic");
-        MIME_TYPE_MAP.put("avi", "video/x-msvideo");
-        MIME_TYPE_MAP.put("aw", "application/applixware");
-        MIME_TYPE_MAP.put("azf", "application/vnd.airzip.filesecure.azf");
-        MIME_TYPE_MAP.put("azs", "application/vnd.airzip.filesecure.azs");
-        MIME_TYPE_MAP.put("azw", "application/vnd.amazon.ebook");
-        MIME_TYPE_MAP.put("bat", "application/x-msdownload");
-        MIME_TYPE_MAP.put("bcpio", "application/x-bcpio");
-        MIME_TYPE_MAP.put("bdf", "application/x-font-bdf");
-        MIME_TYPE_MAP.put("bdm", "application/vnd.syncml.dm+wbxml");
-        MIME_TYPE_MAP.put("bed", "application/vnd.realvnc.bed");
-        MIME_TYPE_MAP.put("bh2", "application/vnd.fujitsu.oasysprs");
-        MIME_TYPE_MAP.put("bin", "application/octet-stream");
-        MIME_TYPE_MAP.put("blb", "application/x-blorb");
-        MIME_TYPE_MAP.put("blorb", "application/x-blorb");
-        MIME_TYPE_MAP.put("bmi", "application/vnd.bmi");
-        MIME_TYPE_MAP.put("bmp", "image/bmp");
-        MIME_TYPE_MAP.put("book", "application/vnd.framemaker");
-        MIME_TYPE_MAP.put("box", "application/vnd.previewsystems.box");
-        MIME_TYPE_MAP.put("boz", "application/x-bzip2");
-        MIME_TYPE_MAP.put("bpk", "application/octet-stream");
-        MIME_TYPE_MAP.put("btif", "image/prs.btif");
-        MIME_TYPE_MAP.put("bz", "application/x-bzip");
-        MIME_TYPE_MAP.put("bz2", "application/x-bzip2");
-        MIME_TYPE_MAP.put("c", "text/x-c");
-        MIME_TYPE_MAP.put("c11amc", "application/vnd.cluetrust.cartomobile-config");
-        MIME_TYPE_MAP.put("c11amz", "application/vnd.cluetrust.cartomobile-config-pkg");
-        MIME_TYPE_MAP.put("c4d", "application/vnd.clonk.c4group");
-        MIME_TYPE_MAP.put("c4f", "application/vnd.clonk.c4group");
-        MIME_TYPE_MAP.put("c4g", "application/vnd.clonk.c4group");
-        MIME_TYPE_MAP.put("c4p", "application/vnd.clonk.c4group");
-        MIME_TYPE_MAP.put("c4u", "application/vnd.clonk.c4group");
-        MIME_TYPE_MAP.put("cab", "application/vnd.ms-cab-compressed");
-        MIME_TYPE_MAP.put("caf", "audio/x-caf");
-        MIME_TYPE_MAP.put("cap", "application/vnd.tcpdump.pcap");
-        MIME_TYPE_MAP.put("car", "application/vnd.curl.car");
-        MIME_TYPE_MAP.put("cat", "application/vnd.ms-pki.seccat");
-        MIME_TYPE_MAP.put("cb7", "application/x-cbr");
-        MIME_TYPE_MAP.put("cba", "application/x-cbr");
-        MIME_TYPE_MAP.put("cbr", "application/x-cbr");
-        MIME_TYPE_MAP.put("cbt", "application/x-cbr");
-        MIME_TYPE_MAP.put("cbz", "application/x-cbr");
-        MIME_TYPE_MAP.put("cc", "text/x-c");
-        MIME_TYPE_MAP.put("cct", "application/x-director");
-        MIME_TYPE_MAP.put("ccxml", "application/ccxml+xml");
-        MIME_TYPE_MAP.put("cdbcmsg", "application/vnd.contact.cmsg");
-        MIME_TYPE_MAP.put("cdf", "application/x-netcdf");
-        MIME_TYPE_MAP.put("cdkey", "application/vnd.mediastation.cdkey");
-        MIME_TYPE_MAP.put("cdmia", "application/cdmi-capability");
-        MIME_TYPE_MAP.put("cdmic", "application/cdmi-container");
-        MIME_TYPE_MAP.put("cdmid", "application/cdmi-domain");
-        MIME_TYPE_MAP.put("cdmio", "application/cdmi-object");
-        MIME_TYPE_MAP.put("cdmiq", "application/cdmi-queue");
-        MIME_TYPE_MAP.put("cdx", "chemical/x-cdx");
-        MIME_TYPE_MAP.put("cdxml", "application/vnd.chemdraw+xml");
-        MIME_TYPE_MAP.put("cdy", "application/vnd.cinderella");
-        MIME_TYPE_MAP.put("cer", "application/pkix-cert");
-        MIME_TYPE_MAP.put("cfs", "application/x-cfs-compressed");
-        MIME_TYPE_MAP.put("cgm", "image/cgm");
-        MIME_TYPE_MAP.put("chat", "application/x-chat");
-        MIME_TYPE_MAP.put("chm", "application/vnd.ms-htmlhelp");
-        MIME_TYPE_MAP.put("chrt", "application/vnd.kde.kchart");
-        MIME_TYPE_MAP.put("cif", "chemical/x-cif");
-        MIME_TYPE_MAP.put("cii", "application/vnd.anser-web-certificate-issue-initiation");
-        MIME_TYPE_MAP.put("cil", "application/vnd.ms-artgalry");
-        MIME_TYPE_MAP.put("cla", "application/vnd.claymore");
-        MIME_TYPE_MAP.put("class", "application/java-vm");
-        MIME_TYPE_MAP.put("clkk", "application/vnd.crick.clicker.keyboard");
-        MIME_TYPE_MAP.put("clkp", "application/vnd.crick.clicker.palette");
-        MIME_TYPE_MAP.put("clkt", "application/vnd.crick.clicker.template");
-        MIME_TYPE_MAP.put("clkw", "application/vnd.crick.clicker.wordbank");
-        MIME_TYPE_MAP.put("clkx", "application/vnd.crick.clicker");
-        MIME_TYPE_MAP.put("clp", "application/x-msclip");
-        MIME_TYPE_MAP.put("cmc", "application/vnd.cosmocaller");
-        MIME_TYPE_MAP.put("cmdf", "chemical/x-cmdf");
-        MIME_TYPE_MAP.put("cml", "chemical/x-cml");
-        MIME_TYPE_MAP.put("cmp", "application/vnd.yellowriver-custom-menu");
-        MIME_TYPE_MAP.put("cmx", "image/x-cmx");
-        MIME_TYPE_MAP.put("cod", "application/vnd.rim.cod");
-        MIME_TYPE_MAP.put("com", "application/x-msdownload");
-        MIME_TYPE_MAP.put("conf", "text/plain");
-        MIME_TYPE_MAP.put("cpio", "application/x-cpio");
-        MIME_TYPE_MAP.put("cpp", "text/x-c");
-        MIME_TYPE_MAP.put("cpt", "application/mac-compactpro");
-        MIME_TYPE_MAP.put("crd", "application/x-mscardfile");
-        MIME_TYPE_MAP.put("crl", "application/pkix-crl");
-        MIME_TYPE_MAP.put("crt", "application/x-x509-ca-cert");
-        MIME_TYPE_MAP.put("cryptonote", "application/vnd.rig.cryptonote");
-        MIME_TYPE_MAP.put("csh", "application/x-csh");
-        MIME_TYPE_MAP.put("csml", "chemical/x-csml");
-        MIME_TYPE_MAP.put("csp", "application/vnd.commonspace");
-        MIME_TYPE_MAP.put("css", "text/css");
-        MIME_TYPE_MAP.put("cst", "application/x-director");
-        MIME_TYPE_MAP.put("csv", "text/csv");
-        MIME_TYPE_MAP.put("cu", "application/cu-seeme");
-        MIME_TYPE_MAP.put("curl", "text/vnd.curl");
-        MIME_TYPE_MAP.put("cww", "application/prs.cww");
-        MIME_TYPE_MAP.put("cxt", "application/x-director");
-        MIME_TYPE_MAP.put("cxx", "text/x-c");
-        MIME_TYPE_MAP.put("dae", "model/vnd.collada+xml");
-        MIME_TYPE_MAP.put("daf", "application/vnd.mobius.daf");
-        MIME_TYPE_MAP.put("dart", "application/vnd.dart");
-        MIME_TYPE_MAP.put("dataless", "application/vnd.fdsn.seed");
-        MIME_TYPE_MAP.put("davmount", "application/davmount+xml");
-        MIME_TYPE_MAP.put("dbk", "application/docbook+xml");
-        MIME_TYPE_MAP.put("dcr", "application/x-director");
-        MIME_TYPE_MAP.put("dcurl", "text/vnd.curl.dcurl");
-        MIME_TYPE_MAP.put("dd2", "application/vnd.oma.dd2+xml");
-        MIME_TYPE_MAP.put("ddd", "application/vnd.fujixerox.ddd");
-        MIME_TYPE_MAP.put("deb", "application/x-debian-package");
-        MIME_TYPE_MAP.put("def", "text/plain");
-        MIME_TYPE_MAP.put("deploy", "application/octet-stream");
-        MIME_TYPE_MAP.put("der", "application/x-x509-ca-cert");
-        MIME_TYPE_MAP.put("dfac", "application/vnd.dreamfactory");
-        MIME_TYPE_MAP.put("dgc", "application/x-dgc-compressed");
-        MIME_TYPE_MAP.put("dic", "text/x-c");
-        MIME_TYPE_MAP.put("dir", "application/x-director");
-        MIME_TYPE_MAP.put("dis", "application/vnd.mobius.dis");
-        MIME_TYPE_MAP.put("dist", "application/octet-stream");
-        MIME_TYPE_MAP.put("distz", "application/octet-stream");
-        MIME_TYPE_MAP.put("djv", "image/vnd.djvu");
-        MIME_TYPE_MAP.put("djvu", "image/vnd.djvu");
-        MIME_TYPE_MAP.put("dll", "application/x-msdownload");
-        MIME_TYPE_MAP.put("dmg", "application/x-apple-diskimage");
-        MIME_TYPE_MAP.put("dmp", "application/vnd.tcpdump.pcap");
-        MIME_TYPE_MAP.put("dms", "application/octet-stream");
-        MIME_TYPE_MAP.put("dna", "application/vnd.dna");
-        MIME_TYPE_MAP.put("doc", "application/msword");
-        MIME_TYPE_MAP.put("docm", "application/vnd.ms-word.document.macroenabled.12");
-        MIME_TYPE_MAP.put("docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
-        MIME_TYPE_MAP.put("dot", "application/msword");
-        MIME_TYPE_MAP.put("dotm", "application/vnd.ms-word.template.macroenabled.12");
-        MIME_TYPE_MAP.put("dotx", "application/vnd.openxmlformats-officedocument.wordprocessingml.template");
-        MIME_TYPE_MAP.put("dp", "application/vnd.osgi.dp");
-        MIME_TYPE_MAP.put("dpg", "application/vnd.dpgraph");
-        MIME_TYPE_MAP.put("dra", "audio/vnd.dra");
-        MIME_TYPE_MAP.put("dsc", "text/prs.lines.tag");
-        MIME_TYPE_MAP.put("dssc", "application/dssc+der");
-        MIME_TYPE_MAP.put("dtb", "application/x-dtbook+xml");
-        MIME_TYPE_MAP.put("dtd", "application/xml-dtd");
-        MIME_TYPE_MAP.put("dts", "audio/vnd.dts");
-        MIME_TYPE_MAP.put("dtshd", "audio/vnd.dts.hd");
-        MIME_TYPE_MAP.put("dump", "application/octet-stream");
-        MIME_TYPE_MAP.put("dvb", "video/vnd.dvb.file");
-        MIME_TYPE_MAP.put("dvi", "application/x-dvi");
-        MIME_TYPE_MAP.put("dwf", "model/vnd.dwf");
-        MIME_TYPE_MAP.put("dwg", "image/vnd.dwg");
-        MIME_TYPE_MAP.put("dxf", "image/vnd.dxf");
-        MIME_TYPE_MAP.put("dxp", "application/vnd.spotfire.dxp");
-        MIME_TYPE_MAP.put("dxr", "application/x-director");
-        MIME_TYPE_MAP.put("ecelp4800", "audio/vnd.nuera.ecelp4800");
-        MIME_TYPE_MAP.put("ecelp7470", "audio/vnd.nuera.ecelp7470");
-        MIME_TYPE_MAP.put("ecelp9600", "audio/vnd.nuera.ecelp9600");
-        MIME_TYPE_MAP.put("ecma", "application/ecmascript");
-        MIME_TYPE_MAP.put("edm", "application/vnd.novadigm.edm");
-        MIME_TYPE_MAP.put("edx", "application/vnd.novadigm.edx");
-        MIME_TYPE_MAP.put("efif", "application/vnd.picsel");
-        MIME_TYPE_MAP.put("ei6", "application/vnd.pg.osasli");
-        MIME_TYPE_MAP.put("elc", "application/octet-stream");
-        MIME_TYPE_MAP.put("emf", "application/x-msmetafile");
-        MIME_TYPE_MAP.put("eml", "message/rfc822");
-        MIME_TYPE_MAP.put("emma", "application/emma+xml");
-        MIME_TYPE_MAP.put("emz", "application/x-msmetafile");
-        MIME_TYPE_MAP.put("eol", "audio/vnd.digital-winds");
-        MIME_TYPE_MAP.put("eot", "application/vnd.ms-fontobject");
-        MIME_TYPE_MAP.put("eps", "application/postscript");
-        MIME_TYPE_MAP.put("epub", "application/epub+zip");
-        MIME_TYPE_MAP.put("es3", "application/vnd.eszigno3+xml");
-        MIME_TYPE_MAP.put("esa", "application/vnd.osgi.subsystem");
-        MIME_TYPE_MAP.put("esf", "application/vnd.epson.esf");
-        MIME_TYPE_MAP.put("et3", "application/vnd.eszigno3+xml");
-        MIME_TYPE_MAP.put("etx", "text/x-setext");
-        MIME_TYPE_MAP.put("eva", "application/x-eva");
-        MIME_TYPE_MAP.put("evy", "application/x-envoy");
-        MIME_TYPE_MAP.put("exe", "application/x-msdownload");
-        MIME_TYPE_MAP.put("exi", "application/exi");
-        MIME_TYPE_MAP.put("ext", "application/vnd.novadigm.ext");
-        MIME_TYPE_MAP.put("ez", "application/andrew-inset");
-        MIME_TYPE_MAP.put("ez2", "application/vnd.ezpix-album");
-        MIME_TYPE_MAP.put("ez3", "application/vnd.ezpix-package");
-        MIME_TYPE_MAP.put("f", "text/x-fortran");
-        MIME_TYPE_MAP.put("f4v", "video/x-f4v");
-        MIME_TYPE_MAP.put("f77", "text/x-fortran");
-        MIME_TYPE_MAP.put("f90", "text/x-fortran");
-        MIME_TYPE_MAP.put("fbs", "image/vnd.fastbidsheet");
-        MIME_TYPE_MAP.put("fcdt", "application/vnd.adobe.formscentral.fcdt");
-        MIME_TYPE_MAP.put("fcs", "application/vnd.isac.fcs");
-        MIME_TYPE_MAP.put("fdf", "application/vnd.fdf");
-        MIME_TYPE_MAP.put("fe_launch", "application/vnd.denovo.fcselayout-link");
-        MIME_TYPE_MAP.put("fg5", "application/vnd.fujitsu.oasysgp");
-        MIME_TYPE_MAP.put("fgd", "application/x-director");
-        MIME_TYPE_MAP.put("fh", "image/x-freehand");
-        MIME_TYPE_MAP.put("fh4", "image/x-freehand");
-        MIME_TYPE_MAP.put("fh5", "image/x-freehand");
-        MIME_TYPE_MAP.put("fh7", "image/x-freehand");
-        MIME_TYPE_MAP.put("fhc", "image/x-freehand");
-        MIME_TYPE_MAP.put("fig", "application/x-xfig");
-        MIME_TYPE_MAP.put("flac", "audio/x-flac");
-        MIME_TYPE_MAP.put("fli", "video/x-fli");
-        MIME_TYPE_MAP.put("flo", "application/vnd.micrografx.flo");
-        MIME_TYPE_MAP.put("flv", "video/x-flv");
-        MIME_TYPE_MAP.put("flw", "application/vnd.kde.kivio");
-        MIME_TYPE_MAP.put("flx", "text/vnd.fmi.flexstor");
-        MIME_TYPE_MAP.put("fly", "text/vnd.fly");
-        MIME_TYPE_MAP.put("fm", "application/vnd.framemaker");
-        MIME_TYPE_MAP.put("fnc", "application/vnd.frogans.fnc");
-        MIME_TYPE_MAP.put("for", "text/x-fortran");
-        MIME_TYPE_MAP.put("fpx", "image/vnd.fpx");
-        MIME_TYPE_MAP.put("frame", "application/vnd.framemaker");
-        MIME_TYPE_MAP.put("fsc", "application/vnd.fsc.weblaunch");
-        MIME_TYPE_MAP.put("fst", "image/vnd.fst");
-        MIME_TYPE_MAP.put("ftc", "application/vnd.fluxtime.clip");
-        MIME_TYPE_MAP.put("fti", "application/vnd.anser-web-funds-transfer-initiation");
-        MIME_TYPE_MAP.put("fvt", "video/vnd.fvt");
-        MIME_TYPE_MAP.put("fxp", "application/vnd.adobe.fxp");
-        MIME_TYPE_MAP.put("fxpl", "application/vnd.adobe.fxp");
-        MIME_TYPE_MAP.put("fzs", "application/vnd.fuzzysheet");
-        MIME_TYPE_MAP.put("g2w", "application/vnd.geoplan");
-        MIME_TYPE_MAP.put("g3", "image/g3fax");
-        MIME_TYPE_MAP.put("g3w", "application/vnd.geospace");
-        MIME_TYPE_MAP.put("gac", "application/vnd.groove-account");
-        MIME_TYPE_MAP.put("gam", "application/x-tads");
-        MIME_TYPE_MAP.put("gbr", "application/rpki-ghostbusters");
-        MIME_TYPE_MAP.put("gca", "application/x-gca-compressed");
-        MIME_TYPE_MAP.put("gdl", "model/vnd.gdl");
-        MIME_TYPE_MAP.put("geo", "application/vnd.dynageo");
-        MIME_TYPE_MAP.put("gex", "application/vnd.geometry-explorer");
-        MIME_TYPE_MAP.put("ggb", "application/vnd.geogebra.file");
-        MIME_TYPE_MAP.put("ggt", "application/vnd.geogebra.tool");
-        MIME_TYPE_MAP.put("ghf", "application/vnd.groove-help");
-        MIME_TYPE_MAP.put("gif", "image/gif");
-        MIME_TYPE_MAP.put("gim", "application/vnd.groove-identity-message");
-        MIME_TYPE_MAP.put("gml", "application/gml+xml");
-        MIME_TYPE_MAP.put("gmx", "application/vnd.gmx");
-        MIME_TYPE_MAP.put("gnumeric", "application/x-gnumeric");
-        MIME_TYPE_MAP.put("gph", "application/vnd.flographit");
-        MIME_TYPE_MAP.put("gpx", "application/gpx+xml");
-        MIME_TYPE_MAP.put("gqf", "application/vnd.grafeq");
-        MIME_TYPE_MAP.put("gqs", "application/vnd.grafeq");
-        MIME_TYPE_MAP.put("gram", "application/srgs");
-        MIME_TYPE_MAP.put("gramps", "application/x-gramps-xml");
-        MIME_TYPE_MAP.put("gre", "application/vnd.geometry-explorer");
-        MIME_TYPE_MAP.put("grv", "application/vnd.groove-injector");
-        MIME_TYPE_MAP.put("grxml", "application/srgs+xml");
-        MIME_TYPE_MAP.put("gsf", "application/x-font-ghostscript");
-        MIME_TYPE_MAP.put("gtar", "application/x-gtar");
-        MIME_TYPE_MAP.put("gtm", "application/vnd.groove-tool-message");
-        MIME_TYPE_MAP.put("gtw", "model/vnd.gtw");
-        MIME_TYPE_MAP.put("gv", "text/vnd.graphviz");
-        MIME_TYPE_MAP.put("gxf", "application/gxf");
-        MIME_TYPE_MAP.put("gxt", "application/vnd.geonext");
-        MIME_TYPE_MAP.put("h", "text/x-c");
-        MIME_TYPE_MAP.put("h261", "video/h261");
-        MIME_TYPE_MAP.put("h263", "video/h263");
-        MIME_TYPE_MAP.put("h264", "video/h264");
-        MIME_TYPE_MAP.put("hal", "application/vnd.hal+xml");
-        MIME_TYPE_MAP.put("hbci", "application/vnd.hbci");
-        MIME_TYPE_MAP.put("hdf", "application/x-hdf");
-        MIME_TYPE_MAP.put("hh", "text/x-c");
-        MIME_TYPE_MAP.put("hlp", "application/winhlp");
-        MIME_TYPE_MAP.put("hpgl", "application/vnd.hp-hpgl");
-        MIME_TYPE_MAP.put("hpid", "application/vnd.hp-hpid");
-        MIME_TYPE_MAP.put("hps", "application/vnd.hp-hps");
-        MIME_TYPE_MAP.put("hqx", "application/mac-binhex40");
-        MIME_TYPE_MAP.put("htke", "application/vnd.kenameaapp");
-        MIME_TYPE_MAP.put("htm", "text/html");
-        MIME_TYPE_MAP.put("html", "text/html");
-        MIME_TYPE_MAP.put("hvd", "application/vnd.yamaha.hv-dic");
-        MIME_TYPE_MAP.put("hvp", "application/vnd.yamaha.hv-voice");
-        MIME_TYPE_MAP.put("hvs", "application/vnd.yamaha.hv-script");
-        MIME_TYPE_MAP.put("i2g", "application/vnd.intergeo");
-        MIME_TYPE_MAP.put("icc", "application/vnd.iccprofile");
-        MIME_TYPE_MAP.put("ice", "x-conference/x-cooltalk");
-        MIME_TYPE_MAP.put("icm", "application/vnd.iccprofile");
-        MIME_TYPE_MAP.put("ico", "image/x-icon");
-        MIME_TYPE_MAP.put("ics", "text/calendar");
-        MIME_TYPE_MAP.put("ief", "image/ief");
-        MIME_TYPE_MAP.put("ifb", "text/calendar");
-        MIME_TYPE_MAP.put("ifm", "application/vnd.shana.informed.formdata");
-        MIME_TYPE_MAP.put("iges", "model/iges");
-        MIME_TYPE_MAP.put("igl", "application/vnd.igloader");
-        MIME_TYPE_MAP.put("igm", "application/vnd.insors.igm");
-        MIME_TYPE_MAP.put("igs", "model/iges");
-        MIME_TYPE_MAP.put("igx", "application/vnd.micrografx.igx");
-        MIME_TYPE_MAP.put("iif", "application/vnd.shana.informed.interchange");
-        MIME_TYPE_MAP.put("imp", "application/vnd.accpac.simply.imp");
-        MIME_TYPE_MAP.put("ims", "application/vnd.ms-ims");
-        MIME_TYPE_MAP.put("in", "text/plain");
-        MIME_TYPE_MAP.put("ink", "application/inkml+xml");
-        MIME_TYPE_MAP.put("inkml", "application/inkml+xml");
-        MIME_TYPE_MAP.put("install", "application/x-install-instructions");
-        MIME_TYPE_MAP.put("iota", "application/vnd.astraea-software.iota");
-        MIME_TYPE_MAP.put("ipfix", "application/ipfix");
-        MIME_TYPE_MAP.put("ipk", "application/vnd.shana.informed.package");
-        MIME_TYPE_MAP.put("irm", "application/vnd.ibm.rights-management");
-        MIME_TYPE_MAP.put("irp", "application/vnd.irepository.package+xml");
-        MIME_TYPE_MAP.put("iso", "application/x-iso9660-image");
-        MIME_TYPE_MAP.put("itp", "application/vnd.shana.informed.formtemplate");
-        MIME_TYPE_MAP.put("ivp", "application/vnd.immervision-ivp");
-        MIME_TYPE_MAP.put("ivu", "application/vnd.immervision-ivu");
-        MIME_TYPE_MAP.put("jad", "text/vnd.sun.j2me.app-descriptor");
-        MIME_TYPE_MAP.put("jam", "application/vnd.jam");
-        MIME_TYPE_MAP.put("jar", "application/java-archive");
-        MIME_TYPE_MAP.put("java", "text/x-java-source");
-        MIME_TYPE_MAP.put("jisp", "application/vnd.jisp");
-        MIME_TYPE_MAP.put("jlt", "application/vnd.hp-jlyt");
-        MIME_TYPE_MAP.put("jnlp", "application/x-java-jnlp-file");
-        MIME_TYPE_MAP.put("joda", "application/vnd.joost.joda-archive");
-        MIME_TYPE_MAP.put("jpe", "image/jpeg");
-        MIME_TYPE_MAP.put("jpeg", "image/jpeg");
-        MIME_TYPE_MAP.put("jpg", "image/jpeg");
-        MIME_TYPE_MAP.put("jpgm", "video/jpm");
-        MIME_TYPE_MAP.put("jpgv", "video/jpeg");
-        MIME_TYPE_MAP.put("jpm", "video/jpm");
-        MIME_TYPE_MAP.put("js", "application/javascript");
-        MIME_TYPE_MAP.put("json", "application/json");
-        MIME_TYPE_MAP.put("jsonml", "application/jsonml+json");
-        MIME_TYPE_MAP.put("kar", "audio/midi");
-        MIME_TYPE_MAP.put("karbon", "application/vnd.kde.karbon");
-        MIME_TYPE_MAP.put("kfo", "application/vnd.kde.kformula");
-        MIME_TYPE_MAP.put("kia", "application/vnd.kidspiration");
-        MIME_TYPE_MAP.put("kml", "application/vnd.google-earth.kml+xml");
-        MIME_TYPE_MAP.put("kmz", "application/vnd.google-earth.kmz");
-        MIME_TYPE_MAP.put("kne", "application/vnd.kinar");
-        MIME_TYPE_MAP.put("knp", "application/vnd.kinar");
-        MIME_TYPE_MAP.put("kon", "application/vnd.kde.kontour");
-        MIME_TYPE_MAP.put("kpr", "application/vnd.kde.kpresenter");
-        MIME_TYPE_MAP.put("kpt", "application/vnd.kde.kpresenter");
-        MIME_TYPE_MAP.put("kpxx", "application/vnd.ds-keypoint");
-        MIME_TYPE_MAP.put("ksp", "application/vnd.kde.kspread");
-        MIME_TYPE_MAP.put("ktr", "application/vnd.kahootz");
-        MIME_TYPE_MAP.put("ktx", "image/ktx");
-        MIME_TYPE_MAP.put("ktz", "application/vnd.kahootz");
-        MIME_TYPE_MAP.put("kwd", "application/vnd.kde.kword");
-        MIME_TYPE_MAP.put("kwt", "application/vnd.kde.kword");
-        MIME_TYPE_MAP.put("lasxml", "application/vnd.las.las+xml");
-        MIME_TYPE_MAP.put("latex", "application/x-latex");
-        MIME_TYPE_MAP.put("lbd", "application/vnd.llamagraphics.life-balance.desktop");
-        MIME_TYPE_MAP.put("lbe", "application/vnd.llamagraphics.life-balance.exchange+xml");
-        MIME_TYPE_MAP.put("les", "application/vnd.hhe.lesson-player");
-        MIME_TYPE_MAP.put("lha", "application/x-lzh-compressed");
-        MIME_TYPE_MAP.put("link66", "application/vnd.route66.link66+xml");
-        MIME_TYPE_MAP.put("list", "text/plain");
-        MIME_TYPE_MAP.put("list3820", "application/vnd.ibm.modcap");
-        MIME_TYPE_MAP.put("listafp", "application/vnd.ibm.modcap");
-        MIME_TYPE_MAP.put("lnk", "application/x-ms-shortcut");
-        MIME_TYPE_MAP.put("log", "text/plain");
-        MIME_TYPE_MAP.put("lostxml", "application/lost+xml");
-        MIME_TYPE_MAP.put("lrf", "application/octet-stream");
-        MIME_TYPE_MAP.put("lrm", "application/vnd.ms-lrm");
-        MIME_TYPE_MAP.put("ltf", "application/vnd.frogans.ltf");
-        MIME_TYPE_MAP.put("lvp", "audio/vnd.lucent.voice");
-        MIME_TYPE_MAP.put("lwp", "application/vnd.lotus-wordpro");
-        MIME_TYPE_MAP.put("lzh", "application/x-lzh-compressed");
-        MIME_TYPE_MAP.put("m13", "application/x-msmediaview");
-        MIME_TYPE_MAP.put("m14", "application/x-msmediaview");
-        MIME_TYPE_MAP.put("m1v", "video/mpeg");
-        MIME_TYPE_MAP.put("m21", "application/mp21");
-        MIME_TYPE_MAP.put("m2a", "audio/mpeg");
-        MIME_TYPE_MAP.put("m2v", "video/mpeg");
-        MIME_TYPE_MAP.put("m3a", "audio/mpeg");
-        MIME_TYPE_MAP.put("m3u", "audio/x-mpegurl");
-        MIME_TYPE_MAP.put("m3u8", "application/vnd.apple.mpegurl");
-        MIME_TYPE_MAP.put("m4u", "video/vnd.mpegurl");
-        MIME_TYPE_MAP.put("m4v", "video/x-m4v");
-        MIME_TYPE_MAP.put("ma", "application/mathematica");
-        MIME_TYPE_MAP.put("mads", "application/mads+xml");
-        MIME_TYPE_MAP.put("mag", "application/vnd.ecowin.chart");
-        MIME_TYPE_MAP.put("maker", "application/vnd.framemaker");
-        MIME_TYPE_MAP.put("man", "text/troff");
-        MIME_TYPE_MAP.put("mar", "application/octet-stream");
-        MIME_TYPE_MAP.put("mathml", "application/mathml+xml");
-        MIME_TYPE_MAP.put("mb", "application/mathematica");
-        MIME_TYPE_MAP.put("mbk", "application/vnd.mobius.mbk");
-        MIME_TYPE_MAP.put("mbox", "application/mbox");
-        MIME_TYPE_MAP.put("mc1", "application/vnd.medcalcdata");
-        MIME_TYPE_MAP.put("mcd", "application/vnd.mcd");
-        MIME_TYPE_MAP.put("mcurl", "text/vnd.curl.mcurl");
-        MIME_TYPE_MAP.put("mdb", "application/x-msaccess");
-        MIME_TYPE_MAP.put("mdi", "image/vnd.ms-modi");
-        MIME_TYPE_MAP.put("me", "text/troff");
-        MIME_TYPE_MAP.put("mesh", "model/mesh");
-        MIME_TYPE_MAP.put("meta4", "application/metalink4+xml");
-        MIME_TYPE_MAP.put("metalink", "application/metalink+xml");
-        MIME_TYPE_MAP.put("mets", "application/mets+xml");
-        MIME_TYPE_MAP.put("mfm", "application/vnd.mfmp");
-        MIME_TYPE_MAP.put("mft", "application/rpki-manifest");
-        MIME_TYPE_MAP.put("mgp", "application/vnd.osgeo.mapguide.package");
-        MIME_TYPE_MAP.put("mgz", "application/vnd.proteus.magazine");
-        MIME_TYPE_MAP.put("mid", "audio/midi");
-        MIME_TYPE_MAP.put("midi", "audio/midi");
-        MIME_TYPE_MAP.put("mie", "application/x-mie");
-        MIME_TYPE_MAP.put("mif", "application/vnd.mif");
-        MIME_TYPE_MAP.put("mime", "message/rfc822");
-        MIME_TYPE_MAP.put("mj2", "video/mj2");
-        MIME_TYPE_MAP.put("mjp2", "video/mj2");
-        MIME_TYPE_MAP.put("mk3d", "video/x-matroska");
-        MIME_TYPE_MAP.put("mka", "audio/x-matroska");
-        MIME_TYPE_MAP.put("mks", "video/x-matroska");
-        MIME_TYPE_MAP.put("mkv", "video/x-matroska");
-        MIME_TYPE_MAP.put("mlp", "application/vnd.dolby.mlp");
-        MIME_TYPE_MAP.put("mmd", "application/vnd.chipnuts.karaoke-mmd");
-        MIME_TYPE_MAP.put("mmf", "application/vnd.smaf");
-        MIME_TYPE_MAP.put("mmr", "image/vnd.fujixerox.edmics-mmr");
-        MIME_TYPE_MAP.put("mng", "video/x-mng");
-        MIME_TYPE_MAP.put("mny", "application/x-msmoney");
-        MIME_TYPE_MAP.put("mobi", "application/x-mobipocket-ebook");
-        MIME_TYPE_MAP.put("mods", "application/mods+xml");
-        MIME_TYPE_MAP.put("mov", "video/quicktime");
-        MIME_TYPE_MAP.put("movie", "video/x-sgi-movie");
-        MIME_TYPE_MAP.put("mp2", "audio/mpeg");
-        MIME_TYPE_MAP.put("mp21", "application/mp21");
-        MIME_TYPE_MAP.put("mp2a", "audio/mpeg");
-        MIME_TYPE_MAP.put("mp3", "audio/mpeg");
-        MIME_TYPE_MAP.put("mp4", "video/mp4");
-        MIME_TYPE_MAP.put("mp4a", "audio/mp4");
-        MIME_TYPE_MAP.put("mp4s", "application/mp4");
-        MIME_TYPE_MAP.put("mp4v", "video/mp4");
-        MIME_TYPE_MAP.put("mpc", "application/vnd.mophun.certificate");
-        MIME_TYPE_MAP.put("mpe", "video/mpeg");
-        MIME_TYPE_MAP.put("mpeg", "video/mpeg");
-        MIME_TYPE_MAP.put("mpg", "video/mpeg");
-        MIME_TYPE_MAP.put("mpg4", "video/mp4");
-        MIME_TYPE_MAP.put("mpga", "audio/mpeg");
-        MIME_TYPE_MAP.put("mpkg", "application/vnd.apple.installer+xml");
-        MIME_TYPE_MAP.put("mpm", "application/vnd.blueice.multipass");
-        MIME_TYPE_MAP.put("mpn", "application/vnd.mophun.application");
-        MIME_TYPE_MAP.put("mpp", "application/vnd.ms-project");
-        MIME_TYPE_MAP.put("mpt", "application/vnd.ms-project");
-        MIME_TYPE_MAP.put("mpy", "application/vnd.ibm.minipay");
-        MIME_TYPE_MAP.put("mqy", "application/vnd.mobius.mqy");
-        MIME_TYPE_MAP.put("mrc", "application/marc");
-        MIME_TYPE_MAP.put("mrcx", "application/marcxml+xml");
-        MIME_TYPE_MAP.put("ms", "text/troff");
-        MIME_TYPE_MAP.put("mscml", "application/mediaservercontrol+xml");
-        MIME_TYPE_MAP.put("mseed", "application/vnd.fdsn.mseed");
-        MIME_TYPE_MAP.put("mseq", "application/vnd.mseq");
-        MIME_TYPE_MAP.put("msf", "application/vnd.epson.msf");
-        MIME_TYPE_MAP.put("msh", "model/mesh");
-        MIME_TYPE_MAP.put("msi", "application/x-msdownload");
-        MIME_TYPE_MAP.put("msl", "application/vnd.mobius.msl");
-        MIME_TYPE_MAP.put("msty", "application/vnd.muvee.style");
-        MIME_TYPE_MAP.put("mts", "model/vnd.mts");
-        MIME_TYPE_MAP.put("mus", "application/vnd.musician");
-        MIME_TYPE_MAP.put("musicxml", "application/vnd.recordare.musicxml+xml");
-        MIME_TYPE_MAP.put("mvb", "application/x-msmediaview");
-        MIME_TYPE_MAP.put("mwf", "application/vnd.mfer");
-        MIME_TYPE_MAP.put("mxf", "application/mxf");
-        MIME_TYPE_MAP.put("mxl", "application/vnd.recordare.musicxml");
-        MIME_TYPE_MAP.put("mxml", "application/xv+xml");
-        MIME_TYPE_MAP.put("mxs", "application/vnd.triscape.mxs");
-        MIME_TYPE_MAP.put("mxu", "video/vnd.mpegurl");
-        MIME_TYPE_MAP.put("n-gage", "application/vnd.nokia.n-gage.symbian.install");
-        MIME_TYPE_MAP.put("n3", "text/n3");
-        MIME_TYPE_MAP.put("nb", "application/mathematica");
-        MIME_TYPE_MAP.put("nbp", "application/vnd.wolfram.player");
-        MIME_TYPE_MAP.put("nc", "application/x-netcdf");
-        MIME_TYPE_MAP.put("ncx", "application/x-dtbncx+xml");
-        MIME_TYPE_MAP.put("nfo", "text/x-nfo");
-        MIME_TYPE_MAP.put("ngdat", "application/vnd.nokia.n-gage.data");
-        MIME_TYPE_MAP.put("nitf", "application/vnd.nitf");
-        MIME_TYPE_MAP.put("nlu", "application/vnd.neurolanguage.nlu");
-        MIME_TYPE_MAP.put("nml", "application/vnd.enliven");
-        MIME_TYPE_MAP.put("nnd", "application/vnd.noblenet-directory");
-        MIME_TYPE_MAP.put("nns", "application/vnd.noblenet-sealer");
-        MIME_TYPE_MAP.put("nnw", "application/vnd.noblenet-web");
-        MIME_TYPE_MAP.put("npx", "image/vnd.net-fpx");
-        MIME_TYPE_MAP.put("nsc", "application/x-conference");
-        MIME_TYPE_MAP.put("nsf", "application/vnd.lotus-notes");
-        MIME_TYPE_MAP.put("ntf", "application/vnd.nitf");
-        MIME_TYPE_MAP.put("nzb", "application/x-nzb");
-        MIME_TYPE_MAP.put("oa2", "application/vnd.fujitsu.oasys2");
-        MIME_TYPE_MAP.put("oa3", "application/vnd.fujitsu.oasys3");
-        MIME_TYPE_MAP.put("oas", "application/vnd.fujitsu.oasys");
-        MIME_TYPE_MAP.put("obd", "application/x-msbinder");
-        MIME_TYPE_MAP.put("obj", "application/x-tgif");
-        MIME_TYPE_MAP.put("oda", "application/oda");
-        MIME_TYPE_MAP.put("odb", "application/vnd.oasis.opendocument.database");
-        MIME_TYPE_MAP.put("odc", "application/vnd.oasis.opendocument.chart");
-        MIME_TYPE_MAP.put("odf", "application/vnd.oasis.opendocument.formula");
-        MIME_TYPE_MAP.put("odft", "application/vnd.oasis.opendocument.formula-template");
-        MIME_TYPE_MAP.put("odg", "application/vnd.oasis.opendocument.graphics");
-        MIME_TYPE_MAP.put("odi", "application/vnd.oasis.opendocument.image");
-        MIME_TYPE_MAP.put("odm", "application/vnd.oasis.opendocument.text-master");
-        MIME_TYPE_MAP.put("odp", "application/vnd.oasis.opendocument.presentation");
-        MIME_TYPE_MAP.put("ods", "application/vnd.oasis.opendocument.spreadsheet");
-        MIME_TYPE_MAP.put("odt", "application/vnd.oasis.opendocument.text");
-        MIME_TYPE_MAP.put("oga", "audio/ogg");
-        MIME_TYPE_MAP.put("ogg", "audio/ogg");
-        MIME_TYPE_MAP.put("ogv", "video/ogg");
-        MIME_TYPE_MAP.put("ogx", "application/ogg");
-        MIME_TYPE_MAP.put("omdoc", "application/omdoc+xml");
-        MIME_TYPE_MAP.put("onepkg", "application/onenote");
-        MIME_TYPE_MAP.put("onetmp", "application/onenote");
-        MIME_TYPE_MAP.put("onetoc", "application/onenote");
-        MIME_TYPE_MAP.put("onetoc2", "application/onenote");
-        MIME_TYPE_MAP.put("opf", "application/oebps-package+xml");
-        MIME_TYPE_MAP.put("opml", "text/x-opml");
-        MIME_TYPE_MAP.put("oprc", "application/vnd.palm");
-        MIME_TYPE_MAP.put("org", "application/vnd.lotus-organizer");
-        MIME_TYPE_MAP.put("osf", "application/vnd.yamaha.openscoreformat");
-        MIME_TYPE_MAP.put("osfpvg", "application/vnd.yamaha.openscoreformat.osfpvg+xml");
-        MIME_TYPE_MAP.put("otc", "application/vnd.oasis.opendocument.chart-template");
-        MIME_TYPE_MAP.put("otf", "application/x-font-otf");
-        MIME_TYPE_MAP.put("otg", "application/vnd.oasis.opendocument.graphics-template");
-        MIME_TYPE_MAP.put("oth", "application/vnd.oasis.opendocument.text-web");
-        MIME_TYPE_MAP.put("oti", "application/vnd.oasis.opendocument.image-template");
-        MIME_TYPE_MAP.put("otp", "application/vnd.oasis.opendocument.presentation-template");
-        MIME_TYPE_MAP.put("ots", "application/vnd.oasis.opendocument.spreadsheet-template");
-        MIME_TYPE_MAP.put("ott", "application/vnd.oasis.opendocument.text-template");
-        MIME_TYPE_MAP.put("oxps", "application/oxps");
-        MIME_TYPE_MAP.put("oxt", "application/vnd.openofficeorg.extension");
-        MIME_TYPE_MAP.put("p", "text/x-pascal");
-        MIME_TYPE_MAP.put("p10", "application/pkcs10");
-        MIME_TYPE_MAP.put("p12", "application/x-pkcs12");
-        MIME_TYPE_MAP.put("p7b", "application/x-pkcs7-certificates");
-        MIME_TYPE_MAP.put("p7c", "application/pkcs7-mime");
-        MIME_TYPE_MAP.put("p7m", "application/pkcs7-mime");
-        MIME_TYPE_MAP.put("p7r", "application/x-pkcs7-certreqresp");
-        MIME_TYPE_MAP.put("p7s", "application/pkcs7-signature");
-        MIME_TYPE_MAP.put("p8", "application/pkcs8");
-        MIME_TYPE_MAP.put("pas", "text/x-pascal");
-        MIME_TYPE_MAP.put("paw", "application/vnd.pawaafile");
-        MIME_TYPE_MAP.put("pbd", "application/vnd.powerbuilder6");
-        MIME_TYPE_MAP.put("pbm", "image/x-portable-bitmap");
-        MIME_TYPE_MAP.put("pcap", "application/vnd.tcpdump.pcap");
-        MIME_TYPE_MAP.put("pcf", "application/x-font-pcf");
-        MIME_TYPE_MAP.put("pcl", "application/vnd.hp-pcl");
-        MIME_TYPE_MAP.put("pclxl", "application/vnd.hp-pclxl");
-        MIME_TYPE_MAP.put("pct", "image/x-pict");
-        MIME_TYPE_MAP.put("pcurl", "application/vnd.curl.pcurl");
-        MIME_TYPE_MAP.put("pcx", "image/x-pcx");
-        MIME_TYPE_MAP.put("pdb", "application/vnd.palm");
-        MIME_TYPE_MAP.put("pdf", "application/pdf");
-        MIME_TYPE_MAP.put("pfa", "application/x-font-type1");
-        MIME_TYPE_MAP.put("pfb", "application/x-font-type1");
-        MIME_TYPE_MAP.put("pfm", "application/x-font-type1");
-        MIME_TYPE_MAP.put("pfr", "application/font-tdpfr");
-        MIME_TYPE_MAP.put("pfx", "application/x-pkcs12");
-        MIME_TYPE_MAP.put("pgm", "image/x-portable-graymap");
-        MIME_TYPE_MAP.put("pgn", "application/x-chess-pgn");
-        MIME_TYPE_MAP.put("pgp", "application/pgp-encrypted");
-        MIME_TYPE_MAP.put("pic", "image/x-pict");
-        MIME_TYPE_MAP.put("pkg", "application/octet-stream");
-        MIME_TYPE_MAP.put("pki", "application/pkixcmp");
-        MIME_TYPE_MAP.put("pkipath", "application/pkix-pkipath");
-        MIME_TYPE_MAP.put("plb", "application/vnd.3gpp.pic-bw-large");
-        MIME_TYPE_MAP.put("plc", "application/vnd.mobius.plc");
-        MIME_TYPE_MAP.put("plf", "application/vnd.pocketlearn");
-        MIME_TYPE_MAP.put("pls", "application/pls+xml");
-        MIME_TYPE_MAP.put("pml", "application/vnd.ctc-posml");
-        MIME_TYPE_MAP.put("png", "image/png");
-        MIME_TYPE_MAP.put("pnm", "image/x-portable-anymap");
-        MIME_TYPE_MAP.put("portpkg", "application/vnd.macports.portpkg");
-        MIME_TYPE_MAP.put("pot", "application/vnd.ms-powerpoint");
-        MIME_TYPE_MAP.put("potm", "application/vnd.ms-powerpoint.template.macroenabled.12");
-        MIME_TYPE_MAP.put("potx", "application/vnd.openxmlformats-officedocument.presentationml.template");
-        MIME_TYPE_MAP.put("ppam", "application/vnd.ms-powerpoint.addin.macroenabled.12");
-        MIME_TYPE_MAP.put("ppd", "application/vnd.cups-ppd");
-        MIME_TYPE_MAP.put("ppm", "image/x-portable-pixmap");
-        MIME_TYPE_MAP.put("pps", "application/vnd.ms-powerpoint");
-        MIME_TYPE_MAP.put("ppsm", "application/vnd.ms-powerpoint.slideshow.macroenabled.12");
-        MIME_TYPE_MAP.put("ppsx", "application/vnd.openxmlformats-officedocument.presentationml.slideshow");
-        MIME_TYPE_MAP.put("ppt", "application/vnd.ms-powerpoint");
-        MIME_TYPE_MAP.put("pptm", "application/vnd.ms-powerpoint.presentation.macroenabled.12");
-        MIME_TYPE_MAP.put("pptx", "application/vnd.openxmlformats-officedocument.presentationml.presentation");
-        MIME_TYPE_MAP.put("pqa", "application/vnd.palm");
-        MIME_TYPE_MAP.put("prc", "application/x-mobipocket-ebook");
-        MIME_TYPE_MAP.put("pre", "application/vnd.lotus-freelance");
-        MIME_TYPE_MAP.put("prf", "application/pics-rules");
-        MIME_TYPE_MAP.put("ps", "application/postscript");
-        MIME_TYPE_MAP.put("psb", "application/vnd.3gpp.pic-bw-small");
-        MIME_TYPE_MAP.put("psd", "image/vnd.adobe.photoshop");
-        MIME_TYPE_MAP.put("psf", "application/x-font-linux-psf");
-        MIME_TYPE_MAP.put("pskcxml", "application/pskc+xml");
-        MIME_TYPE_MAP.put("ptid", "application/vnd.pvi.ptid1");
-        MIME_TYPE_MAP.put("pub", "application/x-mspublisher");
-        MIME_TYPE_MAP.put("pvb", "application/vnd.3gpp.pic-bw-var");
-        MIME_TYPE_MAP.put("pwn", "application/vnd.3m.post-it-notes");
-        MIME_TYPE_MAP.put("pya", "audio/vnd.ms-playready.media.pya");
-        MIME_TYPE_MAP.put("pyv", "video/vnd.ms-playready.media.pyv");
-        MIME_TYPE_MAP.put("qam", "application/vnd.epson.quickanime");
-        MIME_TYPE_MAP.put("qbo", "application/vnd.intu.qbo");
-        MIME_TYPE_MAP.put("qfx", "application/vnd.intu.qfx");
-        MIME_TYPE_MAP.put("qps", "application/vnd.publishare-delta-tree");
-        MIME_TYPE_MAP.put("qt", "video/quicktime");
-        MIME_TYPE_MAP.put("qwd", "application/vnd.quark.quarkxpress");
-        MIME_TYPE_MAP.put("qwt", "application/vnd.quark.quarkxpress");
-        MIME_TYPE_MAP.put("qxb", "application/vnd.quark.quarkxpress");
-        MIME_TYPE_MAP.put("qxd", "application/vnd.quark.quarkxpress");
-        MIME_TYPE_MAP.put("qxl", "application/vnd.quark.quarkxpress");
-        MIME_TYPE_MAP.put("qxt", "application/vnd.quark.quarkxpress");
-        MIME_TYPE_MAP.put("ra", "audio/x-pn-realaudio");
-        MIME_TYPE_MAP.put("ram", "audio/x-pn-realaudio");
-        MIME_TYPE_MAP.put("rar", "application/x-rar-compressed");
-        MIME_TYPE_MAP.put("ras", "image/x-cmu-raster");
-        MIME_TYPE_MAP.put("rcprofile", "application/vnd.ipunplugged.rcprofile");
-        MIME_TYPE_MAP.put("rdf", "application/rdf+xml");
-        MIME_TYPE_MAP.put("rdz", "application/vnd.data-vision.rdz");
-        MIME_TYPE_MAP.put("rep", "application/vnd.businessobjects");
-        MIME_TYPE_MAP.put("res", "application/x-dtbresource+xml");
-        MIME_TYPE_MAP.put("rgb", "image/x-rgb");
-        MIME_TYPE_MAP.put("rif", "application/reginfo+xml");
-        MIME_TYPE_MAP.put("rip", "audio/vnd.rip");
-        MIME_TYPE_MAP.put("ris", "application/x-research-info-systems");
-        MIME_TYPE_MAP.put("rl", "application/resource-lists+xml");
-        MIME_TYPE_MAP.put("rlc", "image/vnd.fujixerox.edmics-rlc");
-        MIME_TYPE_MAP.put("rld", "application/resource-lists-diff+xml");
-        MIME_TYPE_MAP.put("rm", "application/vnd.rn-realmedia");
-        MIME_TYPE_MAP.put("rmi", "audio/midi");
-        MIME_TYPE_MAP.put("rmp", "audio/x-pn-realaudio-plugin");
-        MIME_TYPE_MAP.put("rms", "application/vnd.jcp.javame.midlet-rms");
-        MIME_TYPE_MAP.put("rmvb", "application/vnd.rn-realmedia-vbr");
-        MIME_TYPE_MAP.put("rnc", "application/relax-ng-compact-syntax");
-        MIME_TYPE_MAP.put("roa", "application/rpki-roa");
-        MIME_TYPE_MAP.put("roff", "text/troff");
-        MIME_TYPE_MAP.put("rp9", "application/vnd.cloanto.rp9");
-        MIME_TYPE_MAP.put("rpss", "application/vnd.nokia.radio-presets");
-        MIME_TYPE_MAP.put("rpst", "application/vnd.nokia.radio-preset");
-        MIME_TYPE_MAP.put("rq", "application/sparql-query");
-        MIME_TYPE_MAP.put("rs", "application/rls-services+xml");
-        MIME_TYPE_MAP.put("rsd", "application/rsd+xml");
-        MIME_TYPE_MAP.put("rss", "application/rss+xml");
-        MIME_TYPE_MAP.put("rtf", "application/rtf");
-        MIME_TYPE_MAP.put("rtx", "text/richtext");
-        MIME_TYPE_MAP.put("s", "text/x-asm");
-        MIME_TYPE_MAP.put("s3m", "audio/s3m");
-        MIME_TYPE_MAP.put("saf", "application/vnd.yamaha.smaf-audio");
-        MIME_TYPE_MAP.put("sbml", "application/sbml+xml");
-        MIME_TYPE_MAP.put("sc", "application/vnd.ibm.secure-container");
-        MIME_TYPE_MAP.put("scd", "application/x-msschedule");
-        MIME_TYPE_MAP.put("scm", "application/vnd.lotus-screencam");
-        MIME_TYPE_MAP.put("scq", "application/scvp-cv-request");
-        MIME_TYPE_MAP.put("scs", "application/scvp-cv-response");
-        MIME_TYPE_MAP.put("scurl", "text/vnd.curl.scurl");
-        MIME_TYPE_MAP.put("sda", "application/vnd.stardivision.draw");
-        MIME_TYPE_MAP.put("sdc", "application/vnd.stardivision.calc");
-        MIME_TYPE_MAP.put("sdd", "application/vnd.stardivision.impress");
-        MIME_TYPE_MAP.put("sdkd", "application/vnd.solent.sdkm+xml");
-        MIME_TYPE_MAP.put("sdkm", "application/vnd.solent.sdkm+xml");
-        MIME_TYPE_MAP.put("sdp", "application/sdp");
-        MIME_TYPE_MAP.put("sdw", "application/vnd.stardivision.writer");
-        MIME_TYPE_MAP.put("see", "application/vnd.seemail");
-        MIME_TYPE_MAP.put("seed", "application/vnd.fdsn.seed");
-        MIME_TYPE_MAP.put("sema", "application/vnd.sema");
-        MIME_TYPE_MAP.put("semd", "application/vnd.semd");
-        MIME_TYPE_MAP.put("semf", "application/vnd.semf");
-        MIME_TYPE_MAP.put("ser", "application/java-serialized-object");
-        MIME_TYPE_MAP.put("setpay", "application/set-payment-initiation");
-        MIME_TYPE_MAP.put("setreg", "application/set-registration-initiation");
-        MIME_TYPE_MAP.put("sfd-hdstx", "application/vnd.hydrostatix.sof-data");
-        MIME_TYPE_MAP.put("sfs", "application/vnd.spotfire.sfs");
-        MIME_TYPE_MAP.put("sfv", "text/x-sfv");
-        MIME_TYPE_MAP.put("sgi", "image/sgi");
-        MIME_TYPE_MAP.put("sgl", "application/vnd.stardivision.writer-global");
-        MIME_TYPE_MAP.put("sgm", "text/sgml");
-        MIME_TYPE_MAP.put("sgml", "text/sgml");
-        MIME_TYPE_MAP.put("sh", "application/x-sh");
-        MIME_TYPE_MAP.put("shar", "application/x-shar");
-        MIME_TYPE_MAP.put("shf", "application/shf+xml");
-        MIME_TYPE_MAP.put("sid", "image/x-mrsid-image");
-        MIME_TYPE_MAP.put("sig", "application/pgp-signature");
-        MIME_TYPE_MAP.put("sil", "audio/silk");
-        MIME_TYPE_MAP.put("silo", "model/mesh");
-        MIME_TYPE_MAP.put("sis", "application/vnd.symbian.install");
-        MIME_TYPE_MAP.put("sisx", "application/vnd.symbian.install");
-        MIME_TYPE_MAP.put("sit", "application/x-stuffit");
-        MIME_TYPE_MAP.put("sitx", "application/x-stuffitx");
-        MIME_TYPE_MAP.put("skd", "application/vnd.koan");
-        MIME_TYPE_MAP.put("skm", "application/vnd.koan");
-        MIME_TYPE_MAP.put("skp", "application/vnd.koan");
-        MIME_TYPE_MAP.put("skt", "application/vnd.koan");
-        MIME_TYPE_MAP.put("sldm", "application/vnd.ms-powerpoint.slide.macroenabled.12");
-        MIME_TYPE_MAP.put("sldx", "application/vnd.openxmlformats-officedocument.presentationml.slide");
-        MIME_TYPE_MAP.put("slt", "application/vnd.epson.salt");
-        MIME_TYPE_MAP.put("sm", "application/vnd.stepmania.stepchart");
-        MIME_TYPE_MAP.put("smf", "application/vnd.stardivision.math");
-        MIME_TYPE_MAP.put("smi", "application/smil+xml");
-        MIME_TYPE_MAP.put("smil", "application/smil+xml");
-        MIME_TYPE_MAP.put("smv", "video/x-smv");
-        MIME_TYPE_MAP.put("smzip", "application/vnd.stepmania.package");
-        MIME_TYPE_MAP.put("snd", "audio/basic");
-        MIME_TYPE_MAP.put("snf", "application/x-font-snf");
-        MIME_TYPE_MAP.put("so", "application/octet-stream");
-        MIME_TYPE_MAP.put("spc", "application/x-pkcs7-certificates");
-        MIME_TYPE_MAP.put("spf", "application/vnd.yamaha.smaf-phrase");
-        MIME_TYPE_MAP.put("spl", "application/x-futuresplash");
-        MIME_TYPE_MAP.put("spot", "text/vnd.in3d.spot");
-        MIME_TYPE_MAP.put("spp", "application/scvp-vp-response");
-        MIME_TYPE_MAP.put("spq", "application/scvp-vp-request");
-        MIME_TYPE_MAP.put("spx", "audio/ogg");
-        MIME_TYPE_MAP.put("sql", "application/x-sql");
-        MIME_TYPE_MAP.put("src", "application/x-wais-source");
-        MIME_TYPE_MAP.put("srt", "application/x-subrip");
-        MIME_TYPE_MAP.put("sru", "application/sru+xml");
-        MIME_TYPE_MAP.put("srx", "application/sparql-results+xml");
-        MIME_TYPE_MAP.put("ssdl", "application/ssdl+xml");
-        MIME_TYPE_MAP.put("sse", "application/vnd.kodak-descriptor");
-        MIME_TYPE_MAP.put("ssf", "application/vnd.epson.ssf");
-        MIME_TYPE_MAP.put("ssml", "application/ssml+xml");
-        MIME_TYPE_MAP.put("st", "application/vnd.sailingtracker.track");
-        MIME_TYPE_MAP.put("stc", "application/vnd.sun.xml.calc.template");
-        MIME_TYPE_MAP.put("std", "application/vnd.sun.xml.draw.template");
-        MIME_TYPE_MAP.put("stf", "application/vnd.wt.stf");
-        MIME_TYPE_MAP.put("sti", "application/vnd.sun.xml.impress.template");
-        MIME_TYPE_MAP.put("stk", "application/hyperstudio");
-        MIME_TYPE_MAP.put("stl", "application/vnd.ms-pki.stl");
-        MIME_TYPE_MAP.put("str", "application/vnd.pg.format");
-        MIME_TYPE_MAP.put("stw", "application/vnd.sun.xml.writer.template");
-        MIME_TYPE_MAP.put("sub", "text/vnd.dvb.subtitle");
-        MIME_TYPE_MAP.put("sus", "application/vnd.sus-calendar");
-        MIME_TYPE_MAP.put("susp", "application/vnd.sus-calendar");
-        MIME_TYPE_MAP.put("sv4cpio", "application/x-sv4cpio");
-        MIME_TYPE_MAP.put("sv4crc", "application/x-sv4crc");
-        MIME_TYPE_MAP.put("svc", "application/vnd.dvb.service");
-        MIME_TYPE_MAP.put("svd", "application/vnd.svd");
-        MIME_TYPE_MAP.put("svg", "image/svg+xml");
-        MIME_TYPE_MAP.put("svgz", "image/svg+xml");
-        MIME_TYPE_MAP.put("swa", "application/x-director");
-        MIME_TYPE_MAP.put("swf", "application/x-shockwave-flash");
-        MIME_TYPE_MAP.put("swi", "application/vnd.aristanetworks.swi");
-        MIME_TYPE_MAP.put("sxc", "application/vnd.sun.xml.calc");
-        MIME_TYPE_MAP.put("sxd", "application/vnd.sun.xml.draw");
-        MIME_TYPE_MAP.put("sxg", "application/vnd.sun.xml.writer.global");
-        MIME_TYPE_MAP.put("sxi", "application/vnd.sun.xml.impress");
-        MIME_TYPE_MAP.put("sxm", "application/vnd.sun.xml.math");
-        MIME_TYPE_MAP.put("sxw", "application/vnd.sun.xml.writer");
-        MIME_TYPE_MAP.put("t", "text/troff");
-        MIME_TYPE_MAP.put("t3", "application/x-t3vm-image");
-        MIME_TYPE_MAP.put("taglet", "application/vnd.mynfc");
-        MIME_TYPE_MAP.put("tao", "application/vnd.tao.intent-module-archive");
-        MIME_TYPE_MAP.put("tar", "application/x-tar");
-        MIME_TYPE_MAP.put("tcap", "application/vnd.3gpp2.tcap");
-        MIME_TYPE_MAP.put("tcl", "application/x-tcl");
-        MIME_TYPE_MAP.put("teacher", "application/vnd.smart.teacher");
-        MIME_TYPE_MAP.put("tei", "application/tei+xml");
-        MIME_TYPE_MAP.put("teicorpus", "application/tei+xml");
-        MIME_TYPE_MAP.put("tex", "application/x-tex");
-        MIME_TYPE_MAP.put("texi", "application/x-texinfo");
-        MIME_TYPE_MAP.put("texinfo", "application/x-texinfo");
-        MIME_TYPE_MAP.put("text", "text/plain");
-        MIME_TYPE_MAP.put("tfi", "application/thraud+xml");
-        MIME_TYPE_MAP.put("tfm", "application/x-tex-tfm");
-        MIME_TYPE_MAP.put("tga", "image/x-tga");
-        MIME_TYPE_MAP.put("thmx", "application/vnd.ms-officetheme");
-        MIME_TYPE_MAP.put("tif", "image/tiff");
-        MIME_TYPE_MAP.put("tiff", "image/tiff");
-        MIME_TYPE_MAP.put("tmo", "application/vnd.tmobile-livetv");
-        MIME_TYPE_MAP.put("torrent", "application/x-bittorrent");
-        MIME_TYPE_MAP.put("tpl", "application/vnd.groove-tool-template");
-        MIME_TYPE_MAP.put("tpt", "application/vnd.trid.tpt");
-        MIME_TYPE_MAP.put("tr", "text/troff");
-        MIME_TYPE_MAP.put("tra", "application/vnd.trueapp");
-        MIME_TYPE_MAP.put("trm", "application/x-msterminal");
-        MIME_TYPE_MAP.put("tsd", "application/timestamped-data");
-        MIME_TYPE_MAP.put("tsv", "text/tab-separated-values");
-        MIME_TYPE_MAP.put("ttc", "application/x-font-ttf");
-        MIME_TYPE_MAP.put("ttf", "application/x-font-ttf");
-        MIME_TYPE_MAP.put("ttl", "text/turtle");
-        MIME_TYPE_MAP.put("twd", "application/vnd.simtech-mindmapper");
-        MIME_TYPE_MAP.put("twds", "application/vnd.simtech-mindmapper");
-        MIME_TYPE_MAP.put("txd", "application/vnd.genomatix.tuxedo");
-        MIME_TYPE_MAP.put("txf", "application/vnd.mobius.txf");
-        MIME_TYPE_MAP.put("txt", "text/plain");
-        MIME_TYPE_MAP.put("u32", "application/x-authorware-bin");
-        MIME_TYPE_MAP.put("udeb", "application/x-debian-package");
-        MIME_TYPE_MAP.put("ufd", "application/vnd.ufdl");
-        MIME_TYPE_MAP.put("ufdl", "application/vnd.ufdl");
-        MIME_TYPE_MAP.put("ulx", "application/x-glulx");
-        MIME_TYPE_MAP.put("umj", "application/vnd.umajin");
-        MIME_TYPE_MAP.put("unityweb", "application/vnd.unity");
-        MIME_TYPE_MAP.put("uoml", "application/vnd.uoml+xml");
-        MIME_TYPE_MAP.put("uri", "text/uri-list");
-        MIME_TYPE_MAP.put("uris", "text/uri-list");
-        MIME_TYPE_MAP.put("urls", "text/uri-list");
-        MIME_TYPE_MAP.put("ustar", "application/x-ustar");
-        MIME_TYPE_MAP.put("utz", "application/vnd.uiq.theme");
-        MIME_TYPE_MAP.put("uu", "text/x-uuencode");
-        MIME_TYPE_MAP.put("uva", "audio/vnd.dece.audio");
-        MIME_TYPE_MAP.put("uvd", "application/vnd.dece.data");
-        MIME_TYPE_MAP.put("uvf", "application/vnd.dece.data");
-        MIME_TYPE_MAP.put("uvg", "image/vnd.dece.graphic");
-        MIME_TYPE_MAP.put("uvh", "video/vnd.dece.hd");
-        MIME_TYPE_MAP.put("uvi", "image/vnd.dece.graphic");
-        MIME_TYPE_MAP.put("uvm", "video/vnd.dece.mobile");
-        MIME_TYPE_MAP.put("uvp", "video/vnd.dece.pd");
-        MIME_TYPE_MAP.put("uvs", "video/vnd.dece.sd");
-        MIME_TYPE_MAP.put("uvt", "application/vnd.dece.ttml+xml");
-        MIME_TYPE_MAP.put("uvu", "video/vnd.uvvu.mp4");
-        MIME_TYPE_MAP.put("uvv", "video/vnd.dece.video");
-        MIME_TYPE_MAP.put("uvva", "audio/vnd.dece.audio");
-        MIME_TYPE_MAP.put("uvvd", "application/vnd.dece.data");
-        MIME_TYPE_MAP.put("uvvf", "application/vnd.dece.data");
-        MIME_TYPE_MAP.put("uvvg", "image/vnd.dece.graphic");
-        MIME_TYPE_MAP.put("uvvh", "video/vnd.dece.hd");
-        MIME_TYPE_MAP.put("uvvi", "image/vnd.dece.graphic");
-        MIME_TYPE_MAP.put("uvvm", "video/vnd.dece.mobile");
-        MIME_TYPE_MAP.put("uvvp", "video/vnd.dece.pd");
-        MIME_TYPE_MAP.put("uvvs", "video/vnd.dece.sd");
-        MIME_TYPE_MAP.put("uvvt", "application/vnd.dece.ttml+xml");
-        MIME_TYPE_MAP.put("uvvu", "video/vnd.uvvu.mp4");
-        MIME_TYPE_MAP.put("uvvv", "video/vnd.dece.video");
-        MIME_TYPE_MAP.put("uvvx", "application/vnd.dece.unspecified");
-        MIME_TYPE_MAP.put("uvvz", "application/vnd.dece.zip");
-        MIME_TYPE_MAP.put("uvx", "application/vnd.dece.unspecified");
-        MIME_TYPE_MAP.put("uvz", "application/vnd.dece.zip");
-        MIME_TYPE_MAP.put("vcard", "text/vcard");
-        MIME_TYPE_MAP.put("vcd", "application/x-cdlink");
-        MIME_TYPE_MAP.put("vcf", "text/x-vcard");
-        MIME_TYPE_MAP.put("vcg", "application/vnd.groove-vcard");
-        MIME_TYPE_MAP.put("vcs", "text/x-vcalendar");
-        MIME_TYPE_MAP.put("vcx", "application/vnd.vcx");
-        MIME_TYPE_MAP.put("vis", "application/vnd.visionary");
-        MIME_TYPE_MAP.put("viv", "video/vnd.vivo");
-        MIME_TYPE_MAP.put("vob", "video/x-ms-vob");
-        MIME_TYPE_MAP.put("vor", "application/vnd.stardivision.writer");
-        MIME_TYPE_MAP.put("vox", "application/x-authorware-bin");
-        MIME_TYPE_MAP.put("vrml", "model/vrml");
-        MIME_TYPE_MAP.put("vsd", "application/vnd.visio");
-        MIME_TYPE_MAP.put("vsf", "application/vnd.vsf");
-        MIME_TYPE_MAP.put("vss", "application/vnd.visio");
-        MIME_TYPE_MAP.put("vst", "application/vnd.visio");
-        MIME_TYPE_MAP.put("vsw", "application/vnd.visio");
-        MIME_TYPE_MAP.put("vtu", "model/vnd.vtu");
-        MIME_TYPE_MAP.put("vxml", "application/voicexml+xml");
-        MIME_TYPE_MAP.put("w3d", "application/x-director");
-        MIME_TYPE_MAP.put("wad", "application/x-doom");
-        MIME_TYPE_MAP.put("wav", "audio/x-wav");
-        MIME_TYPE_MAP.put("wax", "audio/x-ms-wax");
-        MIME_TYPE_MAP.put("wbmp", "image/vnd.wap.wbmp");
-        MIME_TYPE_MAP.put("wbs", "application/vnd.criticaltools.wbs+xml");
-        MIME_TYPE_MAP.put("wbxml", "application/vnd.wap.wbxml");
-        MIME_TYPE_MAP.put("wcm", "application/vnd.ms-works");
-        MIME_TYPE_MAP.put("wdb", "application/vnd.ms-works");
-        MIME_TYPE_MAP.put("wdp", "image/vnd.ms-photo");
-        MIME_TYPE_MAP.put("weba", "audio/webm");
-        MIME_TYPE_MAP.put("webm", "video/webm");
-        MIME_TYPE_MAP.put("webp", "image/webp");
-        MIME_TYPE_MAP.put("wg", "application/vnd.pmi.widget");
-        MIME_TYPE_MAP.put("wgt", "application/widget");
-        MIME_TYPE_MAP.put("wks", "application/vnd.ms-works");
-        MIME_TYPE_MAP.put("wm", "video/x-ms-wm");
-        MIME_TYPE_MAP.put("wma", "audio/x-ms-wma");
-        MIME_TYPE_MAP.put("wmd", "application/x-ms-wmd");
-        MIME_TYPE_MAP.put("wmf", "application/x-msmetafile");
-        MIME_TYPE_MAP.put("wml", "text/vnd.wap.wml");
-        MIME_TYPE_MAP.put("wmlc", "application/vnd.wap.wmlc");
-        MIME_TYPE_MAP.put("wmls", "text/vnd.wap.wmlscript");
-        MIME_TYPE_MAP.put("wmlsc", "application/vnd.wap.wmlscriptc");
-        MIME_TYPE_MAP.put("wmv", "video/x-ms-wmv");
-        MIME_TYPE_MAP.put("wmx", "video/x-ms-wmx");
-        MIME_TYPE_MAP.put("wmz", "application/x-msmetafile");
-        MIME_TYPE_MAP.put("woff", "application/font-woff");
-        MIME_TYPE_MAP.put("wpd", "application/vnd.wordperfect");
-        MIME_TYPE_MAP.put("wpl", "application/vnd.ms-wpl");
-        MIME_TYPE_MAP.put("wps", "application/vnd.ms-works");
-        MIME_TYPE_MAP.put("wqd", "application/vnd.wqd");
-        MIME_TYPE_MAP.put("wri", "application/x-mswrite");
-        MIME_TYPE_MAP.put("wrl", "model/vrml");
-        MIME_TYPE_MAP.put("wsdl", "application/wsdl+xml");
-        MIME_TYPE_MAP.put("wspolicy", "application/wspolicy+xml");
-        MIME_TYPE_MAP.put("wtb", "application/vnd.webturbo");
-        MIME_TYPE_MAP.put("wvx", "video/x-ms-wvx");
-        MIME_TYPE_MAP.put("x32", "application/x-authorware-bin");
-        MIME_TYPE_MAP.put("x3d", "model/x3d+xml");
-        MIME_TYPE_MAP.put("x3db", "model/x3d+binary");
-        MIME_TYPE_MAP.put("x3dbz", "model/x3d+binary");
-        MIME_TYPE_MAP.put("x3dv", "model/x3d+vrml");
-        MIME_TYPE_MAP.put("x3dvz", "model/x3d+vrml");
-        MIME_TYPE_MAP.put("x3dz", "model/x3d+xml");
-        MIME_TYPE_MAP.put("xaml", "application/xaml+xml");
-        MIME_TYPE_MAP.put("xap", "application/x-silverlight-app");
-        MIME_TYPE_MAP.put("xar", "application/vnd.xara");
-        MIME_TYPE_MAP.put("xbap", "application/x-ms-xbap");
-        MIME_TYPE_MAP.put("xbd", "application/vnd.fujixerox.docuworks.binder");
-        MIME_TYPE_MAP.put("xbm", "image/x-xbitmap");
-        MIME_TYPE_MAP.put("xdf", "application/xcap-diff+xml");
-        MIME_TYPE_MAP.put("xdm", "application/vnd.syncml.dm+xml");
-        MIME_TYPE_MAP.put("xdp", "application/vnd.adobe.xdp+xml");
-        MIME_TYPE_MAP.put("xdssc", "application/dssc+xml");
-        MIME_TYPE_MAP.put("xdw", "application/vnd.fujixerox.docuworks");
-        MIME_TYPE_MAP.put("xenc", "application/xenc+xml");
-        MIME_TYPE_MAP.put("xer", "application/patch-ops-error+xml");
-        MIME_TYPE_MAP.put("xfdf", "application/vnd.adobe.xfdf");
-        MIME_TYPE_MAP.put("xfdl", "application/vnd.xfdl");
-        MIME_TYPE_MAP.put("xht", "application/xhtml+xml");
-        MIME_TYPE_MAP.put("xhtml", "application/xhtml+xml");
-        MIME_TYPE_MAP.put("xhvml", "application/xv+xml");
-        MIME_TYPE_MAP.put("xif", "image/vnd.xiff");
-        MIME_TYPE_MAP.put("xla", "application/vnd.ms-excel");
-        MIME_TYPE_MAP.put("xlam", "application/vnd.ms-excel.addin.macroenabled.12");
-        MIME_TYPE_MAP.put("xlc", "application/vnd.ms-excel");
-        MIME_TYPE_MAP.put("xlf", "application/x-xliff+xml");
-        MIME_TYPE_MAP.put("xlm", "application/vnd.ms-excel");
-        MIME_TYPE_MAP.put("xls", "application/vnd.ms-excel");
-        MIME_TYPE_MAP.put("xlsb", "application/vnd.ms-excel.sheet.binary.macroenabled.12");
-        MIME_TYPE_MAP.put("xlsm", "application/vnd.ms-excel.sheet.macroenabled.12");
-        MIME_TYPE_MAP.put("xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        MIME_TYPE_MAP.put("xlt", "application/vnd.ms-excel");
-        MIME_TYPE_MAP.put("xltm", "application/vnd.ms-excel.template.macroenabled.12");
-        MIME_TYPE_MAP.put("xltx", "application/vnd.openxmlformats-officedocument.spreadsheetml.template");
-        MIME_TYPE_MAP.put("xlw", "application/vnd.ms-excel");
-        MIME_TYPE_MAP.put("xm", "audio/xm");
-        MIME_TYPE_MAP.put("xml", "application/xml");
-        MIME_TYPE_MAP.put("xo", "application/vnd.olpc-sugar");
-        MIME_TYPE_MAP.put("xop", "application/xop+xml");
-        MIME_TYPE_MAP.put("xpi", "application/x-xpinstall");
-        MIME_TYPE_MAP.put("xpl", "application/xproc+xml");
-        MIME_TYPE_MAP.put("xpm", "image/x-xpixmap");
-        MIME_TYPE_MAP.put("xpr", "application/vnd.is-xpr");
-        MIME_TYPE_MAP.put("xps", "application/vnd.ms-xpsdocument");
-        MIME_TYPE_MAP.put("xpw", "application/vnd.intercon.formnet");
-        MIME_TYPE_MAP.put("xpx", "application/vnd.intercon.formnet");
-        MIME_TYPE_MAP.put("xsl", "application/xml");
-        MIME_TYPE_MAP.put("xslt", "application/xslt+xml");
-        MIME_TYPE_MAP.put("xsm", "application/vnd.syncml+xml");
-        MIME_TYPE_MAP.put("xspf", "application/xspf+xml");
-        MIME_TYPE_MAP.put("xul", "application/vnd.mozilla.xul+xml");
-        MIME_TYPE_MAP.put("xvm", "application/xv+xml");
-        MIME_TYPE_MAP.put("xvml", "application/xv+xml");
-        MIME_TYPE_MAP.put("xwd", "image/x-xwindowdump");
-        MIME_TYPE_MAP.put("xyz", "chemical/x-xyz");
-        MIME_TYPE_MAP.put("xz", "application/x-xz");
-        MIME_TYPE_MAP.put("yang", "application/yang");
-        MIME_TYPE_MAP.put("yin", "application/yin+xml");
-        MIME_TYPE_MAP.put("z1", "application/x-zmachine");
-        MIME_TYPE_MAP.put("z2", "application/x-zmachine");
-        MIME_TYPE_MAP.put("z3", "application/x-zmachine");
-        MIME_TYPE_MAP.put("z4", "application/x-zmachine");
-        MIME_TYPE_MAP.put("z5", "application/x-zmachine");
-        MIME_TYPE_MAP.put("z6", "application/x-zmachine");
-        MIME_TYPE_MAP.put("z7", "application/x-zmachine");
-        MIME_TYPE_MAP.put("z8", "application/x-zmachine");
-        MIME_TYPE_MAP.put("zaz", "application/vnd.zzazz.deck+xml");
-        MIME_TYPE_MAP.put("zip", "application/zip");
-        MIME_TYPE_MAP.put("zir", "application/vnd.zul");
-        MIME_TYPE_MAP.put("zirz", "application/vnd.zul");
-        MIME_TYPE_MAP.put("zmm", "application/vnd.handheld-entertainment+xml");
-        MIME_TYPE_MAP.put("123", "application/vnd.lotus-1-2-3");
+    @JvmStatic
+    fun getContentTypeForSuffix(fileName: String): String {
+        return if (!StringUtils.hasText(fileName)) "" else MIME_TYPE_MAP.getOrDefault(splitSuffix(fileName), "")
     }
 
-    public static String getContentTypeForSuffix(String fileName) {
-        if (!StringUtils.hasText(fileName)) return "";
-        return MIME_TYPE_MAP.getOrDefault(splitSuffix(fileName), "");
-    }
-
-    public static String splitSuffix(String fileName) {
-        if (!StringUtils.hasText(fileName)) return "";
-
+    @JvmStatic
+    fun splitSuffix(fileName: String): String {
+        if (!StringUtils.hasText(fileName)) return ""
         //未知后缀
-        if (fileName.indexOf(".") == -1) return "unknown";
-        if (fileName.lastIndexOf(".") == 0) return fileName.substring(1);
-
-        final String[] split = fileName.split("\\.");
-        return split[split.length - 1];
+        if (fileName.indexOf(".") == -1) return "unknown"
+        if (fileName.lastIndexOf(".") == 0) return fileName.substring(1)
+        val split = fileName.split("\\.").toTypedArray()
+        return split[split.size - 1]
     }
 
-    public static String getETag(long lastModified, long length) {
-        return Long.toHexString(lastModified) + '-' + Long.toHexString(length);
+    @JvmStatic
+    fun getETag(lastModified: Long, length: Long): String {
+        return lastModified.toString(16) + '-' + length.toString(16)
+    }
+
+    init {
+        MIME_TYPE_MAP["3dml"] = "text/vnd.in3d.3dml"
+        MIME_TYPE_MAP["3ds"] = "image/x-3ds"
+        MIME_TYPE_MAP["3g2"] = "video/3gpp2"
+        MIME_TYPE_MAP["3gp"] = "video/3gpp"
+        MIME_TYPE_MAP["7z"] = "application/x-7z-compressed"
+        MIME_TYPE_MAP["aab"] = "application/x-authorware-bin"
+        MIME_TYPE_MAP["aac"] = "audio/x-aac"
+        MIME_TYPE_MAP["aam"] = "application/x-authorware-map"
+        MIME_TYPE_MAP["aas"] = "application/x-authorware-seg"
+        MIME_TYPE_MAP["abw"] = "application/x-abiword"
+        MIME_TYPE_MAP["ac"] = "application/pkix-attr-cert"
+        MIME_TYPE_MAP["acc"] = "application/vnd.americandynamics.acc"
+        MIME_TYPE_MAP["ace"] = "application/x-ace-compressed"
+        MIME_TYPE_MAP["acu"] = "application/vnd.acucobol"
+        MIME_TYPE_MAP["acutc"] = "application/vnd.acucorp"
+        MIME_TYPE_MAP["adp"] = "audio/adpcm"
+        MIME_TYPE_MAP["aep"] = "application/vnd.audiograph"
+        MIME_TYPE_MAP["afm"] = "application/x-font-type1"
+        MIME_TYPE_MAP["afp"] = "application/vnd.ibm.modcap"
+        MIME_TYPE_MAP["ahead"] = "application/vnd.ahead.space"
+        MIME_TYPE_MAP["ai"] = "application/postscript"
+        MIME_TYPE_MAP["aif"] = "audio/x-aiff"
+        MIME_TYPE_MAP["aifc"] = "audio/x-aiff"
+        MIME_TYPE_MAP["aiff"] = "audio/x-aiff"
+        MIME_TYPE_MAP["air"] = "application/vnd.adobe.air-application-installer-package+zip"
+        MIME_TYPE_MAP["ait"] = "application/vnd.dvb.ait"
+        MIME_TYPE_MAP["ami"] = "application/vnd.amiga.ami"
+        MIME_TYPE_MAP["apk"] = "application/vnd.android.package-archive"
+        MIME_TYPE_MAP["appcache"] = "text/cache-manifest"
+        MIME_TYPE_MAP["application"] = "application/x-ms-application"
+        MIME_TYPE_MAP["apr"] = "application/vnd.lotus-approach"
+        MIME_TYPE_MAP["arc"] = "application/x-freearc"
+        MIME_TYPE_MAP["asc"] = "application/pgp-signature"
+        MIME_TYPE_MAP["asf"] = "video/x-ms-asf"
+        MIME_TYPE_MAP["asm"] = "text/x-asm"
+        MIME_TYPE_MAP["aso"] = "application/vnd.accpac.simply.aso"
+        MIME_TYPE_MAP["asx"] = "video/x-ms-asf"
+        MIME_TYPE_MAP["atc"] = "application/vnd.acucorp"
+        MIME_TYPE_MAP["atom"] = "application/atom+xml"
+        MIME_TYPE_MAP["atomcat"] = "application/atomcat+xml"
+        MIME_TYPE_MAP["atomsvc"] = "application/atomsvc+xml"
+        MIME_TYPE_MAP["atx"] = "application/vnd.antix.game-component"
+        MIME_TYPE_MAP["au"] = "audio/basic"
+        MIME_TYPE_MAP["avi"] = "video/x-msvideo"
+        MIME_TYPE_MAP["aw"] = "application/applixware"
+        MIME_TYPE_MAP["azf"] = "application/vnd.airzip.filesecure.azf"
+        MIME_TYPE_MAP["azs"] = "application/vnd.airzip.filesecure.azs"
+        MIME_TYPE_MAP["azw"] = "application/vnd.amazon.ebook"
+        MIME_TYPE_MAP["bat"] = "application/x-msdownload"
+        MIME_TYPE_MAP["bcpio"] = "application/x-bcpio"
+        MIME_TYPE_MAP["bdf"] = "application/x-font-bdf"
+        MIME_TYPE_MAP["bdm"] = "application/vnd.syncml.dm+wbxml"
+        MIME_TYPE_MAP["bed"] = "application/vnd.realvnc.bed"
+        MIME_TYPE_MAP["bh2"] = "application/vnd.fujitsu.oasysprs"
+        MIME_TYPE_MAP["bin"] = "application/octet-stream"
+        MIME_TYPE_MAP["blb"] = "application/x-blorb"
+        MIME_TYPE_MAP["blorb"] = "application/x-blorb"
+        MIME_TYPE_MAP["bmi"] = "application/vnd.bmi"
+        MIME_TYPE_MAP["bmp"] = "image/bmp"
+        MIME_TYPE_MAP["book"] = "application/vnd.framemaker"
+        MIME_TYPE_MAP["box"] = "application/vnd.previewsystems.box"
+        MIME_TYPE_MAP["boz"] = "application/x-bzip2"
+        MIME_TYPE_MAP["bpk"] = "application/octet-stream"
+        MIME_TYPE_MAP["btif"] = "image/prs.btif"
+        MIME_TYPE_MAP["bz"] = "application/x-bzip"
+        MIME_TYPE_MAP["bz2"] = "application/x-bzip2"
+        MIME_TYPE_MAP["c"] = "text/x-c"
+        MIME_TYPE_MAP["c11amc"] = "application/vnd.cluetrust.cartomobile-config"
+        MIME_TYPE_MAP["c11amz"] = "application/vnd.cluetrust.cartomobile-config-pkg"
+        MIME_TYPE_MAP["c4d"] = "application/vnd.clonk.c4group"
+        MIME_TYPE_MAP["c4f"] = "application/vnd.clonk.c4group"
+        MIME_TYPE_MAP["c4g"] = "application/vnd.clonk.c4group"
+        MIME_TYPE_MAP["c4p"] = "application/vnd.clonk.c4group"
+        MIME_TYPE_MAP["c4u"] = "application/vnd.clonk.c4group"
+        MIME_TYPE_MAP["cab"] = "application/vnd.ms-cab-compressed"
+        MIME_TYPE_MAP["caf"] = "audio/x-caf"
+        MIME_TYPE_MAP["cap"] = "application/vnd.tcpdump.pcap"
+        MIME_TYPE_MAP["car"] = "application/vnd.curl.car"
+        MIME_TYPE_MAP["cat"] = "application/vnd.ms-pki.seccat"
+        MIME_TYPE_MAP["cb7"] = "application/x-cbr"
+        MIME_TYPE_MAP["cba"] = "application/x-cbr"
+        MIME_TYPE_MAP["cbr"] = "application/x-cbr"
+        MIME_TYPE_MAP["cbt"] = "application/x-cbr"
+        MIME_TYPE_MAP["cbz"] = "application/x-cbr"
+        MIME_TYPE_MAP["cc"] = "text/x-c"
+        MIME_TYPE_MAP["cct"] = "application/x-director"
+        MIME_TYPE_MAP["ccxml"] = "application/ccxml+xml"
+        MIME_TYPE_MAP["cdbcmsg"] = "application/vnd.contact.cmsg"
+        MIME_TYPE_MAP["cdf"] = "application/x-netcdf"
+        MIME_TYPE_MAP["cdkey"] = "application/vnd.mediastation.cdkey"
+        MIME_TYPE_MAP["cdmia"] = "application/cdmi-capability"
+        MIME_TYPE_MAP["cdmic"] = "application/cdmi-container"
+        MIME_TYPE_MAP["cdmid"] = "application/cdmi-domain"
+        MIME_TYPE_MAP["cdmio"] = "application/cdmi-object"
+        MIME_TYPE_MAP["cdmiq"] = "application/cdmi-queue"
+        MIME_TYPE_MAP["cdx"] = "chemical/x-cdx"
+        MIME_TYPE_MAP["cdxml"] = "application/vnd.chemdraw+xml"
+        MIME_TYPE_MAP["cdy"] = "application/vnd.cinderella"
+        MIME_TYPE_MAP["cer"] = "application/pkix-cert"
+        MIME_TYPE_MAP["cfs"] = "application/x-cfs-compressed"
+        MIME_TYPE_MAP["cgm"] = "image/cgm"
+        MIME_TYPE_MAP["chat"] = "application/x-chat"
+        MIME_TYPE_MAP["chm"] = "application/vnd.ms-htmlhelp"
+        MIME_TYPE_MAP["chrt"] = "application/vnd.kde.kchart"
+        MIME_TYPE_MAP["cif"] = "chemical/x-cif"
+        MIME_TYPE_MAP["cii"] = "application/vnd.anser-web-certificate-issue-initiation"
+        MIME_TYPE_MAP["cil"] = "application/vnd.ms-artgalry"
+        MIME_TYPE_MAP["cla"] = "application/vnd.claymore"
+        MIME_TYPE_MAP["class"] = "application/java-vm"
+        MIME_TYPE_MAP["clkk"] = "application/vnd.crick.clicker.keyboard"
+        MIME_TYPE_MAP["clkp"] = "application/vnd.crick.clicker.palette"
+        MIME_TYPE_MAP["clkt"] = "application/vnd.crick.clicker.template"
+        MIME_TYPE_MAP["clkw"] = "application/vnd.crick.clicker.wordbank"
+        MIME_TYPE_MAP["clkx"] = "application/vnd.crick.clicker"
+        MIME_TYPE_MAP["clp"] = "application/x-msclip"
+        MIME_TYPE_MAP["cmc"] = "application/vnd.cosmocaller"
+        MIME_TYPE_MAP["cmdf"] = "chemical/x-cmdf"
+        MIME_TYPE_MAP["cml"] = "chemical/x-cml"
+        MIME_TYPE_MAP["cmp"] = "application/vnd.yellowriver-custom-menu"
+        MIME_TYPE_MAP["cmx"] = "image/x-cmx"
+        MIME_TYPE_MAP["cod"] = "application/vnd.rim.cod"
+        MIME_TYPE_MAP["com"] = "application/x-msdownload"
+        MIME_TYPE_MAP["conf"] = "text/plain"
+        MIME_TYPE_MAP["cpio"] = "application/x-cpio"
+        MIME_TYPE_MAP["cpp"] = "text/x-c"
+        MIME_TYPE_MAP["cpt"] = "application/mac-compactpro"
+        MIME_TYPE_MAP["crd"] = "application/x-mscardfile"
+        MIME_TYPE_MAP["crl"] = "application/pkix-crl"
+        MIME_TYPE_MAP["crt"] = "application/x-x509-ca-cert"
+        MIME_TYPE_MAP["cryptonote"] = "application/vnd.rig.cryptonote"
+        MIME_TYPE_MAP["csh"] = "application/x-csh"
+        MIME_TYPE_MAP["csml"] = "chemical/x-csml"
+        MIME_TYPE_MAP["csp"] = "application/vnd.commonspace"
+        MIME_TYPE_MAP["css"] = "text/css"
+        MIME_TYPE_MAP["cst"] = "application/x-director"
+        MIME_TYPE_MAP["csv"] = "text/csv"
+        MIME_TYPE_MAP["cu"] = "application/cu-seeme"
+        MIME_TYPE_MAP["curl"] = "text/vnd.curl"
+        MIME_TYPE_MAP["cww"] = "application/prs.cww"
+        MIME_TYPE_MAP["cxt"] = "application/x-director"
+        MIME_TYPE_MAP["cxx"] = "text/x-c"
+        MIME_TYPE_MAP["dae"] = "model/vnd.collada+xml"
+        MIME_TYPE_MAP["daf"] = "application/vnd.mobius.daf"
+        MIME_TYPE_MAP["dart"] = "application/vnd.dart"
+        MIME_TYPE_MAP["dataless"] = "application/vnd.fdsn.seed"
+        MIME_TYPE_MAP["davmount"] = "application/davmount+xml"
+        MIME_TYPE_MAP["dbk"] = "application/docbook+xml"
+        MIME_TYPE_MAP["dcr"] = "application/x-director"
+        MIME_TYPE_MAP["dcurl"] = "text/vnd.curl.dcurl"
+        MIME_TYPE_MAP["dd2"] = "application/vnd.oma.dd2+xml"
+        MIME_TYPE_MAP["ddd"] = "application/vnd.fujixerox.ddd"
+        MIME_TYPE_MAP["deb"] = "application/x-debian-package"
+        MIME_TYPE_MAP["def"] = "text/plain"
+        MIME_TYPE_MAP["deploy"] = "application/octet-stream"
+        MIME_TYPE_MAP["der"] = "application/x-x509-ca-cert"
+        MIME_TYPE_MAP["dfac"] = "application/vnd.dreamfactory"
+        MIME_TYPE_MAP["dgc"] = "application/x-dgc-compressed"
+        MIME_TYPE_MAP["dic"] = "text/x-c"
+        MIME_TYPE_MAP["dir"] = "application/x-director"
+        MIME_TYPE_MAP["dis"] = "application/vnd.mobius.dis"
+        MIME_TYPE_MAP["dist"] = "application/octet-stream"
+        MIME_TYPE_MAP["distz"] = "application/octet-stream"
+        MIME_TYPE_MAP["djv"] = "image/vnd.djvu"
+        MIME_TYPE_MAP["djvu"] = "image/vnd.djvu"
+        MIME_TYPE_MAP["dll"] = "application/x-msdownload"
+        MIME_TYPE_MAP["dmg"] = "application/x-apple-diskimage"
+        MIME_TYPE_MAP["dmp"] = "application/vnd.tcpdump.pcap"
+        MIME_TYPE_MAP["dms"] = "application/octet-stream"
+        MIME_TYPE_MAP["dna"] = "application/vnd.dna"
+        MIME_TYPE_MAP["doc"] = "application/msword"
+        MIME_TYPE_MAP["docm"] = "application/vnd.ms-word.document.macroenabled.12"
+        MIME_TYPE_MAP["docx"] = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        MIME_TYPE_MAP["dot"] = "application/msword"
+        MIME_TYPE_MAP["dotm"] = "application/vnd.ms-word.template.macroenabled.12"
+        MIME_TYPE_MAP["dotx"] = "application/vnd.openxmlformats-officedocument.wordprocessingml.template"
+        MIME_TYPE_MAP["dp"] = "application/vnd.osgi.dp"
+        MIME_TYPE_MAP["dpg"] = "application/vnd.dpgraph"
+        MIME_TYPE_MAP["dra"] = "audio/vnd.dra"
+        MIME_TYPE_MAP["dsc"] = "text/prs.lines.tag"
+        MIME_TYPE_MAP["dssc"] = "application/dssc+der"
+        MIME_TYPE_MAP["dtb"] = "application/x-dtbook+xml"
+        MIME_TYPE_MAP["dtd"] = "application/xml-dtd"
+        MIME_TYPE_MAP["dts"] = "audio/vnd.dts"
+        MIME_TYPE_MAP["dtshd"] = "audio/vnd.dts.hd"
+        MIME_TYPE_MAP["dump"] = "application/octet-stream"
+        MIME_TYPE_MAP["dvb"] = "video/vnd.dvb.file"
+        MIME_TYPE_MAP["dvi"] = "application/x-dvi"
+        MIME_TYPE_MAP["dwf"] = "model/vnd.dwf"
+        MIME_TYPE_MAP["dwg"] = "image/vnd.dwg"
+        MIME_TYPE_MAP["dxf"] = "image/vnd.dxf"
+        MIME_TYPE_MAP["dxp"] = "application/vnd.spotfire.dxp"
+        MIME_TYPE_MAP["dxr"] = "application/x-director"
+        MIME_TYPE_MAP["ecelp4800"] = "audio/vnd.nuera.ecelp4800"
+        MIME_TYPE_MAP["ecelp7470"] = "audio/vnd.nuera.ecelp7470"
+        MIME_TYPE_MAP["ecelp9600"] = "audio/vnd.nuera.ecelp9600"
+        MIME_TYPE_MAP["ecma"] = "application/ecmascript"
+        MIME_TYPE_MAP["edm"] = "application/vnd.novadigm.edm"
+        MIME_TYPE_MAP["edx"] = "application/vnd.novadigm.edx"
+        MIME_TYPE_MAP["efif"] = "application/vnd.picsel"
+        MIME_TYPE_MAP["ei6"] = "application/vnd.pg.osasli"
+        MIME_TYPE_MAP["elc"] = "application/octet-stream"
+        MIME_TYPE_MAP["emf"] = "application/x-msmetafile"
+        MIME_TYPE_MAP["eml"] = "message/rfc822"
+        MIME_TYPE_MAP["emma"] = "application/emma+xml"
+        MIME_TYPE_MAP["emz"] = "application/x-msmetafile"
+        MIME_TYPE_MAP["eol"] = "audio/vnd.digital-winds"
+        MIME_TYPE_MAP["eot"] = "application/vnd.ms-fontobject"
+        MIME_TYPE_MAP["eps"] = "application/postscript"
+        MIME_TYPE_MAP["epub"] = "application/epub+zip"
+        MIME_TYPE_MAP["es3"] = "application/vnd.eszigno3+xml"
+        MIME_TYPE_MAP["esa"] = "application/vnd.osgi.subsystem"
+        MIME_TYPE_MAP["esf"] = "application/vnd.epson.esf"
+        MIME_TYPE_MAP["et3"] = "application/vnd.eszigno3+xml"
+        MIME_TYPE_MAP["etx"] = "text/x-setext"
+        MIME_TYPE_MAP["eva"] = "application/x-eva"
+        MIME_TYPE_MAP["evy"] = "application/x-envoy"
+        MIME_TYPE_MAP["exe"] = "application/x-msdownload"
+        MIME_TYPE_MAP["exi"] = "application/exi"
+        MIME_TYPE_MAP["ext"] = "application/vnd.novadigm.ext"
+        MIME_TYPE_MAP["ez"] = "application/andrew-inset"
+        MIME_TYPE_MAP["ez2"] = "application/vnd.ezpix-album"
+        MIME_TYPE_MAP["ez3"] = "application/vnd.ezpix-package"
+        MIME_TYPE_MAP["f"] = "text/x-fortran"
+        MIME_TYPE_MAP["f4v"] = "video/x-f4v"
+        MIME_TYPE_MAP["f77"] = "text/x-fortran"
+        MIME_TYPE_MAP["f90"] = "text/x-fortran"
+        MIME_TYPE_MAP["fbs"] = "image/vnd.fastbidsheet"
+        MIME_TYPE_MAP["fcdt"] = "application/vnd.adobe.formscentral.fcdt"
+        MIME_TYPE_MAP["fcs"] = "application/vnd.isac.fcs"
+        MIME_TYPE_MAP["fdf"] = "application/vnd.fdf"
+        MIME_TYPE_MAP["fe_launch"] = "application/vnd.denovo.fcselayout-link"
+        MIME_TYPE_MAP["fg5"] = "application/vnd.fujitsu.oasysgp"
+        MIME_TYPE_MAP["fgd"] = "application/x-director"
+        MIME_TYPE_MAP["fh"] = "image/x-freehand"
+        MIME_TYPE_MAP["fh4"] = "image/x-freehand"
+        MIME_TYPE_MAP["fh5"] = "image/x-freehand"
+        MIME_TYPE_MAP["fh7"] = "image/x-freehand"
+        MIME_TYPE_MAP["fhc"] = "image/x-freehand"
+        MIME_TYPE_MAP["fig"] = "application/x-xfig"
+        MIME_TYPE_MAP["flac"] = "audio/x-flac"
+        MIME_TYPE_MAP["fli"] = "video/x-fli"
+        MIME_TYPE_MAP["flo"] = "application/vnd.micrografx.flo"
+        MIME_TYPE_MAP["flv"] = "video/x-flv"
+        MIME_TYPE_MAP["flw"] = "application/vnd.kde.kivio"
+        MIME_TYPE_MAP["flx"] = "text/vnd.fmi.flexstor"
+        MIME_TYPE_MAP["fly"] = "text/vnd.fly"
+        MIME_TYPE_MAP["fm"] = "application/vnd.framemaker"
+        MIME_TYPE_MAP["fnc"] = "application/vnd.frogans.fnc"
+        MIME_TYPE_MAP["for"] = "text/x-fortran"
+        MIME_TYPE_MAP["fpx"] = "image/vnd.fpx"
+        MIME_TYPE_MAP["frame"] = "application/vnd.framemaker"
+        MIME_TYPE_MAP["fsc"] = "application/vnd.fsc.weblaunch"
+        MIME_TYPE_MAP["fst"] = "image/vnd.fst"
+        MIME_TYPE_MAP["ftc"] = "application/vnd.fluxtime.clip"
+        MIME_TYPE_MAP["fti"] = "application/vnd.anser-web-funds-transfer-initiation"
+        MIME_TYPE_MAP["fvt"] = "video/vnd.fvt"
+        MIME_TYPE_MAP["fxp"] = "application/vnd.adobe.fxp"
+        MIME_TYPE_MAP["fxpl"] = "application/vnd.adobe.fxp"
+        MIME_TYPE_MAP["fzs"] = "application/vnd.fuzzysheet"
+        MIME_TYPE_MAP["g2w"] = "application/vnd.geoplan"
+        MIME_TYPE_MAP["g3"] = "image/g3fax"
+        MIME_TYPE_MAP["g3w"] = "application/vnd.geospace"
+        MIME_TYPE_MAP["gac"] = "application/vnd.groove-account"
+        MIME_TYPE_MAP["gam"] = "application/x-tads"
+        MIME_TYPE_MAP["gbr"] = "application/rpki-ghostbusters"
+        MIME_TYPE_MAP["gca"] = "application/x-gca-compressed"
+        MIME_TYPE_MAP["gdl"] = "model/vnd.gdl"
+        MIME_TYPE_MAP["geo"] = "application/vnd.dynageo"
+        MIME_TYPE_MAP["gex"] = "application/vnd.geometry-explorer"
+        MIME_TYPE_MAP["ggb"] = "application/vnd.geogebra.file"
+        MIME_TYPE_MAP["ggt"] = "application/vnd.geogebra.tool"
+        MIME_TYPE_MAP["ghf"] = "application/vnd.groove-help"
+        MIME_TYPE_MAP["gif"] = "image/gif"
+        MIME_TYPE_MAP["gim"] = "application/vnd.groove-identity-message"
+        MIME_TYPE_MAP["gml"] = "application/gml+xml"
+        MIME_TYPE_MAP["gmx"] = "application/vnd.gmx"
+        MIME_TYPE_MAP["gnumeric"] = "application/x-gnumeric"
+        MIME_TYPE_MAP["gph"] = "application/vnd.flographit"
+        MIME_TYPE_MAP["gpx"] = "application/gpx+xml"
+        MIME_TYPE_MAP["gqf"] = "application/vnd.grafeq"
+        MIME_TYPE_MAP["gqs"] = "application/vnd.grafeq"
+        MIME_TYPE_MAP["gram"] = "application/srgs"
+        MIME_TYPE_MAP["gramps"] = "application/x-gramps-xml"
+        MIME_TYPE_MAP["gre"] = "application/vnd.geometry-explorer"
+        MIME_TYPE_MAP["grv"] = "application/vnd.groove-injector"
+        MIME_TYPE_MAP["grxml"] = "application/srgs+xml"
+        MIME_TYPE_MAP["gsf"] = "application/x-font-ghostscript"
+        MIME_TYPE_MAP["gtar"] = "application/x-gtar"
+        MIME_TYPE_MAP["gtm"] = "application/vnd.groove-tool-message"
+        MIME_TYPE_MAP["gtw"] = "model/vnd.gtw"
+        MIME_TYPE_MAP["gv"] = "text/vnd.graphviz"
+        MIME_TYPE_MAP["gxf"] = "application/gxf"
+        MIME_TYPE_MAP["gxt"] = "application/vnd.geonext"
+        MIME_TYPE_MAP["h"] = "text/x-c"
+        MIME_TYPE_MAP["h261"] = "video/h261"
+        MIME_TYPE_MAP["h263"] = "video/h263"
+        MIME_TYPE_MAP["h264"] = "video/h264"
+        MIME_TYPE_MAP["hal"] = "application/vnd.hal+xml"
+        MIME_TYPE_MAP["hbci"] = "application/vnd.hbci"
+        MIME_TYPE_MAP["hdf"] = "application/x-hdf"
+        MIME_TYPE_MAP["hh"] = "text/x-c"
+        MIME_TYPE_MAP["hlp"] = "application/winhlp"
+        MIME_TYPE_MAP["hpgl"] = "application/vnd.hp-hpgl"
+        MIME_TYPE_MAP["hpid"] = "application/vnd.hp-hpid"
+        MIME_TYPE_MAP["hps"] = "application/vnd.hp-hps"
+        MIME_TYPE_MAP["hqx"] = "application/mac-binhex40"
+        MIME_TYPE_MAP["htke"] = "application/vnd.kenameaapp"
+        MIME_TYPE_MAP["htm"] = "text/html"
+        MIME_TYPE_MAP["html"] = "text/html"
+        MIME_TYPE_MAP["hvd"] = "application/vnd.yamaha.hv-dic"
+        MIME_TYPE_MAP["hvp"] = "application/vnd.yamaha.hv-voice"
+        MIME_TYPE_MAP["hvs"] = "application/vnd.yamaha.hv-script"
+        MIME_TYPE_MAP["i2g"] = "application/vnd.intergeo"
+        MIME_TYPE_MAP["icc"] = "application/vnd.iccprofile"
+        MIME_TYPE_MAP["ice"] = "x-conference/x-cooltalk"
+        MIME_TYPE_MAP["icm"] = "application/vnd.iccprofile"
+        MIME_TYPE_MAP["ico"] = "image/x-icon"
+        MIME_TYPE_MAP["ics"] = "text/calendar"
+        MIME_TYPE_MAP["ief"] = "image/ief"
+        MIME_TYPE_MAP["ifb"] = "text/calendar"
+        MIME_TYPE_MAP["ifm"] = "application/vnd.shana.informed.formdata"
+        MIME_TYPE_MAP["iges"] = "model/iges"
+        MIME_TYPE_MAP["igl"] = "application/vnd.igloader"
+        MIME_TYPE_MAP["igm"] = "application/vnd.insors.igm"
+        MIME_TYPE_MAP["igs"] = "model/iges"
+        MIME_TYPE_MAP["igx"] = "application/vnd.micrografx.igx"
+        MIME_TYPE_MAP["iif"] = "application/vnd.shana.informed.interchange"
+        MIME_TYPE_MAP["imp"] = "application/vnd.accpac.simply.imp"
+        MIME_TYPE_MAP["ims"] = "application/vnd.ms-ims"
+        MIME_TYPE_MAP["in"] = "text/plain"
+        MIME_TYPE_MAP["ink"] = "application/inkml+xml"
+        MIME_TYPE_MAP["inkml"] = "application/inkml+xml"
+        MIME_TYPE_MAP["install"] = "application/x-install-instructions"
+        MIME_TYPE_MAP["iota"] = "application/vnd.astraea-software.iota"
+        MIME_TYPE_MAP["ipfix"] = "application/ipfix"
+        MIME_TYPE_MAP["ipk"] = "application/vnd.shana.informed.package"
+        MIME_TYPE_MAP["irm"] = "application/vnd.ibm.rights-management"
+        MIME_TYPE_MAP["irp"] = "application/vnd.irepository.package+xml"
+        MIME_TYPE_MAP["iso"] = "application/x-iso9660-image"
+        MIME_TYPE_MAP["itp"] = "application/vnd.shana.informed.formtemplate"
+        MIME_TYPE_MAP["ivp"] = "application/vnd.immervision-ivp"
+        MIME_TYPE_MAP["ivu"] = "application/vnd.immervision-ivu"
+        MIME_TYPE_MAP["jad"] = "text/vnd.sun.j2me.app-descriptor"
+        MIME_TYPE_MAP["jam"] = "application/vnd.jam"
+        MIME_TYPE_MAP["jar"] = "application/java-archive"
+        MIME_TYPE_MAP["java"] = "text/x-java-source"
+        MIME_TYPE_MAP["jisp"] = "application/vnd.jisp"
+        MIME_TYPE_MAP["jlt"] = "application/vnd.hp-jlyt"
+        MIME_TYPE_MAP["jnlp"] = "application/x-java-jnlp-file"
+        MIME_TYPE_MAP["joda"] = "application/vnd.joost.joda-archive"
+        MIME_TYPE_MAP["jpe"] = "image/jpeg"
+        MIME_TYPE_MAP["jpeg"] = "image/jpeg"
+        MIME_TYPE_MAP["jpg"] = "image/jpeg"
+        MIME_TYPE_MAP["jpgm"] = "video/jpm"
+        MIME_TYPE_MAP["jpgv"] = "video/jpeg"
+        MIME_TYPE_MAP["jpm"] = "video/jpm"
+        MIME_TYPE_MAP["js"] = "application/javascript"
+        MIME_TYPE_MAP["json"] = "application/json"
+        MIME_TYPE_MAP["jsonml"] = "application/jsonml+json"
+        MIME_TYPE_MAP["kar"] = "audio/midi"
+        MIME_TYPE_MAP["karbon"] = "application/vnd.kde.karbon"
+        MIME_TYPE_MAP["kfo"] = "application/vnd.kde.kformula"
+        MIME_TYPE_MAP["kia"] = "application/vnd.kidspiration"
+        MIME_TYPE_MAP["kml"] = "application/vnd.google-earth.kml+xml"
+        MIME_TYPE_MAP["kmz"] = "application/vnd.google-earth.kmz"
+        MIME_TYPE_MAP["kne"] = "application/vnd.kinar"
+        MIME_TYPE_MAP["knp"] = "application/vnd.kinar"
+        MIME_TYPE_MAP["kon"] = "application/vnd.kde.kontour"
+        MIME_TYPE_MAP["kpr"] = "application/vnd.kde.kpresenter"
+        MIME_TYPE_MAP["kpt"] = "application/vnd.kde.kpresenter"
+        MIME_TYPE_MAP["kpxx"] = "application/vnd.ds-keypoint"
+        MIME_TYPE_MAP["ksp"] = "application/vnd.kde.kspread"
+        MIME_TYPE_MAP["ktr"] = "application/vnd.kahootz"
+        MIME_TYPE_MAP["ktx"] = "image/ktx"
+        MIME_TYPE_MAP["ktz"] = "application/vnd.kahootz"
+        MIME_TYPE_MAP["kwd"] = "application/vnd.kde.kword"
+        MIME_TYPE_MAP["kwt"] = "application/vnd.kde.kword"
+        MIME_TYPE_MAP["lasxml"] = "application/vnd.las.las+xml"
+        MIME_TYPE_MAP["latex"] = "application/x-latex"
+        MIME_TYPE_MAP["lbd"] = "application/vnd.llamagraphics.life-balance.desktop"
+        MIME_TYPE_MAP["lbe"] = "application/vnd.llamagraphics.life-balance.exchange+xml"
+        MIME_TYPE_MAP["les"] = "application/vnd.hhe.lesson-player"
+        MIME_TYPE_MAP["lha"] = "application/x-lzh-compressed"
+        MIME_TYPE_MAP["link66"] = "application/vnd.route66.link66+xml"
+        MIME_TYPE_MAP["list"] = "text/plain"
+        MIME_TYPE_MAP["list3820"] = "application/vnd.ibm.modcap"
+        MIME_TYPE_MAP["listafp"] = "application/vnd.ibm.modcap"
+        MIME_TYPE_MAP["lnk"] = "application/x-ms-shortcut"
+        MIME_TYPE_MAP["log"] = "text/plain"
+        MIME_TYPE_MAP["lostxml"] = "application/lost+xml"
+        MIME_TYPE_MAP["lrf"] = "application/octet-stream"
+        MIME_TYPE_MAP["lrm"] = "application/vnd.ms-lrm"
+        MIME_TYPE_MAP["ltf"] = "application/vnd.frogans.ltf"
+        MIME_TYPE_MAP["lvp"] = "audio/vnd.lucent.voice"
+        MIME_TYPE_MAP["lwp"] = "application/vnd.lotus-wordpro"
+        MIME_TYPE_MAP["lzh"] = "application/x-lzh-compressed"
+        MIME_TYPE_MAP["m13"] = "application/x-msmediaview"
+        MIME_TYPE_MAP["m14"] = "application/x-msmediaview"
+        MIME_TYPE_MAP["m1v"] = "video/mpeg"
+        MIME_TYPE_MAP["m21"] = "application/mp21"
+        MIME_TYPE_MAP["m2a"] = "audio/mpeg"
+        MIME_TYPE_MAP["m2v"] = "video/mpeg"
+        MIME_TYPE_MAP["m3a"] = "audio/mpeg"
+        MIME_TYPE_MAP["m3u"] = "audio/x-mpegurl"
+        MIME_TYPE_MAP["m3u8"] = "application/vnd.apple.mpegurl"
+        MIME_TYPE_MAP["m4u"] = "video/vnd.mpegurl"
+        MIME_TYPE_MAP["m4v"] = "video/x-m4v"
+        MIME_TYPE_MAP["ma"] = "application/mathematica"
+        MIME_TYPE_MAP["mads"] = "application/mads+xml"
+        MIME_TYPE_MAP["mag"] = "application/vnd.ecowin.chart"
+        MIME_TYPE_MAP["maker"] = "application/vnd.framemaker"
+        MIME_TYPE_MAP["man"] = "text/troff"
+        MIME_TYPE_MAP["mar"] = "application/octet-stream"
+        MIME_TYPE_MAP["mathml"] = "application/mathml+xml"
+        MIME_TYPE_MAP["mb"] = "application/mathematica"
+        MIME_TYPE_MAP["mbk"] = "application/vnd.mobius.mbk"
+        MIME_TYPE_MAP["mbox"] = "application/mbox"
+        MIME_TYPE_MAP["mc1"] = "application/vnd.medcalcdata"
+        MIME_TYPE_MAP["mcd"] = "application/vnd.mcd"
+        MIME_TYPE_MAP["mcurl"] = "text/vnd.curl.mcurl"
+        MIME_TYPE_MAP["mdb"] = "application/x-msaccess"
+        MIME_TYPE_MAP["mdi"] = "image/vnd.ms-modi"
+        MIME_TYPE_MAP["me"] = "text/troff"
+        MIME_TYPE_MAP["mesh"] = "model/mesh"
+        MIME_TYPE_MAP["meta4"] = "application/metalink4+xml"
+        MIME_TYPE_MAP["metalink"] = "application/metalink+xml"
+        MIME_TYPE_MAP["mets"] = "application/mets+xml"
+        MIME_TYPE_MAP["mfm"] = "application/vnd.mfmp"
+        MIME_TYPE_MAP["mft"] = "application/rpki-manifest"
+        MIME_TYPE_MAP["mgp"] = "application/vnd.osgeo.mapguide.package"
+        MIME_TYPE_MAP["mgz"] = "application/vnd.proteus.magazine"
+        MIME_TYPE_MAP["mid"] = "audio/midi"
+        MIME_TYPE_MAP["midi"] = "audio/midi"
+        MIME_TYPE_MAP["mie"] = "application/x-mie"
+        MIME_TYPE_MAP["mif"] = "application/vnd.mif"
+        MIME_TYPE_MAP["mime"] = "message/rfc822"
+        MIME_TYPE_MAP["mj2"] = "video/mj2"
+        MIME_TYPE_MAP["mjp2"] = "video/mj2"
+        MIME_TYPE_MAP["mk3d"] = "video/x-matroska"
+        MIME_TYPE_MAP["mka"] = "audio/x-matroska"
+        MIME_TYPE_MAP["mks"] = "video/x-matroska"
+        MIME_TYPE_MAP["mkv"] = "video/x-matroska"
+        MIME_TYPE_MAP["mlp"] = "application/vnd.dolby.mlp"
+        MIME_TYPE_MAP["mmd"] = "application/vnd.chipnuts.karaoke-mmd"
+        MIME_TYPE_MAP["mmf"] = "application/vnd.smaf"
+        MIME_TYPE_MAP["mmr"] = "image/vnd.fujixerox.edmics-mmr"
+        MIME_TYPE_MAP["mng"] = "video/x-mng"
+        MIME_TYPE_MAP["mny"] = "application/x-msmoney"
+        MIME_TYPE_MAP["mobi"] = "application/x-mobipocket-ebook"
+        MIME_TYPE_MAP["mods"] = "application/mods+xml"
+        MIME_TYPE_MAP["mov"] = "video/quicktime"
+        MIME_TYPE_MAP["movie"] = "video/x-sgi-movie"
+        MIME_TYPE_MAP["mp2"] = "audio/mpeg"
+        MIME_TYPE_MAP["mp21"] = "application/mp21"
+        MIME_TYPE_MAP["mp2a"] = "audio/mpeg"
+        MIME_TYPE_MAP["mp3"] = "audio/mpeg"
+        MIME_TYPE_MAP["mp4"] = "video/mp4"
+        MIME_TYPE_MAP["mp4a"] = "audio/mp4"
+        MIME_TYPE_MAP["mp4s"] = "application/mp4"
+        MIME_TYPE_MAP["mp4v"] = "video/mp4"
+        MIME_TYPE_MAP["mpc"] = "application/vnd.mophun.certificate"
+        MIME_TYPE_MAP["mpe"] = "video/mpeg"
+        MIME_TYPE_MAP["mpeg"] = "video/mpeg"
+        MIME_TYPE_MAP["mpg"] = "video/mpeg"
+        MIME_TYPE_MAP["mpg4"] = "video/mp4"
+        MIME_TYPE_MAP["mpga"] = "audio/mpeg"
+        MIME_TYPE_MAP["mpkg"] = "application/vnd.apple.installer+xml"
+        MIME_TYPE_MAP["mpm"] = "application/vnd.blueice.multipass"
+        MIME_TYPE_MAP["mpn"] = "application/vnd.mophun.application"
+        MIME_TYPE_MAP["mpp"] = "application/vnd.ms-project"
+        MIME_TYPE_MAP["mpt"] = "application/vnd.ms-project"
+        MIME_TYPE_MAP["mpy"] = "application/vnd.ibm.minipay"
+        MIME_TYPE_MAP["mqy"] = "application/vnd.mobius.mqy"
+        MIME_TYPE_MAP["mrc"] = "application/marc"
+        MIME_TYPE_MAP["mrcx"] = "application/marcxml+xml"
+        MIME_TYPE_MAP["ms"] = "text/troff"
+        MIME_TYPE_MAP["mscml"] = "application/mediaservercontrol+xml"
+        MIME_TYPE_MAP["mseed"] = "application/vnd.fdsn.mseed"
+        MIME_TYPE_MAP["mseq"] = "application/vnd.mseq"
+        MIME_TYPE_MAP["msf"] = "application/vnd.epson.msf"
+        MIME_TYPE_MAP["msh"] = "model/mesh"
+        MIME_TYPE_MAP["msi"] = "application/x-msdownload"
+        MIME_TYPE_MAP["msl"] = "application/vnd.mobius.msl"
+        MIME_TYPE_MAP["msty"] = "application/vnd.muvee.style"
+        MIME_TYPE_MAP["mts"] = "model/vnd.mts"
+        MIME_TYPE_MAP["mus"] = "application/vnd.musician"
+        MIME_TYPE_MAP["musicxml"] = "application/vnd.recordare.musicxml+xml"
+        MIME_TYPE_MAP["mvb"] = "application/x-msmediaview"
+        MIME_TYPE_MAP["mwf"] = "application/vnd.mfer"
+        MIME_TYPE_MAP["mxf"] = "application/mxf"
+        MIME_TYPE_MAP["mxl"] = "application/vnd.recordare.musicxml"
+        MIME_TYPE_MAP["mxml"] = "application/xv+xml"
+        MIME_TYPE_MAP["mxs"] = "application/vnd.triscape.mxs"
+        MIME_TYPE_MAP["mxu"] = "video/vnd.mpegurl"
+        MIME_TYPE_MAP["n-gage"] = "application/vnd.nokia.n-gage.symbian.install"
+        MIME_TYPE_MAP["n3"] = "text/n3"
+        MIME_TYPE_MAP["nb"] = "application/mathematica"
+        MIME_TYPE_MAP["nbp"] = "application/vnd.wolfram.player"
+        MIME_TYPE_MAP["nc"] = "application/x-netcdf"
+        MIME_TYPE_MAP["ncx"] = "application/x-dtbncx+xml"
+        MIME_TYPE_MAP["nfo"] = "text/x-nfo"
+        MIME_TYPE_MAP["ngdat"] = "application/vnd.nokia.n-gage.data"
+        MIME_TYPE_MAP["nitf"] = "application/vnd.nitf"
+        MIME_TYPE_MAP["nlu"] = "application/vnd.neurolanguage.nlu"
+        MIME_TYPE_MAP["nml"] = "application/vnd.enliven"
+        MIME_TYPE_MAP["nnd"] = "application/vnd.noblenet-directory"
+        MIME_TYPE_MAP["nns"] = "application/vnd.noblenet-sealer"
+        MIME_TYPE_MAP["nnw"] = "application/vnd.noblenet-web"
+        MIME_TYPE_MAP["npx"] = "image/vnd.net-fpx"
+        MIME_TYPE_MAP["nsc"] = "application/x-conference"
+        MIME_TYPE_MAP["nsf"] = "application/vnd.lotus-notes"
+        MIME_TYPE_MAP["ntf"] = "application/vnd.nitf"
+        MIME_TYPE_MAP["nzb"] = "application/x-nzb"
+        MIME_TYPE_MAP["oa2"] = "application/vnd.fujitsu.oasys2"
+        MIME_TYPE_MAP["oa3"] = "application/vnd.fujitsu.oasys3"
+        MIME_TYPE_MAP["oas"] = "application/vnd.fujitsu.oasys"
+        MIME_TYPE_MAP["obd"] = "application/x-msbinder"
+        MIME_TYPE_MAP["obj"] = "application/x-tgif"
+        MIME_TYPE_MAP["oda"] = "application/oda"
+        MIME_TYPE_MAP["odb"] = "application/vnd.oasis.opendocument.database"
+        MIME_TYPE_MAP["odc"] = "application/vnd.oasis.opendocument.chart"
+        MIME_TYPE_MAP["odf"] = "application/vnd.oasis.opendocument.formula"
+        MIME_TYPE_MAP["odft"] = "application/vnd.oasis.opendocument.formula-template"
+        MIME_TYPE_MAP["odg"] = "application/vnd.oasis.opendocument.graphics"
+        MIME_TYPE_MAP["odi"] = "application/vnd.oasis.opendocument.image"
+        MIME_TYPE_MAP["odm"] = "application/vnd.oasis.opendocument.text-master"
+        MIME_TYPE_MAP["odp"] = "application/vnd.oasis.opendocument.presentation"
+        MIME_TYPE_MAP["ods"] = "application/vnd.oasis.opendocument.spreadsheet"
+        MIME_TYPE_MAP["odt"] = "application/vnd.oasis.opendocument.text"
+        MIME_TYPE_MAP["oga"] = "audio/ogg"
+        MIME_TYPE_MAP["ogg"] = "audio/ogg"
+        MIME_TYPE_MAP["ogv"] = "video/ogg"
+        MIME_TYPE_MAP["ogx"] = "application/ogg"
+        MIME_TYPE_MAP["omdoc"] = "application/omdoc+xml"
+        MIME_TYPE_MAP["onepkg"] = "application/onenote"
+        MIME_TYPE_MAP["onetmp"] = "application/onenote"
+        MIME_TYPE_MAP["onetoc"] = "application/onenote"
+        MIME_TYPE_MAP["onetoc2"] = "application/onenote"
+        MIME_TYPE_MAP["opf"] = "application/oebps-package+xml"
+        MIME_TYPE_MAP["opml"] = "text/x-opml"
+        MIME_TYPE_MAP["oprc"] = "application/vnd.palm"
+        MIME_TYPE_MAP["org"] = "application/vnd.lotus-organizer"
+        MIME_TYPE_MAP["osf"] = "application/vnd.yamaha.openscoreformat"
+        MIME_TYPE_MAP["osfpvg"] = "application/vnd.yamaha.openscoreformat.osfpvg+xml"
+        MIME_TYPE_MAP["otc"] = "application/vnd.oasis.opendocument.chart-template"
+        MIME_TYPE_MAP["otf"] = "application/x-font-otf"
+        MIME_TYPE_MAP["otg"] = "application/vnd.oasis.opendocument.graphics-template"
+        MIME_TYPE_MAP["oth"] = "application/vnd.oasis.opendocument.text-web"
+        MIME_TYPE_MAP["oti"] = "application/vnd.oasis.opendocument.image-template"
+        MIME_TYPE_MAP["otp"] = "application/vnd.oasis.opendocument.presentation-template"
+        MIME_TYPE_MAP["ots"] = "application/vnd.oasis.opendocument.spreadsheet-template"
+        MIME_TYPE_MAP["ott"] = "application/vnd.oasis.opendocument.text-template"
+        MIME_TYPE_MAP["oxps"] = "application/oxps"
+        MIME_TYPE_MAP["oxt"] = "application/vnd.openofficeorg.extension"
+        MIME_TYPE_MAP["p"] = "text/x-pascal"
+        MIME_TYPE_MAP["p10"] = "application/pkcs10"
+        MIME_TYPE_MAP["p12"] = "application/x-pkcs12"
+        MIME_TYPE_MAP["p7b"] = "application/x-pkcs7-certificates"
+        MIME_TYPE_MAP["p7c"] = "application/pkcs7-mime"
+        MIME_TYPE_MAP["p7m"] = "application/pkcs7-mime"
+        MIME_TYPE_MAP["p7r"] = "application/x-pkcs7-certreqresp"
+        MIME_TYPE_MAP["p7s"] = "application/pkcs7-signature"
+        MIME_TYPE_MAP["p8"] = "application/pkcs8"
+        MIME_TYPE_MAP["pas"] = "text/x-pascal"
+        MIME_TYPE_MAP["paw"] = "application/vnd.pawaafile"
+        MIME_TYPE_MAP["pbd"] = "application/vnd.powerbuilder6"
+        MIME_TYPE_MAP["pbm"] = "image/x-portable-bitmap"
+        MIME_TYPE_MAP["pcap"] = "application/vnd.tcpdump.pcap"
+        MIME_TYPE_MAP["pcf"] = "application/x-font-pcf"
+        MIME_TYPE_MAP["pcl"] = "application/vnd.hp-pcl"
+        MIME_TYPE_MAP["pclxl"] = "application/vnd.hp-pclxl"
+        MIME_TYPE_MAP["pct"] = "image/x-pict"
+        MIME_TYPE_MAP["pcurl"] = "application/vnd.curl.pcurl"
+        MIME_TYPE_MAP["pcx"] = "image/x-pcx"
+        MIME_TYPE_MAP["pdb"] = "application/vnd.palm"
+        MIME_TYPE_MAP["pdf"] = "application/pdf"
+        MIME_TYPE_MAP["pfa"] = "application/x-font-type1"
+        MIME_TYPE_MAP["pfb"] = "application/x-font-type1"
+        MIME_TYPE_MAP["pfm"] = "application/x-font-type1"
+        MIME_TYPE_MAP["pfr"] = "application/font-tdpfr"
+        MIME_TYPE_MAP["pfx"] = "application/x-pkcs12"
+        MIME_TYPE_MAP["pgm"] = "image/x-portable-graymap"
+        MIME_TYPE_MAP["pgn"] = "application/x-chess-pgn"
+        MIME_TYPE_MAP["pgp"] = "application/pgp-encrypted"
+        MIME_TYPE_MAP["pic"] = "image/x-pict"
+        MIME_TYPE_MAP["pkg"] = "application/octet-stream"
+        MIME_TYPE_MAP["pki"] = "application/pkixcmp"
+        MIME_TYPE_MAP["pkipath"] = "application/pkix-pkipath"
+        MIME_TYPE_MAP["plb"] = "application/vnd.3gpp.pic-bw-large"
+        MIME_TYPE_MAP["plc"] = "application/vnd.mobius.plc"
+        MIME_TYPE_MAP["plf"] = "application/vnd.pocketlearn"
+        MIME_TYPE_MAP["pls"] = "application/pls+xml"
+        MIME_TYPE_MAP["pml"] = "application/vnd.ctc-posml"
+        MIME_TYPE_MAP["png"] = "image/png"
+        MIME_TYPE_MAP["pnm"] = "image/x-portable-anymap"
+        MIME_TYPE_MAP["portpkg"] = "application/vnd.macports.portpkg"
+        MIME_TYPE_MAP["pot"] = "application/vnd.ms-powerpoint"
+        MIME_TYPE_MAP["potm"] = "application/vnd.ms-powerpoint.template.macroenabled.12"
+        MIME_TYPE_MAP["potx"] = "application/vnd.openxmlformats-officedocument.presentationml.template"
+        MIME_TYPE_MAP["ppam"] = "application/vnd.ms-powerpoint.addin.macroenabled.12"
+        MIME_TYPE_MAP["ppd"] = "application/vnd.cups-ppd"
+        MIME_TYPE_MAP["ppm"] = "image/x-portable-pixmap"
+        MIME_TYPE_MAP["pps"] = "application/vnd.ms-powerpoint"
+        MIME_TYPE_MAP["ppsm"] = "application/vnd.ms-powerpoint.slideshow.macroenabled.12"
+        MIME_TYPE_MAP["ppsx"] = "application/vnd.openxmlformats-officedocument.presentationml.slideshow"
+        MIME_TYPE_MAP["ppt"] = "application/vnd.ms-powerpoint"
+        MIME_TYPE_MAP["pptm"] = "application/vnd.ms-powerpoint.presentation.macroenabled.12"
+        MIME_TYPE_MAP["pptx"] = "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+        MIME_TYPE_MAP["pqa"] = "application/vnd.palm"
+        MIME_TYPE_MAP["prc"] = "application/x-mobipocket-ebook"
+        MIME_TYPE_MAP["pre"] = "application/vnd.lotus-freelance"
+        MIME_TYPE_MAP["prf"] = "application/pics-rules"
+        MIME_TYPE_MAP["ps"] = "application/postscript"
+        MIME_TYPE_MAP["psb"] = "application/vnd.3gpp.pic-bw-small"
+        MIME_TYPE_MAP["psd"] = "image/vnd.adobe.photoshop"
+        MIME_TYPE_MAP["psf"] = "application/x-font-linux-psf"
+        MIME_TYPE_MAP["pskcxml"] = "application/pskc+xml"
+        MIME_TYPE_MAP["ptid"] = "application/vnd.pvi.ptid1"
+        MIME_TYPE_MAP["pub"] = "application/x-mspublisher"
+        MIME_TYPE_MAP["pvb"] = "application/vnd.3gpp.pic-bw-var"
+        MIME_TYPE_MAP["pwn"] = "application/vnd.3m.post-it-notes"
+        MIME_TYPE_MAP["pya"] = "audio/vnd.ms-playready.media.pya"
+        MIME_TYPE_MAP["pyv"] = "video/vnd.ms-playready.media.pyv"
+        MIME_TYPE_MAP["qam"] = "application/vnd.epson.quickanime"
+        MIME_TYPE_MAP["qbo"] = "application/vnd.intu.qbo"
+        MIME_TYPE_MAP["qfx"] = "application/vnd.intu.qfx"
+        MIME_TYPE_MAP["qps"] = "application/vnd.publishare-delta-tree"
+        MIME_TYPE_MAP["qt"] = "video/quicktime"
+        MIME_TYPE_MAP["qwd"] = "application/vnd.quark.quarkxpress"
+        MIME_TYPE_MAP["qwt"] = "application/vnd.quark.quarkxpress"
+        MIME_TYPE_MAP["qxb"] = "application/vnd.quark.quarkxpress"
+        MIME_TYPE_MAP["qxd"] = "application/vnd.quark.quarkxpress"
+        MIME_TYPE_MAP["qxl"] = "application/vnd.quark.quarkxpress"
+        MIME_TYPE_MAP["qxt"] = "application/vnd.quark.quarkxpress"
+        MIME_TYPE_MAP["ra"] = "audio/x-pn-realaudio"
+        MIME_TYPE_MAP["ram"] = "audio/x-pn-realaudio"
+        MIME_TYPE_MAP["rar"] = "application/x-rar-compressed"
+        MIME_TYPE_MAP["ras"] = "image/x-cmu-raster"
+        MIME_TYPE_MAP["rcprofile"] = "application/vnd.ipunplugged.rcprofile"
+        MIME_TYPE_MAP["rdf"] = "application/rdf+xml"
+        MIME_TYPE_MAP["rdz"] = "application/vnd.data-vision.rdz"
+        MIME_TYPE_MAP["rep"] = "application/vnd.businessobjects"
+        MIME_TYPE_MAP["res"] = "application/x-dtbresource+xml"
+        MIME_TYPE_MAP["rgb"] = "image/x-rgb"
+        MIME_TYPE_MAP["rif"] = "application/reginfo+xml"
+        MIME_TYPE_MAP["rip"] = "audio/vnd.rip"
+        MIME_TYPE_MAP["ris"] = "application/x-research-info-systems"
+        MIME_TYPE_MAP["rl"] = "application/resource-lists+xml"
+        MIME_TYPE_MAP["rlc"] = "image/vnd.fujixerox.edmics-rlc"
+        MIME_TYPE_MAP["rld"] = "application/resource-lists-diff+xml"
+        MIME_TYPE_MAP["rm"] = "application/vnd.rn-realmedia"
+        MIME_TYPE_MAP["rmi"] = "audio/midi"
+        MIME_TYPE_MAP["rmp"] = "audio/x-pn-realaudio-plugin"
+        MIME_TYPE_MAP["rms"] = "application/vnd.jcp.javame.midlet-rms"
+        MIME_TYPE_MAP["rmvb"] = "application/vnd.rn-realmedia-vbr"
+        MIME_TYPE_MAP["rnc"] = "application/relax-ng-compact-syntax"
+        MIME_TYPE_MAP["roa"] = "application/rpki-roa"
+        MIME_TYPE_MAP["roff"] = "text/troff"
+        MIME_TYPE_MAP["rp9"] = "application/vnd.cloanto.rp9"
+        MIME_TYPE_MAP["rpss"] = "application/vnd.nokia.radio-presets"
+        MIME_TYPE_MAP["rpst"] = "application/vnd.nokia.radio-preset"
+        MIME_TYPE_MAP["rq"] = "application/sparql-query"
+        MIME_TYPE_MAP["rs"] = "application/rls-services+xml"
+        MIME_TYPE_MAP["rsd"] = "application/rsd+xml"
+        MIME_TYPE_MAP["rss"] = "application/rss+xml"
+        MIME_TYPE_MAP["rtf"] = "application/rtf"
+        MIME_TYPE_MAP["rtx"] = "text/richtext"
+        MIME_TYPE_MAP["s"] = "text/x-asm"
+        MIME_TYPE_MAP["s3m"] = "audio/s3m"
+        MIME_TYPE_MAP["saf"] = "application/vnd.yamaha.smaf-audio"
+        MIME_TYPE_MAP["sbml"] = "application/sbml+xml"
+        MIME_TYPE_MAP["sc"] = "application/vnd.ibm.secure-container"
+        MIME_TYPE_MAP["scd"] = "application/x-msschedule"
+        MIME_TYPE_MAP["scm"] = "application/vnd.lotus-screencam"
+        MIME_TYPE_MAP["scq"] = "application/scvp-cv-request"
+        MIME_TYPE_MAP["scs"] = "application/scvp-cv-response"
+        MIME_TYPE_MAP["scurl"] = "text/vnd.curl.scurl"
+        MIME_TYPE_MAP["sda"] = "application/vnd.stardivision.draw"
+        MIME_TYPE_MAP["sdc"] = "application/vnd.stardivision.calc"
+        MIME_TYPE_MAP["sdd"] = "application/vnd.stardivision.impress"
+        MIME_TYPE_MAP["sdkd"] = "application/vnd.solent.sdkm+xml"
+        MIME_TYPE_MAP["sdkm"] = "application/vnd.solent.sdkm+xml"
+        MIME_TYPE_MAP["sdp"] = "application/sdp"
+        MIME_TYPE_MAP["sdw"] = "application/vnd.stardivision.writer"
+        MIME_TYPE_MAP["see"] = "application/vnd.seemail"
+        MIME_TYPE_MAP["seed"] = "application/vnd.fdsn.seed"
+        MIME_TYPE_MAP["sema"] = "application/vnd.sema"
+        MIME_TYPE_MAP["semd"] = "application/vnd.semd"
+        MIME_TYPE_MAP["semf"] = "application/vnd.semf"
+        MIME_TYPE_MAP["ser"] = "application/java-serialized-object"
+        MIME_TYPE_MAP["setpay"] = "application/set-payment-initiation"
+        MIME_TYPE_MAP["setreg"] = "application/set-registration-initiation"
+        MIME_TYPE_MAP["sfd-hdstx"] = "application/vnd.hydrostatix.sof-data"
+        MIME_TYPE_MAP["sfs"] = "application/vnd.spotfire.sfs"
+        MIME_TYPE_MAP["sfv"] = "text/x-sfv"
+        MIME_TYPE_MAP["sgi"] = "image/sgi"
+        MIME_TYPE_MAP["sgl"] = "application/vnd.stardivision.writer-global"
+        MIME_TYPE_MAP["sgm"] = "text/sgml"
+        MIME_TYPE_MAP["sgml"] = "text/sgml"
+        MIME_TYPE_MAP["sh"] = "application/x-sh"
+        MIME_TYPE_MAP["shar"] = "application/x-shar"
+        MIME_TYPE_MAP["shf"] = "application/shf+xml"
+        MIME_TYPE_MAP["sid"] = "image/x-mrsid-image"
+        MIME_TYPE_MAP["sig"] = "application/pgp-signature"
+        MIME_TYPE_MAP["sil"] = "audio/silk"
+        MIME_TYPE_MAP["silo"] = "model/mesh"
+        MIME_TYPE_MAP["sis"] = "application/vnd.symbian.install"
+        MIME_TYPE_MAP["sisx"] = "application/vnd.symbian.install"
+        MIME_TYPE_MAP["sit"] = "application/x-stuffit"
+        MIME_TYPE_MAP["sitx"] = "application/x-stuffitx"
+        MIME_TYPE_MAP["skd"] = "application/vnd.koan"
+        MIME_TYPE_MAP["skm"] = "application/vnd.koan"
+        MIME_TYPE_MAP["skp"] = "application/vnd.koan"
+        MIME_TYPE_MAP["skt"] = "application/vnd.koan"
+        MIME_TYPE_MAP["sldm"] = "application/vnd.ms-powerpoint.slide.macroenabled.12"
+        MIME_TYPE_MAP["sldx"] = "application/vnd.openxmlformats-officedocument.presentationml.slide"
+        MIME_TYPE_MAP["slt"] = "application/vnd.epson.salt"
+        MIME_TYPE_MAP["sm"] = "application/vnd.stepmania.stepchart"
+        MIME_TYPE_MAP["smf"] = "application/vnd.stardivision.math"
+        MIME_TYPE_MAP["smi"] = "application/smil+xml"
+        MIME_TYPE_MAP["smil"] = "application/smil+xml"
+        MIME_TYPE_MAP["smv"] = "video/x-smv"
+        MIME_TYPE_MAP["smzip"] = "application/vnd.stepmania.package"
+        MIME_TYPE_MAP["snd"] = "audio/basic"
+        MIME_TYPE_MAP["snf"] = "application/x-font-snf"
+        MIME_TYPE_MAP["so"] = "application/octet-stream"
+        MIME_TYPE_MAP["spc"] = "application/x-pkcs7-certificates"
+        MIME_TYPE_MAP["spf"] = "application/vnd.yamaha.smaf-phrase"
+        MIME_TYPE_MAP["spl"] = "application/x-futuresplash"
+        MIME_TYPE_MAP["spot"] = "text/vnd.in3d.spot"
+        MIME_TYPE_MAP["spp"] = "application/scvp-vp-response"
+        MIME_TYPE_MAP["spq"] = "application/scvp-vp-request"
+        MIME_TYPE_MAP["spx"] = "audio/ogg"
+        MIME_TYPE_MAP["sql"] = "application/x-sql"
+        MIME_TYPE_MAP["src"] = "application/x-wais-source"
+        MIME_TYPE_MAP["srt"] = "application/x-subrip"
+        MIME_TYPE_MAP["sru"] = "application/sru+xml"
+        MIME_TYPE_MAP["srx"] = "application/sparql-results+xml"
+        MIME_TYPE_MAP["ssdl"] = "application/ssdl+xml"
+        MIME_TYPE_MAP["sse"] = "application/vnd.kodak-descriptor"
+        MIME_TYPE_MAP["ssf"] = "application/vnd.epson.ssf"
+        MIME_TYPE_MAP["ssml"] = "application/ssml+xml"
+        MIME_TYPE_MAP["st"] = "application/vnd.sailingtracker.track"
+        MIME_TYPE_MAP["stc"] = "application/vnd.sun.xml.calc.template"
+        MIME_TYPE_MAP["std"] = "application/vnd.sun.xml.draw.template"
+        MIME_TYPE_MAP["stf"] = "application/vnd.wt.stf"
+        MIME_TYPE_MAP["sti"] = "application/vnd.sun.xml.impress.template"
+        MIME_TYPE_MAP["stk"] = "application/hyperstudio"
+        MIME_TYPE_MAP["stl"] = "application/vnd.ms-pki.stl"
+        MIME_TYPE_MAP["str"] = "application/vnd.pg.format"
+        MIME_TYPE_MAP["stw"] = "application/vnd.sun.xml.writer.template"
+        MIME_TYPE_MAP["sub"] = "text/vnd.dvb.subtitle"
+        MIME_TYPE_MAP["sus"] = "application/vnd.sus-calendar"
+        MIME_TYPE_MAP["susp"] = "application/vnd.sus-calendar"
+        MIME_TYPE_MAP["sv4cpio"] = "application/x-sv4cpio"
+        MIME_TYPE_MAP["sv4crc"] = "application/x-sv4crc"
+        MIME_TYPE_MAP["svc"] = "application/vnd.dvb.service"
+        MIME_TYPE_MAP["svd"] = "application/vnd.svd"
+        MIME_TYPE_MAP["svg"] = "image/svg+xml"
+        MIME_TYPE_MAP["svgz"] = "image/svg+xml"
+        MIME_TYPE_MAP["swa"] = "application/x-director"
+        MIME_TYPE_MAP["swf"] = "application/x-shockwave-flash"
+        MIME_TYPE_MAP["swi"] = "application/vnd.aristanetworks.swi"
+        MIME_TYPE_MAP["sxc"] = "application/vnd.sun.xml.calc"
+        MIME_TYPE_MAP["sxd"] = "application/vnd.sun.xml.draw"
+        MIME_TYPE_MAP["sxg"] = "application/vnd.sun.xml.writer.global"
+        MIME_TYPE_MAP["sxi"] = "application/vnd.sun.xml.impress"
+        MIME_TYPE_MAP["sxm"] = "application/vnd.sun.xml.math"
+        MIME_TYPE_MAP["sxw"] = "application/vnd.sun.xml.writer"
+        MIME_TYPE_MAP["t"] = "text/troff"
+        MIME_TYPE_MAP["t3"] = "application/x-t3vm-image"
+        MIME_TYPE_MAP["taglet"] = "application/vnd.mynfc"
+        MIME_TYPE_MAP["tao"] = "application/vnd.tao.intent-module-archive"
+        MIME_TYPE_MAP["tar"] = "application/x-tar"
+        MIME_TYPE_MAP["tcap"] = "application/vnd.3gpp2.tcap"
+        MIME_TYPE_MAP["tcl"] = "application/x-tcl"
+        MIME_TYPE_MAP["teacher"] = "application/vnd.smart.teacher"
+        MIME_TYPE_MAP["tei"] = "application/tei+xml"
+        MIME_TYPE_MAP["teicorpus"] = "application/tei+xml"
+        MIME_TYPE_MAP["tex"] = "application/x-tex"
+        MIME_TYPE_MAP["texi"] = "application/x-texinfo"
+        MIME_TYPE_MAP["texinfo"] = "application/x-texinfo"
+        MIME_TYPE_MAP["text"] = "text/plain"
+        MIME_TYPE_MAP["tfi"] = "application/thraud+xml"
+        MIME_TYPE_MAP["tfm"] = "application/x-tex-tfm"
+        MIME_TYPE_MAP["tga"] = "image/x-tga"
+        MIME_TYPE_MAP["thmx"] = "application/vnd.ms-officetheme"
+        MIME_TYPE_MAP["tif"] = "image/tiff"
+        MIME_TYPE_MAP["tiff"] = "image/tiff"
+        MIME_TYPE_MAP["tmo"] = "application/vnd.tmobile-livetv"
+        MIME_TYPE_MAP["torrent"] = "application/x-bittorrent"
+        MIME_TYPE_MAP["tpl"] = "application/vnd.groove-tool-template"
+        MIME_TYPE_MAP["tpt"] = "application/vnd.trid.tpt"
+        MIME_TYPE_MAP["tr"] = "text/troff"
+        MIME_TYPE_MAP["tra"] = "application/vnd.trueapp"
+        MIME_TYPE_MAP["trm"] = "application/x-msterminal"
+        MIME_TYPE_MAP["tsd"] = "application/timestamped-data"
+        MIME_TYPE_MAP["tsv"] = "text/tab-separated-values"
+        MIME_TYPE_MAP["ttc"] = "application/x-font-ttf"
+        MIME_TYPE_MAP["ttf"] = "application/x-font-ttf"
+        MIME_TYPE_MAP["ttl"] = "text/turtle"
+        MIME_TYPE_MAP["twd"] = "application/vnd.simtech-mindmapper"
+        MIME_TYPE_MAP["twds"] = "application/vnd.simtech-mindmapper"
+        MIME_TYPE_MAP["txd"] = "application/vnd.genomatix.tuxedo"
+        MIME_TYPE_MAP["txf"] = "application/vnd.mobius.txf"
+        MIME_TYPE_MAP["txt"] = "text/plain"
+        MIME_TYPE_MAP["u32"] = "application/x-authorware-bin"
+        MIME_TYPE_MAP["udeb"] = "application/x-debian-package"
+        MIME_TYPE_MAP["ufd"] = "application/vnd.ufdl"
+        MIME_TYPE_MAP["ufdl"] = "application/vnd.ufdl"
+        MIME_TYPE_MAP["ulx"] = "application/x-glulx"
+        MIME_TYPE_MAP["umj"] = "application/vnd.umajin"
+        MIME_TYPE_MAP["unityweb"] = "application/vnd.unity"
+        MIME_TYPE_MAP["uoml"] = "application/vnd.uoml+xml"
+        MIME_TYPE_MAP["uri"] = "text/uri-list"
+        MIME_TYPE_MAP["uris"] = "text/uri-list"
+        MIME_TYPE_MAP["urls"] = "text/uri-list"
+        MIME_TYPE_MAP["ustar"] = "application/x-ustar"
+        MIME_TYPE_MAP["utz"] = "application/vnd.uiq.theme"
+        MIME_TYPE_MAP["uu"] = "text/x-uuencode"
+        MIME_TYPE_MAP["uva"] = "audio/vnd.dece.audio"
+        MIME_TYPE_MAP["uvd"] = "application/vnd.dece.data"
+        MIME_TYPE_MAP["uvf"] = "application/vnd.dece.data"
+        MIME_TYPE_MAP["uvg"] = "image/vnd.dece.graphic"
+        MIME_TYPE_MAP["uvh"] = "video/vnd.dece.hd"
+        MIME_TYPE_MAP["uvi"] = "image/vnd.dece.graphic"
+        MIME_TYPE_MAP["uvm"] = "video/vnd.dece.mobile"
+        MIME_TYPE_MAP["uvp"] = "video/vnd.dece.pd"
+        MIME_TYPE_MAP["uvs"] = "video/vnd.dece.sd"
+        MIME_TYPE_MAP["uvt"] = "application/vnd.dece.ttml+xml"
+        MIME_TYPE_MAP["uvu"] = "video/vnd.uvvu.mp4"
+        MIME_TYPE_MAP["uvv"] = "video/vnd.dece.video"
+        MIME_TYPE_MAP["uvva"] = "audio/vnd.dece.audio"
+        MIME_TYPE_MAP["uvvd"] = "application/vnd.dece.data"
+        MIME_TYPE_MAP["uvvf"] = "application/vnd.dece.data"
+        MIME_TYPE_MAP["uvvg"] = "image/vnd.dece.graphic"
+        MIME_TYPE_MAP["uvvh"] = "video/vnd.dece.hd"
+        MIME_TYPE_MAP["uvvi"] = "image/vnd.dece.graphic"
+        MIME_TYPE_MAP["uvvm"] = "video/vnd.dece.mobile"
+        MIME_TYPE_MAP["uvvp"] = "video/vnd.dece.pd"
+        MIME_TYPE_MAP["uvvs"] = "video/vnd.dece.sd"
+        MIME_TYPE_MAP["uvvt"] = "application/vnd.dece.ttml+xml"
+        MIME_TYPE_MAP["uvvu"] = "video/vnd.uvvu.mp4"
+        MIME_TYPE_MAP["uvvv"] = "video/vnd.dece.video"
+        MIME_TYPE_MAP["uvvx"] = "application/vnd.dece.unspecified"
+        MIME_TYPE_MAP["uvvz"] = "application/vnd.dece.zip"
+        MIME_TYPE_MAP["uvx"] = "application/vnd.dece.unspecified"
+        MIME_TYPE_MAP["uvz"] = "application/vnd.dece.zip"
+        MIME_TYPE_MAP["vcard"] = "text/vcard"
+        MIME_TYPE_MAP["vcd"] = "application/x-cdlink"
+        MIME_TYPE_MAP["vcf"] = "text/x-vcard"
+        MIME_TYPE_MAP["vcg"] = "application/vnd.groove-vcard"
+        MIME_TYPE_MAP["vcs"] = "text/x-vcalendar"
+        MIME_TYPE_MAP["vcx"] = "application/vnd.vcx"
+        MIME_TYPE_MAP["vis"] = "application/vnd.visionary"
+        MIME_TYPE_MAP["viv"] = "video/vnd.vivo"
+        MIME_TYPE_MAP["vob"] = "video/x-ms-vob"
+        MIME_TYPE_MAP["vor"] = "application/vnd.stardivision.writer"
+        MIME_TYPE_MAP["vox"] = "application/x-authorware-bin"
+        MIME_TYPE_MAP["vrml"] = "model/vrml"
+        MIME_TYPE_MAP["vsd"] = "application/vnd.visio"
+        MIME_TYPE_MAP["vsf"] = "application/vnd.vsf"
+        MIME_TYPE_MAP["vss"] = "application/vnd.visio"
+        MIME_TYPE_MAP["vst"] = "application/vnd.visio"
+        MIME_TYPE_MAP["vsw"] = "application/vnd.visio"
+        MIME_TYPE_MAP["vtu"] = "model/vnd.vtu"
+        MIME_TYPE_MAP["vxml"] = "application/voicexml+xml"
+        MIME_TYPE_MAP["w3d"] = "application/x-director"
+        MIME_TYPE_MAP["wad"] = "application/x-doom"
+        MIME_TYPE_MAP["wav"] = "audio/x-wav"
+        MIME_TYPE_MAP["wax"] = "audio/x-ms-wax"
+        MIME_TYPE_MAP["wbmp"] = "image/vnd.wap.wbmp"
+        MIME_TYPE_MAP["wbs"] = "application/vnd.criticaltools.wbs+xml"
+        MIME_TYPE_MAP["wbxml"] = "application/vnd.wap.wbxml"
+        MIME_TYPE_MAP["wcm"] = "application/vnd.ms-works"
+        MIME_TYPE_MAP["wdb"] = "application/vnd.ms-works"
+        MIME_TYPE_MAP["wdp"] = "image/vnd.ms-photo"
+        MIME_TYPE_MAP["weba"] = "audio/webm"
+        MIME_TYPE_MAP["webm"] = "video/webm"
+        MIME_TYPE_MAP["webp"] = "image/webp"
+        MIME_TYPE_MAP["wg"] = "application/vnd.pmi.widget"
+        MIME_TYPE_MAP["wgt"] = "application/widget"
+        MIME_TYPE_MAP["wks"] = "application/vnd.ms-works"
+        MIME_TYPE_MAP["wm"] = "video/x-ms-wm"
+        MIME_TYPE_MAP["wma"] = "audio/x-ms-wma"
+        MIME_TYPE_MAP["wmd"] = "application/x-ms-wmd"
+        MIME_TYPE_MAP["wmf"] = "application/x-msmetafile"
+        MIME_TYPE_MAP["wml"] = "text/vnd.wap.wml"
+        MIME_TYPE_MAP["wmlc"] = "application/vnd.wap.wmlc"
+        MIME_TYPE_MAP["wmls"] = "text/vnd.wap.wmlscript"
+        MIME_TYPE_MAP["wmlsc"] = "application/vnd.wap.wmlscriptc"
+        MIME_TYPE_MAP["wmv"] = "video/x-ms-wmv"
+        MIME_TYPE_MAP["wmx"] = "video/x-ms-wmx"
+        MIME_TYPE_MAP["wmz"] = "application/x-msmetafile"
+        MIME_TYPE_MAP["woff"] = "application/font-woff"
+        MIME_TYPE_MAP["wpd"] = "application/vnd.wordperfect"
+        MIME_TYPE_MAP["wpl"] = "application/vnd.ms-wpl"
+        MIME_TYPE_MAP["wps"] = "application/vnd.ms-works"
+        MIME_TYPE_MAP["wqd"] = "application/vnd.wqd"
+        MIME_TYPE_MAP["wri"] = "application/x-mswrite"
+        MIME_TYPE_MAP["wrl"] = "model/vrml"
+        MIME_TYPE_MAP["wsdl"] = "application/wsdl+xml"
+        MIME_TYPE_MAP["wspolicy"] = "application/wspolicy+xml"
+        MIME_TYPE_MAP["wtb"] = "application/vnd.webturbo"
+        MIME_TYPE_MAP["wvx"] = "video/x-ms-wvx"
+        MIME_TYPE_MAP["x32"] = "application/x-authorware-bin"
+        MIME_TYPE_MAP["x3d"] = "model/x3d+xml"
+        MIME_TYPE_MAP["x3db"] = "model/x3d+binary"
+        MIME_TYPE_MAP["x3dbz"] = "model/x3d+binary"
+        MIME_TYPE_MAP["x3dv"] = "model/x3d+vrml"
+        MIME_TYPE_MAP["x3dvz"] = "model/x3d+vrml"
+        MIME_TYPE_MAP["x3dz"] = "model/x3d+xml"
+        MIME_TYPE_MAP["xaml"] = "application/xaml+xml"
+        MIME_TYPE_MAP["xap"] = "application/x-silverlight-app"
+        MIME_TYPE_MAP["xar"] = "application/vnd.xara"
+        MIME_TYPE_MAP["xbap"] = "application/x-ms-xbap"
+        MIME_TYPE_MAP["xbd"] = "application/vnd.fujixerox.docuworks.binder"
+        MIME_TYPE_MAP["xbm"] = "image/x-xbitmap"
+        MIME_TYPE_MAP["xdf"] = "application/xcap-diff+xml"
+        MIME_TYPE_MAP["xdm"] = "application/vnd.syncml.dm+xml"
+        MIME_TYPE_MAP["xdp"] = "application/vnd.adobe.xdp+xml"
+        MIME_TYPE_MAP["xdssc"] = "application/dssc+xml"
+        MIME_TYPE_MAP["xdw"] = "application/vnd.fujixerox.docuworks"
+        MIME_TYPE_MAP["xenc"] = "application/xenc+xml"
+        MIME_TYPE_MAP["xer"] = "application/patch-ops-error+xml"
+        MIME_TYPE_MAP["xfdf"] = "application/vnd.adobe.xfdf"
+        MIME_TYPE_MAP["xfdl"] = "application/vnd.xfdl"
+        MIME_TYPE_MAP["xht"] = "application/xhtml+xml"
+        MIME_TYPE_MAP["xhtml"] = "application/xhtml+xml"
+        MIME_TYPE_MAP["xhvml"] = "application/xv+xml"
+        MIME_TYPE_MAP["xif"] = "image/vnd.xiff"
+        MIME_TYPE_MAP["xla"] = "application/vnd.ms-excel"
+        MIME_TYPE_MAP["xlam"] = "application/vnd.ms-excel.addin.macroenabled.12"
+        MIME_TYPE_MAP["xlc"] = "application/vnd.ms-excel"
+        MIME_TYPE_MAP["xlf"] = "application/x-xliff+xml"
+        MIME_TYPE_MAP["xlm"] = "application/vnd.ms-excel"
+        MIME_TYPE_MAP["xls"] = "application/vnd.ms-excel"
+        MIME_TYPE_MAP["xlsb"] = "application/vnd.ms-excel.sheet.binary.macroenabled.12"
+        MIME_TYPE_MAP["xlsm"] = "application/vnd.ms-excel.sheet.macroenabled.12"
+        MIME_TYPE_MAP["xlsx"] = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        MIME_TYPE_MAP["xlt"] = "application/vnd.ms-excel"
+        MIME_TYPE_MAP["xltm"] = "application/vnd.ms-excel.template.macroenabled.12"
+        MIME_TYPE_MAP["xltx"] = "application/vnd.openxmlformats-officedocument.spreadsheetml.template"
+        MIME_TYPE_MAP["xlw"] = "application/vnd.ms-excel"
+        MIME_TYPE_MAP["xm"] = "audio/xm"
+        MIME_TYPE_MAP["xml"] = "application/xml"
+        MIME_TYPE_MAP["xo"] = "application/vnd.olpc-sugar"
+        MIME_TYPE_MAP["xop"] = "application/xop+xml"
+        MIME_TYPE_MAP["xpi"] = "application/x-xpinstall"
+        MIME_TYPE_MAP["xpl"] = "application/xproc+xml"
+        MIME_TYPE_MAP["xpm"] = "image/x-xpixmap"
+        MIME_TYPE_MAP["xpr"] = "application/vnd.is-xpr"
+        MIME_TYPE_MAP["xps"] = "application/vnd.ms-xpsdocument"
+        MIME_TYPE_MAP["xpw"] = "application/vnd.intercon.formnet"
+        MIME_TYPE_MAP["xpx"] = "application/vnd.intercon.formnet"
+        MIME_TYPE_MAP["xsl"] = "application/xml"
+        MIME_TYPE_MAP["xslt"] = "application/xslt+xml"
+        MIME_TYPE_MAP["xsm"] = "application/vnd.syncml+xml"
+        MIME_TYPE_MAP["xspf"] = "application/xspf+xml"
+        MIME_TYPE_MAP["xul"] = "application/vnd.mozilla.xul+xml"
+        MIME_TYPE_MAP["xvm"] = "application/xv+xml"
+        MIME_TYPE_MAP["xvml"] = "application/xv+xml"
+        MIME_TYPE_MAP["xwd"] = "image/x-xwindowdump"
+        MIME_TYPE_MAP["xyz"] = "chemical/x-xyz"
+        MIME_TYPE_MAP["xz"] = "application/x-xz"
+        MIME_TYPE_MAP["yang"] = "application/yang"
+        MIME_TYPE_MAP["yin"] = "application/yin+xml"
+        MIME_TYPE_MAP["z1"] = "application/x-zmachine"
+        MIME_TYPE_MAP["z2"] = "application/x-zmachine"
+        MIME_TYPE_MAP["z3"] = "application/x-zmachine"
+        MIME_TYPE_MAP["z4"] = "application/x-zmachine"
+        MIME_TYPE_MAP["z5"] = "application/x-zmachine"
+        MIME_TYPE_MAP["z6"] = "application/x-zmachine"
+        MIME_TYPE_MAP["z7"] = "application/x-zmachine"
+        MIME_TYPE_MAP["z8"] = "application/x-zmachine"
+        MIME_TYPE_MAP["zaz"] = "application/vnd.zzazz.deck+xml"
+        MIME_TYPE_MAP["zip"] = "application/zip"
+        MIME_TYPE_MAP["zir"] = "application/vnd.zul"
+        MIME_TYPE_MAP["zirz"] = "application/vnd.zul"
+        MIME_TYPE_MAP["zmm"] = "application/vnd.handheld-entertainment+xml"
+        MIME_TYPE_MAP["123"] = "application/vnd.lotus-1-2-3"
     }
 }

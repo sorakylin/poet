@@ -20,5 +20,12 @@ public interface PoetAccessRouter {
 
     Navigation routing(String module, String name);
 
+    /**
+     * 组合文件存储路径+文件路径
+     * 一般来说只有本地文件系统才能用到
+     *
+     * @param key 文件的key , 抽象路径
+     * @return 文件的完整路径
+     */
     String formatKey(String key);
 }

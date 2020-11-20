@@ -1,67 +1,50 @@
-package com.skypyb.poet.spring.boot.core.client;
+package com.skypyb.poet.spring.boot.core.client
 
-import com.skypyb.poet.spring.boot.core.model.Navigation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
+import com.skypyb.poet.spring.boot.core.model.Navigation
+import org.slf4j.LoggerFactory
+import java.io.File
+import java.util.regex.Matcher
 
-import java.io.File;
-import java.util.Arrays;
-import java.util.regex.Matcher;
-import java.util.stream.Collectors;
+class DefaultPoetAccessRouter : PoetAccessRouter {
 
-public class DefaultPoetAccessRouter implements PoetAccessRouter {
-
-    private static Logger logger = LoggerFactory.getLogger(DefaultPoetAccessRouter.class);
-
-    private PoetAnnexSlicer slicer = PoetAnnexSlicer.DEFAULT_SLICER;
-    private String delimiter = PoetAnnexSlicer.DELIMITER;
-    private String storageLocation;
-    private String defaultModule;
-
-    @Override
-    public void setStorageLocation(String storageLocation) {
-        this.storageLocation = storageLocation.endsWith(delimiter) ? storageLocation.substring(0, storageLocation.length() - 1) : storageLocation;
+    companion object {
+        private val logger = LoggerFactory.getLogger(DefaultPoetAccessRouter::class.java)
     }
 
-    @Override
-    public void setDefaultModule(String module) {
-        this.defaultModule = defaultModule;
+    private var slicer = PoetAnnexSlicer.DEFAULT_SLICER
+    private var delimiter = PoetAnnexSlicer.DELIMITER
+    private var storageLocation: String? = null
+    private var defaultModule: String? = null
+
+    override fun setStorageLocation(storageLocation: String) {
+        this.storageLocation = if (storageLocation.endsWith(delimiter)) storageLocation.substring(0, storageLocation.length - 1) else storageLocation
     }
 
-    @Override
-    public void setSlicer(PoetAnnexSlicer slicer) {
-        this.slicer = slicer;
+    override fun setDefaultModule(module: String) {
+        this.defaultModule = module
     }
 
-    @Override
-    public void setDelimiter(String delimiter) {
-        this.delimiter = delimiter;
+    override fun setSlicer(slicer: PoetAnnexSlicer) {
+        this.slicer = slicer
     }
 
-    @Override
-    public String getDelimiter() {
-        return delimiter;
+    override fun setDelimiter(delimiter: String) {
+        this.delimiter = delimiter
     }
 
-    @Override
-    public Navigation routing(String module, String name) {
-        if (!StringUtils.hasText(module)) {
-            module = this.defaultModule;
-        }
+    override fun getDelimiter(): String {
+        return delimiter
+    }
 
-        Navigation navigation = new Navigation();
-        navigation.setName(name);
-        navigation.setModule(module);
+    override fun routing(module: String, name: String): Navigation {
 
-        final String[] pathArray = this.slicer.slicePath(module, name);
+        val practicalModule: String = module.ifBlank { defaultModule ?: "" }
 
-        final String path = Arrays.stream(pathArray).collect(Collectors.joining(delimiter));
-        navigation.setPath(path);
+        val path = slicer.slicePath(practicalModule, name).joinToString(delimiter)
 
-        final String fullPath = formatKey(path);
-        navigation.setFullPath(fullPath);
-        return navigation;
+        val navigation = Navigation(name, practicalModule, path, formatKey(path))
+
+        return navigation
     }
 
     /**
@@ -73,15 +56,16 @@ public class DefaultPoetAccessRouter implements PoetAccessRouter {
      * @param key 文件标识
      * @return 可直接定位到本机具体文件路径的地址
      */
-    @Override
-    public String formatKey(String key) {
-        if (key.startsWith(delimiter)) key = key.substring(1);
+    override fun formatKey(key: String): String {
 
-        String path = this.storageLocation.concat(delimiter).concat(key);
-        logger.debug("Poet format key result: {}.", key);
-        path = path.replaceAll(this.delimiter, Matcher.quoteReplacement(File.separator));
-        path = path.replaceAll(File.separator.concat(File.separator), Matcher.quoteReplacement(File.separator));
+        val abstractPath: String = if (key.startsWith(delimiter)) key.substring(1) else key
 
-        return path;
+        var path: String = storageLocation + delimiter + abstractPath
+
+        path = path.replace(delimiter.toRegex(), Matcher.quoteReplacement(File.separator))
+        path = path.replace(File.separator + File.separator, Matcher.quoteReplacement(File.separator))
+
+        logger.debug("Poet format key result ==>  key:{} path:{}", key, path)
+        return path
     }
 }

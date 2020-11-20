@@ -1,60 +1,39 @@
-package com.skypyb.poet.spring.boot.core.exception;
+package com.skypyb.poet.spring.boot.core.exception
 
-import java.nio.file.Path;
+import java.nio.file.Path
 
 /**
  * 附件访问异常
  */
-public class AnnexAccessException extends RuntimeException {
+class AnnexAccessException : RuntimeException {
 
-    private String path;
+    var path: String? = null
+    var msg: String? = null
 
-    private String msg;
+    constructor()
 
-    public AnnexAccessException() {
-
+    constructor(message: String?) : super(message) {
+        msg = message
     }
 
-    public AnnexAccessException(String message) {
-        super(message);
-        this.msg = message;
+    constructor(message: String?, cause: Throwable?) : super(message, cause) {
+        msg = message
     }
 
-    public AnnexAccessException(String message, Throwable cause) {
-        super(message, cause);
-        this.msg = message;
+    fun message(message: String?): AnnexAccessException {
+        msg = message
+        return this
     }
 
-    public static AnnexAccessException ofPath(Path path) {
-        return ofPath(path.toString());
+    companion object {
+        fun ofPath(path: Path): AnnexAccessException {
+            return ofPath(path.toString())
+        }
+
+        fun ofPath(path: String?): AnnexAccessException {
+            val e = AnnexAccessException()
+            e.path = path
+            return e
+        }
     }
-
-    public static AnnexAccessException ofPath(String path) {
-        AnnexAccessException e = new AnnexAccessException();
-        e.setPath(path);
-        return e;
-    }
-
-    public AnnexAccessException message(String msg) {
-        setMsg(msg);
-        return this;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
-
-
 }
