@@ -20,7 +20,7 @@ class DefaultPoetAccessRouter : PoetAccessRouter {
         this.storageLocation = if (storageLocation.endsWith(delimiter)) storageLocation.substring(0, storageLocation.length - 1) else storageLocation
     }
 
-    override fun setDefaultModule(module: String) {
+    override fun setDefaultModule(module: String?) {
         this.defaultModule = module
     }
 
