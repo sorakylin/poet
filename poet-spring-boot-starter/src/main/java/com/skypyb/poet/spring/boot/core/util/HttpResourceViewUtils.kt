@@ -1,29 +1,25 @@
 package com.skypyb.poet.spring.boot.core.util
 
 import org.springframework.util.StringUtils
-import java.util.*
 
 object HttpResourceViewUtils {
 
     //http://svn.apache.org/repos/asf/httpd/httpd/trunk/docs/conf/mime.types
-    private val MIME_TYPE_MAP = HashMap<String, String>()
+    private val MIME_TYPE_MAP = mutableMapOf<String, String>()
 
-    @JvmStatic
     fun getContentTypeForSuffix(fileName: String): String {
         return if (!StringUtils.hasText(fileName)) "" else MIME_TYPE_MAP.getOrDefault(splitSuffix(fileName), "")
     }
 
-    @JvmStatic
     fun splitSuffix(fileName: String): String {
         if (!StringUtils.hasText(fileName)) return ""
         //未知后缀
-        if (fileName.indexOf(".") == -1) return "unknown"
+        if (!fileName.contains('.')) return "unknown"
         if (fileName.lastIndexOf(".") == 0) return fileName.substring(1)
-        val split = fileName.split("\\.").toTypedArray()
-        return split[split.size - 1]
+
+        return fileName.split(".").last()
     }
 
-    @JvmStatic
     fun getETag(lastModified: Long, length: Long): String {
         return lastModified.toString(16) + '-' + length.toString(16)
     }

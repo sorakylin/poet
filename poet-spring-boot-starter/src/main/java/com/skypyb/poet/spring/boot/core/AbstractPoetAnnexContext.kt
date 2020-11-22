@@ -6,7 +6,7 @@ import com.skypyb.poet.spring.boot.core.exception.AnnexOperationException
 import com.skypyb.poet.spring.boot.core.model.PoetAnnex
 import com.skypyb.poet.spring.boot.core.store.PoetAnnexNameGenerator
 import com.skypyb.poet.spring.boot.core.store.PoetAnnexRepository
-import com.skypyb.poet.spring.boot.core.util.HttpResourceViewUtils.splitSuffix
+import com.skypyb.poet.spring.boot.core.util.HttpResourceViewUtils
 import org.springframework.beans.BeansException
 import org.springframework.context.ApplicationContext
 import org.springframework.context.ApplicationContextAware
@@ -55,7 +55,7 @@ abstract class AbstractPoetAnnexContext : ApplicationContextAware, PoetAnnexCont
 
     private fun nameGenerator(realName: String): String {
         return nameGenerator?.generate()
-                ?.let { StringBuilder(it).append(".").append(splitSuffix(realName)).toString() }
+                ?.let { StringBuilder(it).append(".").append(HttpResourceViewUtils.splitSuffix(realName)).toString() }
                 ?: realName
     }
 

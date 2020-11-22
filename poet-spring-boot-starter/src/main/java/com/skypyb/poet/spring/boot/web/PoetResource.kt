@@ -43,7 +43,7 @@ class PoetResource {
 
 
     @GetMapping("/view/{name}")
-    fun fileView(@PathVariable name: String, response: HttpServletResponse?) {
+    fun fileView(@PathVariable name: String) {
         validateEnable()
         poetAnnexContext.view(name, res())
     }

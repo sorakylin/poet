@@ -7,8 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate
 import java.util.*
 import java.util.stream.Collectors
 
-class MySQLPoetAnnexRepository(jdbcTemplate: JdbcTemplate) : PoetAnnexRepository {
-    val jdbcTemplate = jdbcTemplate
+class MySQLPoetAnnexRepository(private val jdbcTemplate: JdbcTemplate) : PoetAnnexRepository {
     var tableName = "poet_annex"
 
     override fun save(annex: PoetAnnex) {
@@ -21,14 +20,17 @@ class MySQLPoetAnnexRepository(jdbcTemplate: JdbcTemplate) : PoetAnnexRepository
     }
 
     override fun findByName(name: String): PoetAnnex? {
-        val sql = "SELECT \n" +
-                "    `name` AS name,\n" +
-                "    `real_name` AS realName,\n" +
-                "    `suffix` AS suffix,\n" +
-                "    `key` AS key,\n" +
-                "    `length` AS length\n" +
-                "FROM  $tableName\n" +
-                "WHERE `name`=?"
+
+        val sql = """
+            SELECT 
+                `name` AS name,
+                `real_name` AS realName,
+                `suffix` AS suffix,
+                `key` AS key,
+                `length` AS length
+            FROM  $tableName
+            WHERE `name`=?
+        """
         val result = jdbcTemplate.query(sql, arrayOf(name), BeanPropertyRowMapper(DefaultPoetAnnex::class.java))
         return if (result.size == 0) null else result[0]
     }
@@ -36,14 +38,16 @@ class MySQLPoetAnnexRepository(jdbcTemplate: JdbcTemplate) : PoetAnnexRepository
     override fun findByNames(names: Collection<String>): List<PoetAnnex> {
         if (names.isEmpty()) return listOf()
 
-        val sql = "SELECT \n" +
-                "    `name` AS name,\n" +
-                "    `real_name` AS realName,\n" +
-                "    `suffix` AS suffix,\n" +
-                "    `key` AS key,\n" +
-                "    `length` AS length\n" +
-                "FROM $tableName \n" +
-                "WHERE `name` IN (?)"
+        val sql = """
+            SELECT 
+                `name` AS name,
+                `real_name` AS realName,
+                `suffix` AS suffix,
+                `key` AS key,
+                `length` AS length
+            FROM  $tableName
+            WHERE `name` IN (?)
+        """
         val namesString: String = names.joinToString(",")
         return jdbcTemplate.query(sql, arrayOf(namesString), BeanPropertyRowMapper(DefaultPoetAnnex::class.java))
     }
