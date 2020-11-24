@@ -8,10 +8,9 @@ import java.io.InputStream;
 
 /**
  * 具体对附件进行操作的接口
- * 基本的保存、预览、下载功能
  * <p>
  * 所有的操作若不指定模块会路由到默认的文件储存目录下
- * 保存附件时完毕后，所有流都会关掉
+ * 保存附件完毕后，所有流都会关掉
  * <p>
  * 这里的 module 参数, 指的是指定的路径, 如 /temp/img。
  * 如果入参 module 为/temp/img, name 为123.jpg , 则默认会生成 /temp/img/123.jpg 的key
