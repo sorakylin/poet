@@ -14,7 +14,41 @@
     <groupId>com.skypyb.poet</groupId>
     <artifactId>poet-spring-boot-starter</artifactId>
     <name>poet-spring-boot-starter</name>
-    <version>1.0.0.SNAPSHORT</version>
+    <version>v1.0.0</version>
+
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+
+    <licenses>
+        <license>
+            <name>The MIT License</name>
+            <url>https://mit-license.org/</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <tag>master</tag>
+        <url>git@github.com:skypyb/poet.git</url>
+        <connection>scm:git:git@github.com:skypyb/poet.git</connection>
+        <developerConnection>scm:git:git@github.com:skypyb/poet.git</developerConnection>
+    </scm>
+    <developers>
+        <developer>
+            <name>skypyb</name>
+            <email>pyb068@gmail.com</email>
+            <url>www.skypyb.com</url>
+        </developer>
+    </developers>
 
     <properties>
         <module.name>com.skypyb.poet.spring.boot</module.name>
@@ -179,4 +213,119 @@
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>1.6.7</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>ossrh</serverId>
+                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-release-plugin</artifactId>
+                        <version>2.5.3</version>
+                        <configuration>
+                            <autoVersionSubmodules>true</autoVersionSubmodules>
+                            <useReleaseProfile>false</useReleaseProfile>
+                            <releaseProfiles>release</releaseProfiles>
+                            <goals>deploy</goals>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <artifactId>kotlin-maven-plugin</artifactId>
+                        <groupId>org.jetbrains.kotlin</groupId>
+                        <version>${kotlin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>compile</id>
+                                <goals>
+                                    <goal>compile</goal>
+                                </goals>
+                                <configuration>
+                                    <sourceDirs>
+                                        <sourceDir>${project.basedir}/src/main/java</sourceDir>
+                                    </sourceDirs>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>test-compile</id>
+                                <goals>
+                                    <goal>test-compile</goal>
+                                </goals>
+                                <configuration>
+                                    <sourceDirs>
+                                        <sourceDir>${project.basedir}/src/test/kotlin</sourceDir>
+                                    </sourceDirs>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <version>3.5.1</version>
+                        <configuration>
+                            <source>1.8</source>
+                            <target>1.8</target>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.5</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>2.2.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>2.10.4</version>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                                <!-- java8版本导致javadoc打包编译失败时候，添加-->
+                                <configuration>
+                                    <additionalparam>-Xdoclint:none</additionalparam>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

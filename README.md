@@ -53,8 +53,14 @@
 
 <br>
 
-#### 1、首先引入依赖
-
+#### 1、首先通过Maven引入依赖
+```xml
+<dependency>
+  <groupId>com.skypyb.poet</groupId>
+  <artifactId>poet-spring-boot-starter</artifactId>
+  <version>v1.0.0</version>
+</dependency>
+```
 <br>
 
 
@@ -73,39 +79,39 @@ poet:
 
 #### 3、即可开始愉快使用
 
-* 使用上下文进行附件操作
+* 使用上下文进行附件操作  
 
-**例子(保存):** 
-
-```java
-@RestController
-@RequestMapping("/img")
-public class TestResource {
-
-    @Autowired
-    private PoetAnnexContext poetAnnexContext;
-
-    //文件流会安全的关闭
-    @PostMapping("/upload-main")
-    public ResponseEntity uploadMainImage(@RequestParam("file") MultipartFile file) throws IOException {
-
-        //自定义模块(路径)
-        String module = "main/customize1";
-        PoetAnnex save = poetAnnexContext.save(file.getInputStream(), file.getOriginalFilename(), module);
-
-        //上传到默认模块
-//        PoetAnnex save = poetAnnexContext.save(file.getInputStream(), file.getOriginalFilename());
-
-        save.getName();//生成的文件名 全局唯一
-        save.getRealName();//文件原名
-        save.getSuffix(); //后缀
-        save.getKey(); //抽象路径
-        save.getLength(); //文件长度
-
-        return ResponseEntity.ok(save);
+    **例子(保存):** 
+    
+    ```java
+    @RestController
+    @RequestMapping("/img")
+    public class TestResource {
+    
+        @Autowired
+        private PoetAnnexContext poetAnnexContext;
+    
+        //文件流会安全的关闭
+        @PostMapping("/upload-main")
+        public ResponseEntity uploadMainImage(@RequestParam("file") MultipartFile file) throws IOException {
+    
+            //自定义模块(路径)
+            String module = "main/customize1";
+            PoetAnnex save = poetAnnexContext.save(file.getInputStream(), file.getOriginalFilename(), module);
+    
+            //上传到默认模块
+    //        PoetAnnex save = poetAnnexContext.save(file.getInputStream(), file.getOriginalFilename());
+    
+            save.getName();//生成的文件名 全局唯一
+            save.getRealName();//文件原名
+            save.getSuffix(); //后缀
+            save.getKey(); //抽象路径
+            save.getLength(); //文件长度
+    
+            return ResponseEntity.ok(save);
+        }
     }
-}
-```
+    ```
 
 <br>
 
@@ -124,31 +130,31 @@ public class TestResource {
 <br>
 
 * 直接使用附件操作客户端对附件进行操作 (直接操作文件, 不会经过**任何**流程如拦截器、存储 等。 不推荐)
-
-**例子**
-
-```java
-@RestController
-@RequestMapping("/img")
-public class TestResource {
-
-    @Autowired
-    private PoetAnnexClient poetAnnexClient;//基本操作客户端
-    @Autowired
-    private PoetAnnexClientHttpSupport poetAnnexClientHttpSupport; //HTTP支持客户端
-
-    @PostMapping("/upload-main")
-    public ResponseEntity uploadMainImage(@RequestParam("file") MultipartFile file) throws IOException {
-
-        PoetAnnex save = poetAnnexClient.save(file.getInputStream(), file.getOriginalFilename());
-
-        //true
-        Assert.isTrue(Objects.equals(save.getRealName(), save.getName()), "eq");
-
-        return ResponseEntity.ok(save);
+    
+    **例子**
+    
+    ```java
+    @RestController
+    @RequestMapping("/img")
+    public class TestResource {
+    
+        @Autowired
+        private PoetAnnexClient poetAnnexClient;//基本操作客户端
+        @Autowired
+        private PoetAnnexClientHttpSupport poetAnnexClientHttpSupport; //HTTP支持客户端
+    
+        @PostMapping("/upload-main")
+        public ResponseEntity uploadMainImage(@RequestParam("file") MultipartFile file) throws IOException {
+    
+            PoetAnnex save = poetAnnexClient.save(file.getInputStream(), file.getOriginalFilename());
+    
+            //true
+            Assert.isTrue(Objects.equals(save.getRealName(), save.getName()), "eq");
+    
+            return ResponseEntity.ok(save);
+        }
     }
-}
-```
+    ```
 
 
 
