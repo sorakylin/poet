@@ -70,18 +70,16 @@ class PoetResource {
 
     //region -- Business
     @GetMapping("/bs/{name}")
-    fun findAnnex(@PathVariable name: String?): PoetAnnex {
+    fun findAnnex(@PathVariable name: String?): PoetAnnex? {
         validateEnable()
         val annex = poetAnnexRepository!!.findByName(name)
         return annex
     }
 
     @DeleteMapping("/bs/{name}")
-    fun deleteAnnex(@PathVariable name: String?): PoetAnnex {
+    fun deleteAnnex(@PathVariable name: String?): Unit {
         validateEnable()
-        val annex = poetAnnexRepository!!.findByName(name)
-        annex?.let { poetAnnexRepository!!.deleteByName(it.name) }
-        return annex
+        poetAnnexContext.delete(name)
     }
 
     //endregion

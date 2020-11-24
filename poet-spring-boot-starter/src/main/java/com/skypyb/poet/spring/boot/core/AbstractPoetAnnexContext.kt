@@ -1,5 +1,9 @@
 package com.skypyb.poet.spring.boot.core
 
+
+import com.skypyb.poet.spring.boot.core.interceptor.PoetHandlerInterceptor
+import com.skypyb.poet.spring.boot.core.interceptor.PoetHandlerInterceptorChain
+import com.skypyb.poet.spring.boot.core.interceptor.PoetInterceptorChainAware
 import com.skypyb.poet.spring.boot.core.client.PoetAnnexClient
 import com.skypyb.poet.spring.boot.core.client.PoetAnnexClientHttpSupport
 import com.skypyb.poet.spring.boot.core.exception.AnnexOperationException
@@ -7,30 +11,21 @@ import com.skypyb.poet.spring.boot.core.model.PoetAnnex
 import com.skypyb.poet.spring.boot.core.store.PoetAnnexNameGenerator
 import com.skypyb.poet.spring.boot.core.store.PoetAnnexRepository
 import com.skypyb.poet.spring.boot.core.util.HttpResourceViewUtils
-import org.springframework.beans.BeansException
-import org.springframework.context.ApplicationContext
-import org.springframework.context.ApplicationContextAware
-import org.springframework.context.ApplicationEventPublisher
 import java.io.InputStream
-import java.util.*
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 /**
- * 附件操作上下文, 拥有所有对附件操作的机能
+ * 附件操作的整体上下文
+ * 除了拥有所有对附件操作的机能以外,还包含附件信息持久化、拦截器、自定义名称等功能
  */
-abstract class AbstractPoetAnnexContext : ApplicationContextAware, PoetAnnexContext {
+abstract class AbstractPoetAnnexContext : PoetAnnexContext, PoetInterceptorChainAware {
 
-    lateinit var annexClient: PoetAnnexClient
+    private lateinit var annexClient: PoetAnnexClient
 
-    lateinit var annexHttpClient: PoetAnnexClientHttpSupport
-    
-    /**
-     * 是否启用Http支持， 若为false, 则Http相关的操作接口无法使用。 调用时会抛出 [UnsupportedOperationException]
-     *
-     * @see PoetAnnexClientHttpSupport
-     */
-    var isEnableHttpSupport = true
+    private lateinit var annexHttpClient: PoetAnnexClientHttpSupport
+
+    private lateinit var interceptorChain: PoetHandlerInterceptorChain
 
     //名字生成器
     abstract var nameGenerator: PoetAnnexNameGenerator?
@@ -49,9 +44,9 @@ abstract class AbstractPoetAnnexContext : ApplicationContextAware, PoetAnnexCont
         this.annexHttpClient = annexHttpClient
     }
 
-    private fun checkHttpClientEnableState() = if (!isEnableHttpSupport || Objects.isNull(annexHttpClient))
-        throw UnsupportedOperationException("HTTP support is not enabled!") else Unit
-
+    override fun setInterceptorChain(chain: PoetHandlerInterceptorChain) {
+        this.interceptorChain = chain
+    }
 
     private fun nameGenerator(realName: String): String {
         return nameGenerator?.generate()
@@ -59,46 +54,55 @@ abstract class AbstractPoetAnnexContext : ApplicationContextAware, PoetAnnexCont
                 ?: realName
     }
 
-    @Throws(BeansException::class)
-    override fun setApplicationContext(applicationContext: ApplicationContext) {
-        if (eventPublisher == null) {
-            eventPublisher = applicationContext
-        }
-    }
+    override fun save(ins: InputStream, name: String): PoetAnnex {
+        val name = nameGenerator(name)
+        interceptorChain.doInterception(PoetHandlerInterceptor.Mode.SAVE, name, null)
 
-    override fun save(`in`: InputStream, name: String): PoetAnnex {
-        val result = annexClient.save(`in`, nameGenerator(name))
+        val result = annexClient.save(ins, name)
         result.realName = name
         repository?.save(result)
         return result
     }
 
-    override fun save(`in`: InputStream, name: String, module: String): PoetAnnex {
-        val result = annexClient.save(`in`, nameGenerator(name), module)
+    override fun save(ins: InputStream, name: String, module: String): PoetAnnex {
+        val name = nameGenerator(name)
+        interceptorChain.doInterception(PoetHandlerInterceptor.Mode.SAVE, name, module)
+
+        val result = annexClient.save(ins, name, module)
         result.realName = name
         repository?.save(result)
         return result
     }
 
     override fun save(data: ByteArray, name: String): PoetAnnex {
-        val result = annexClient.save(data, nameGenerator(name))
+        val name = nameGenerator(name)
+        interceptorChain.doInterception(PoetHandlerInterceptor.Mode.SAVE, name, null)
+
+        val result = annexClient.save(data, name)
         result.realName = name
         repository?.save(result)
         return result
     }
 
     override fun save(data: ByteArray, name: String, module: String): PoetAnnex {
-        val result = annexClient.save(data, nameGenerator(name), module)
+        val name = nameGenerator(name)
+        interceptorChain.doInterception(PoetHandlerInterceptor.Mode.SAVE, name, module)
+
+        val result = annexClient.save(data, name, module)
         result.realName = name
         repository?.save(result)
         return result
     }
 
     override fun exist(name: String): Boolean {
+        interceptorChain.doInterception(PoetHandlerInterceptor.Mode.ACCESS, name, null)
+
         return repository?.findByName(name)?.key?.let { annexClient?.exist(it) ?: false } ?: false
     }
 
     override fun delete(name: String) {
+        interceptorChain.doInterception(PoetHandlerInterceptor.Mode.DELETE, name, null)
+
         repository?.findByName(name)?.let { repository!!.deleteByName(it.name); annexClient?.delete(it.key) }
     }
 
@@ -110,46 +114,49 @@ abstract class AbstractPoetAnnexContext : ApplicationContextAware, PoetAnnexCont
             ?: throw AnnexOperationException("File($name) does not exist!")
 
     override fun getBytes(name: String): ByteArray {
+        interceptorChain.doInterception(PoetHandlerInterceptor.Mode.ACCESS, name, null)
+
         val annex = findAnnex(name)
         return annexClient.getBytes(annex.key)
     }
 
     override fun view(name: String, response: HttpServletResponse) {
-        checkHttpClientEnableState()
+        interceptorChain.doInterception(PoetHandlerInterceptor.Mode.ACCESS, name, null)
+
         val annex = findAnnex(name)
 
         annexHttpClient.view(annex.key, response)
     }
 
     override fun viewMedia(name: String, response: HttpServletResponse) {
-        checkHttpClientEnableState()
+        interceptorChain.doInterception(PoetHandlerInterceptor.Mode.ACCESS, name, null)
+
         val annex = findAnnex(name)
 
         annexHttpClient.viewMedia(annex.key, response)
     }
 
     override fun viewMedia(name: String, request: HttpServletRequest, response: HttpServletResponse) {
-        checkHttpClientEnableState()
+        interceptorChain.doInterception(PoetHandlerInterceptor.Mode.ACCESS, name, null)
+
         val annex = findAnnex(name)
 
         annexHttpClient.viewMedia(annex.key, request, response)
     }
 
     override fun down(name: String, response: HttpServletResponse) {
-        checkHttpClientEnableState()
+        interceptorChain.doInterception(PoetHandlerInterceptor.Mode.ACCESS, name, null)
+
         val annex = findAnnex(name)
 
         annexHttpClient.down(annex.key, annex.realName, response)
     }
 
     override fun down(name: String, realName: String, response: HttpServletResponse) {
-        checkHttpClientEnableState()
+        interceptorChain.doInterception(PoetHandlerInterceptor.Mode.ACCESS, name, null)
+
         val annex = findAnnex(name)
 
         annexHttpClient.down(annex.key, realName, response)
-    }
-
-    companion object {
-        private var eventPublisher: ApplicationEventPublisher? = null
     }
 }
