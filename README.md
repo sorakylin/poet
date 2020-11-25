@@ -30,7 +30,7 @@
 ## 功能特性
 * 程序中直接使用 `@Autowired` 注入附件操作上下文即可使用众多附件操作方法
 * 提供 HTTP 端点进行附件的 查看、预览(仅限媒体)、删除、上传、下载
-* 支持数据库储存附件元信息,  目前默认仅提供 `MySQL`、 `PostgreSQL` 两种
+* 支持数据库储存附件元信息,  目前默认仅提供 `MySQL`、 `PostgreSQL` 两种支持
 * 自定义附件操作的拦截器
 * 可基于配置文件方便定制各项功能的细节及开/关
 * 插拔式组件化结构，包括但不限于:
@@ -129,7 +129,8 @@ poet:
 
 <br>
 
-* 直接使用附件操作客户端对附件进行操作 (直接操作文件, 不会经过**任何**流程如拦截器、存储 等。 不推荐)
+* 直接使用附件操作客户端对附件进行操作 (直接操作文件, 不会经过**任何**流程如拦截器、存储 等。 不推荐)  
+    值得注意的是, 使用context操作附件只需要根据文件名name进行操作,  使用client则需要使用文件的key (module+name)
     
     **例子**
     
@@ -168,12 +169,12 @@ poet:
 
 | key                    | 默认值        | 说明                                                         |
 | ---------------------- | ------------- | ------------------------------------------------------------ |
-| poet.storageLocation   |               | 非空. 文件默认默认储存位置.                                  |
+| poet.storageLocation   |               | 非空. 附件默认默认储存位置。 附件最终保存的路径为 storageLocation+module+name                         |
 | poet.enableDBStore     | true          | 是否使用DB储存附件信息,  关闭的话则无法使用 HTTP 相关操作    |
 | poet.enableWebResource | true          | 是否启用web资源层.                                           |
 | poet.webUrlPrefix      | /poet         | web资源接口请求路径前缀                                      |
 | poet.defaultModule     |               | 默认模块, 在文件保存时若不指定则将直接保存到此模块之中.  **为空时**直接保存在 `storageLocation` 上 |
-| poet.tableName         | tb_poet_annex | 储存附件信息的表名                                           |
+| poet.tableName         | poet_annex | 储存附件信息的表名                                           |
 
 
 
@@ -190,7 +191,7 @@ poet:
 | GET /poet/view/{name}       | 预览文件,   解析后缀响应对应的Content-Type。 可直接显示图片 |                                     |
 | GET /poet/view-media/{name} | 预览媒体,   包括视频和音频                                  |                                     |
 | GET /poet/download/{name}   | 下载附件                                                    |                                     |
-| POST /up                    | 上传附件, 可指定模块(非必须)                                | file: MultipartFile, module String? |
+| POST /up                    | 上传附件, 可指定模块(非必须)                                | file: MultipartFile, module: String? |
 | GET /bs/{name}              | 获取DB中存储的附件业务信息                                  |                                     |
 | DELETE /bs/{name}           | 删除一个附件                                                |                                     |
 

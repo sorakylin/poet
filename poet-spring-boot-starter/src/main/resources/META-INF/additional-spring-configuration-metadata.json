@@ -51,7 +51,7 @@
       "name": "poet.tableName",
       "sourceType": "com.skypyb.poet.spring.boot.autoconfigure.PoetProperties",
       "type": "java.lang.String",
-      "defaultValue": "tb_poet_annex",
+      "defaultValue": "poet_annex",
       "description": "储存附件信息的表名."
     }
   ]
