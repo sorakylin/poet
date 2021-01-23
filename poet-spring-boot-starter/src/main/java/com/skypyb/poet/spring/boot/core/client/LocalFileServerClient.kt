@@ -27,34 +27,7 @@ class LocalFileServerClient(router: PoetAccessRouter) : PoetAnnexClient, PoetAnn
 
     override fun save(inputStream: InputStream, name: String) = save(inputStream, name, null)
 
-    override fun save(inputStream: InputStream, name: String, module: String?): DefaultPoetAnnex {
-
-        val routing: Navigation = router.routing(module, name)
-        val path: Path = Paths.get(routing.fullPath)
-        try {
-            if (!Files.exists(path.parent)) {
-                Files.createDirectories(path.parent)
-            }
-            //创建、覆盖
-            Files.copy(inputStream, path)
-        } catch (e: IOException) {
-            val ex = AnnexOperationException("Failed to save file!", e)
-            ex.path = routing.path
-            throw ex
-        } finally {
-            StreamUtil.close(inputStream)
-        }
-
-        val annex = DefaultPoetAnnex.of(routing)
-        try {
-            annex.length = Files.size(path)
-        } catch (e: IOException) {
-            val ex = AnnexOperationException("Failed to read file length!", e)
-            ex.path = routing.path
-            throw ex
-        }
-        return annex
-    }
+    override fun save(inputStream: InputStream, name: String, module: String?) = inputStream.use { save(it.readBytes(), name, module) }
 
     override fun save(data: ByteArray, name: String) = save(data, name, null)
 
