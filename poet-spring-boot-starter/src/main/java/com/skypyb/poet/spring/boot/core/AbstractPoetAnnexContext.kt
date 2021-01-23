@@ -54,42 +54,42 @@ abstract class AbstractPoetAnnexContext : PoetAnnexContext, PoetInterceptorChain
                 ?: realName
     }
 
-    override fun save(ins: InputStream, name: String): PoetAnnex {
-        val name = nameGenerator(name)
+    override fun save(ins: InputStream, realName: String): PoetAnnex {
+        val name = nameGenerator(realName)
         interceptorChain.doInterception(PoetHandlerInterceptor.Mode.SAVE, name, null)
 
         val result = annexClient.save(ins, name)
-        result.realName = name
+        result.realName = realName
         repository?.save(result)
         return result
     }
 
-    override fun save(ins: InputStream, name: String, module: String): PoetAnnex {
-        val name = nameGenerator(name)
+    override fun save(ins: InputStream, realName: String, module: String): PoetAnnex {
+        val name = nameGenerator(realName)
         interceptorChain.doInterception(PoetHandlerInterceptor.Mode.SAVE, name, module)
 
         val result = annexClient.save(ins, name, module)
-        result.realName = name
+        result.realName = realName
         repository?.save(result)
         return result
     }
 
-    override fun save(data: ByteArray, name: String): PoetAnnex {
-        val name = nameGenerator(name)
+    override fun save(data: ByteArray, realName: String): PoetAnnex {
+        val name = nameGenerator(realName)
         interceptorChain.doInterception(PoetHandlerInterceptor.Mode.SAVE, name, null)
 
         val result = annexClient.save(data, name)
-        result.realName = name
+        result.realName = realName
         repository?.save(result)
         return result
     }
 
-    override fun save(data: ByteArray, name: String, module: String): PoetAnnex {
-        val name = nameGenerator(name)
+    override fun save(data: ByteArray, realName: String, module: String): PoetAnnex {
+        val name = nameGenerator(realName)
         interceptorChain.doInterception(PoetHandlerInterceptor.Mode.SAVE, name, module)
 
         val result = annexClient.save(data, name, module)
-        result.realName = name
+        result.realName = realName
         repository?.save(result)
         return result
     }
@@ -97,7 +97,7 @@ abstract class AbstractPoetAnnexContext : PoetAnnexContext, PoetInterceptorChain
     override fun exist(name: String): Boolean {
         interceptorChain.doInterception(PoetHandlerInterceptor.Mode.ACCESS, name, null)
 
-        return repository?.findByName(name)?.key?.let { annexClient?.exist(it) ?: false } ?: false
+        return repository?.findByName(name)?.key?.let { annexClient?.exist(it) } ?: false
     }
 
     override fun delete(name: String) {
