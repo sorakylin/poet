@@ -1,7 +1,6 @@
 package com.skypyb.poet.spring.boot.autoconfigure
 
 import com.skypyb.poet.spring.boot.core.exception.AnnexAccessException
-import com.skypyb.poet.spring.boot.core.exception.AnnexOperationException
 import com.skypyb.poet.spring.boot.core.interceptor.PoetHandlerInterceptor
 import com.skypyb.poet.spring.boot.core.interceptor.PoetHandlerInterceptorChain
 import com.skypyb.poet.spring.boot.core.interceptor.PoetInterceptorChainAware
