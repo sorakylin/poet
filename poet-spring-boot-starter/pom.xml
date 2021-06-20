@@ -38,13 +38,13 @@
 
     <scm>
         <tag>master</tag>
-        <url>git@github.com:skypyb/poet.git</url>
-        <connection>scm:git:git@github.com:skypyb/poet.git</connection>
-        <developerConnection>scm:git:git@github.com:skypyb/poet.git</developerConnection>
+        <url>git@github.com:sorakylin/poet.git</url>
+        <connection>scm:git:git@github.com:sorakylin/poet.git</connection>
+        <developerConnection>scm:git:git@github.com:sorakylin/poet.git</developerConnection>
     </scm>
     <developers>
         <developer>
-            <name>skypyb</name>
+            <name>sorakylin</name>
             <email>pyb068@gmail.com</email>
             <url>www.skypyb.com</url>
         </developer>
@@ -61,7 +61,7 @@
 
     <contributors>
         <contributor>
-            <name>skypyb</name>
+            <name>sorakylin</name>
             <email>pyb068@gmail.com</email>
         </contributor>
     </contributors>
