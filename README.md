@@ -16,7 +16,9 @@
 
 
 ## 概述  
-在系统开发中对于附件的操作多少得废些功夫， 尤其体现在个人开发者业余时间写项目时,  脱离了公司基础服务的情况下基本只能一个个去手写文件的增删改查。   
+在系统开发中对于附件的操作多少得废些功夫， 尤其体现在个人开发者业余时间写项目时,  脱离了公司基础服务的情况下基本只能一个个去手写文件的增删改查。
+
+使用云服务时如果你的附件不太正经，为了避免触发风控你还是得在本地保存一份。
 
 此项目即是为了提升开发者的效率而诞生，基于**本地文件系统**。 一键引入即可实现对附件的各种操作。 由个人开发并在个人项目中使用过一段时间后开源。
 
@@ -32,6 +34,7 @@
 * 提供 HTTP 端点进行附件的 查看、预览(仅限媒体)、删除、上传、下载
 * 支持数据库储存附件元信息,  目前默认仅提供 `MySQL`、 `PostgreSQL` 两种支持
 * 自定义附件操作的拦截器
+* 包含图片处理模块，可压缩质量、修改图片大小和格式，简单方便
 * 可基于配置文件方便定制各项功能的细节及开/关
 * 插拔式组件化结构，包括但不限于:
   * 文件名&模块 (文件目录) 生成策略
@@ -58,7 +61,7 @@
 <dependency>
   <groupId>com.skypyb.poet</groupId>
   <artifactId>poet-spring-boot-starter</artifactId>
-  <version>v1.0.0</version>
+  <version>v1.1.0.RELEASE</version>
 </dependency>
 ```
 <br>
@@ -201,6 +204,53 @@ poet:
 
 <br><br>
 
+
+
+## 图片处理
+
+
+图片处理的统一接口， 可自行拓展图片处理方式。  
+自带默认的处理实现`DefaultImageHandler`，可自定义宽、高、压缩比、输出格式(不支持webp)
+```java
+@FunctionalInterface
+public interface PoetImageHandler {
+
+    /**
+     * 涉及到图片处理,  原名已经无意义了。
+     * 这个图片的原名在流程中将会被抹去,  自己保存时定义新的名字
+     *
+     * @param bytes 图片字节数组
+     * @return 新图片的字节数组
+     */
+    byte[] handle(@NotNull byte[] bytes);
+}
+```
+
+<br>
+
+#### 使用方法:
+
+
+```java
+//得到原图的 Bytes， 也可以是 InputStream。InputStream在传入warp()后会被自动关闭
+byte[] imgBytes = getBytes(originImage);
+
+//创建一个将图片处理为宽度980px + 压缩比0.8 + 格式化为jpg的处理器
+DefaultImageHandler handler = new DefaultImageHandler(980, Integer.MAX_VALUE, 0.8f, "jpg");
+
+//得到的结果Map中，key即为use时传入的key, value是处理完毕的结果。 
+//可多次调用use(), invoke()内的回调将会循环触发。Map结果是所有use的key + handler处理结果
+Map<String, PoetAnnex> invokeResult = PoetImageWrap.<String>warp(imgBytes)
+    .use("w980", handler)
+    .invoke((k, bytes) -> {//k = "w980"
+        return poetAnnexContext.save(bytes, "name.jpg", "module");
+    });
+
+//通过指定的key得到Map中对应经过对应处理的图片
+PoetAnnex thumbnailAnnex = invokeResult.get("w980");
+```
+
+<br><br>
 
 
 ## 拦截器
@@ -352,3 +402,9 @@ public interface PoetAnnexContext {
 
 
 
+## 说在最后
+嘛... 总之无限欢迎PR  
+如果帮到了你，请点个star~
+
+<br>
+<br>
