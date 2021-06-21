@@ -3,7 +3,7 @@
 ## poet
 这是由 Kotlin 编写的 SpringBoot Starter 附件操作库。 一键集成进你的应用使其能够更便捷的操作附件
 
-[![version](https://img.shields.io/badge/version-v1.0.0-orange.svg)](../)
+[![version](https://img.shields.io/badge/version-v1.1.0.RELEASE-orange.svg)](../)
 [![License](https://img.shields.io/badge/License-MIT-red.svg)](https://mit-license.org/)
 [![Kotlin](https://img.shields.io/badge/Kotlin-1.3.72-green)](https://github.com/JetBrains/kotlin/releases/tag/v1.3.72)
 [![JDK](https://img.shields.io/badge/JDK-1.8-orange)](https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
