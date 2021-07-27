@@ -62,4 +62,16 @@ class MySQLPoetAnnexRepository(private val jdbcTemplate: JdbcTemplate) : PoetAnn
         }
         return listOf();
     }
+
+    override fun updateInstanceId(names: MutableCollection<String>, instanceId: Long): Int {
+        return 0
+    }
+
+    override fun deleteExpireAnnex(): Int {
+        return 0
+    }
+
+    override fun neverExpire(names: MutableCollection<String>): Int {
+        return 0
+    }
 }

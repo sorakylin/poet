@@ -58,7 +58,7 @@ class PostgresPoetAnnexRepository(private val jdbcTemplate: JdbcTemplate) : Poet
             FROM  $tableName
             WHERE name IN (?)
         """
-        val namesString: String = names.joinToString(",")
+        val namesString: String = names.joinToString(",") { name -> "'$name'" }
         return jdbcTemplate.query(sql, arrayOf(namesString), BeanPropertyRowMapper(DefaultPoetAnnex::class.java))
     }
 
@@ -80,4 +80,21 @@ class PostgresPoetAnnexRepository(private val jdbcTemplate: JdbcTemplate) : Poet
         return jdbcTemplate.query(sql, arrayOf(mainCategory, instanceId, instanceModule), BeanPropertyRowMapper(DefaultPoetAnnex::class.java))
     }
 
+    override fun updateInstanceId(names: MutableCollection<String>, instanceId: Long): Int {
+        if (names.isEmpty()) return 0
+
+        val namesString: String = names.joinToString(",") { name -> "'$name'" }
+        return jdbcTemplate.update("UPDATE $tableName SET instance_id = ? WHERE name IN (?)", instanceId, namesString);
+    }
+
+    override fun deleteExpireAnnex(): Int {
+        return jdbcTemplate.update("DELETE FROM $tableName WHERE expire_time < now()");
+    }
+
+    override fun neverExpire(names: MutableCollection<String>): Int {
+        if (names.isEmpty()) return 0
+
+        val namesString: String = names.joinToString(",") { name -> "'$name'" }
+        return jdbcTemplate.update("UPDATE $tableName SET expire_time = null WHERE name IN (?)", namesString);
+    }
 }

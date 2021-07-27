@@ -14,7 +14,7 @@
     <groupId>com.skypyb.poet</groupId>
     <artifactId>poet-spring-boot-starter</artifactId>
     <name>poet-spring-boot-starter</name>
-    <version>v1.1.0.RELEASE</version>
+    <version>v2.1.0.RELEASE</version>
 
 
     <distributionManagement>

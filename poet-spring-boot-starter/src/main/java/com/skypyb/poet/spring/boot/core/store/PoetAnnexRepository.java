@@ -23,4 +23,10 @@ public interface PoetAnnexRepository {
     List<? extends PoetAnnex> findByNames(Collection<String> names);
 
     List<? extends PoetAnnex> findByRoadSign(@Nullable String mainCategory, @Nullable Long instanceId, @Nullable String instanceModule);
+
+    int updateInstanceId(Collection<String> names, Long instanceId);
+
+    int neverExpire(Collection<String> names);
+
+    int deleteExpireAnnex();
 }
