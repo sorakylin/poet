@@ -13,9 +13,13 @@ public interface PoetAnnexRepository {
 
     void save(PoetAnnex annex);
 
+    void save(PoetAnnex annex, StoreRoadSign roadSign);
+
     int deleteByName(String name);
 
     PoetAnnex findByName(String name);
 
     List<? extends PoetAnnex> findByNames(Collection<String> names);
+
+    List<? extends PoetAnnex> findByRoadSign(String mainCategory, Long instanceId, String instanceModule);
 }

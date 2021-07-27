@@ -7,11 +7,24 @@ import org.springframework.jdbc.core.JdbcTemplate
 import java.util.*
 
 class PostgresPoetAnnexRepository(private val jdbcTemplate: JdbcTemplate) : PoetAnnexRepository {
+    val defaultRoadSign = StoreRoadSign();
     var tableName = "poet_annex"
 
     override fun save(annex: PoetAnnex) {
-        jdbcTemplate.update("INSERT INTO $tableName(name,real_name,suffix,key,length,create_time) VALUES (?,?,?,?,?,?)",
-                annex.name, annex.realName, annex.suffix, annex.key, annex.length, Date())
+        save(annex, defaultRoadSign)
+    }
+
+    override fun save(annex: PoetAnnex, roadSign: StoreRoadSign) {
+        val sql = """
+            INSERT INTO $tableName(
+            name,real_name,suffix,key,length,create_time,
+            main_category,instance_id,instance_module,expire_time)
+            VALUES (?,?,?,?,?,?,?,?,?,?)
+        """;
+
+        jdbcTemplate.update(sql,
+                annex.name, annex.realName, annex.suffix, annex.key, annex.length, Date(),
+                roadSign.mainCategory, roadSign.instanceId, roadSign.instanceModule, roadSign.expireTime)
     }
 
     override fun deleteByName(name: String): Int {
@@ -49,4 +62,23 @@ class PostgresPoetAnnexRepository(private val jdbcTemplate: JdbcTemplate) : Poet
         val namesString: String = names.joinToString(",")
         return jdbcTemplate.query(sql, arrayOf(namesString), BeanPropertyRowMapper(DefaultPoetAnnex::class.java))
     }
+
+
+    override fun findByRoadSign(mainCategory: String?, instanceId: Long?, instanceModule: String?): List<PoetAnnex> {
+        if (mainCategory == null && instanceId == null && instanceModule == null) {
+            return listOf();
+        }
+        val sql = """
+            SELECT 
+                name AS name,
+                real_name AS realName,
+                suffix AS suffix,
+                key AS key,
+                length AS length
+            FROM  $tableName
+            WHERE main_category=? AND instance_id=? AND instance_module=?
+        """
+        return jdbcTemplate.query(sql, arrayOf(mainCategory, instanceId, instanceModule), BeanPropertyRowMapper(DefaultPoetAnnex::class.java))
+    }
+
 }

@@ -8,9 +8,14 @@ import java.util.*
 import java.util.stream.Collectors
 
 class MySQLPoetAnnexRepository(private val jdbcTemplate: JdbcTemplate) : PoetAnnexRepository {
+    val defaultRoadSign = StoreRoadSign();
     var tableName = "poet_annex"
 
     override fun save(annex: PoetAnnex) {
+        save(annex, defaultRoadSign)
+    }
+
+    override fun save(annex: PoetAnnex, roadSign: StoreRoadSign) {
         jdbcTemplate.update("INSERT INTO $tableName(`name`,`real_name`,`suffix`,`key`,`length`,`create_time`) VALUES (?,?,?,?,?,?)",
                 annex.name, annex.realName, annex.suffix, annex.key, annex.length, Date())
     }
@@ -50,5 +55,12 @@ class MySQLPoetAnnexRepository(private val jdbcTemplate: JdbcTemplate) : PoetAnn
         """
         val namesString: String = names.joinToString(",")
         return jdbcTemplate.query(sql, arrayOf(namesString), BeanPropertyRowMapper(DefaultPoetAnnex::class.java))
+    }
+
+    override fun findByRoadSign(mainCategory: String?, instanceId: Long?, instanceModule: String?): List<PoetAnnex> {
+        if (mainCategory == null && instanceId == null && instanceModule == null) {
+            return listOf();
+        }
+        return listOf();
     }
 }
