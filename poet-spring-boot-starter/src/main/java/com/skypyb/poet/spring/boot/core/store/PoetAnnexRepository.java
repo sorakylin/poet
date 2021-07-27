@@ -2,6 +2,7 @@ package com.skypyb.poet.spring.boot.core.store;
 
 import com.skypyb.poet.spring.boot.core.model.PoetAnnex;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 
@@ -21,5 +22,5 @@ public interface PoetAnnexRepository {
 
     List<? extends PoetAnnex> findByNames(Collection<String> names);
 
-    List<? extends PoetAnnex> findByRoadSign(String mainCategory, Long instanceId, String instanceModule);
+    List<? extends PoetAnnex> findByRoadSign(@Nullable String mainCategory, @Nullable Long instanceId, @Nullable String instanceModule);
 }

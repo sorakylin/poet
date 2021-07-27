@@ -8,4 +8,8 @@ class StoreRoadSign {
     var instanceId: Long? = null
     var instanceModule: String? = null
     var expireTime: LocalDateTime? = null
+
+    companion object {
+        fun empty() = StoreRoadSign();
+    }
 }

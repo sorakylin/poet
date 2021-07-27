@@ -8,11 +8,10 @@ import java.util.*
 import java.util.stream.Collectors
 
 class MySQLPoetAnnexRepository(private val jdbcTemplate: JdbcTemplate) : PoetAnnexRepository {
-    val defaultRoadSign = StoreRoadSign();
     var tableName = "poet_annex"
 
     override fun save(annex: PoetAnnex) {
-        save(annex, defaultRoadSign)
+        save(annex, StoreRoadSign.empty())
     }
 
     override fun save(annex: PoetAnnex, roadSign: StoreRoadSign) {

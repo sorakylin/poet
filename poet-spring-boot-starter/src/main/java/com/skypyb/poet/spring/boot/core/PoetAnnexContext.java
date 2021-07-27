@@ -4,6 +4,7 @@ import com.skypyb.poet.spring.boot.core.client.PoetAccessRouter;
 import com.skypyb.poet.spring.boot.core.client.PoetAnnexClient;
 import com.skypyb.poet.spring.boot.core.client.PoetAnnexClientHttpSupport;
 import com.skypyb.poet.spring.boot.core.model.PoetAnnex;
+import com.skypyb.poet.spring.boot.core.store.StoreRoadSign;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,17 +21,29 @@ import java.util.Optional;
 public interface PoetAnnexContext {
 
 
-    PoetAnnex save(InputStream in, String name);
+    default PoetAnnex save(InputStream in, String name) {
+        return save(in, name, StoreRoadSign.Companion.empty());
+    }
 
+    default PoetAnnex save(InputStream in, String name, String module) {
+        return save(in, name, module, StoreRoadSign.Companion.empty());
+    }
 
-    PoetAnnex save(InputStream in, String name, String module);
+    default PoetAnnex save(byte[] data, String name) {
+        return save(data, name, StoreRoadSign.Companion.empty());
+    }
 
+    default PoetAnnex save(byte[] data, String name, String module) {
+        return save(data, name, module, StoreRoadSign.Companion.empty());
+    }
 
-    PoetAnnex save(byte[] data, String name);
+    PoetAnnex save(InputStream in, String name, StoreRoadSign roadSign);
 
+    PoetAnnex save(InputStream in, String name, String module, StoreRoadSign roadSign);
 
-    PoetAnnex save(byte[] data, String name, String module);
+    PoetAnnex save(byte[] data, String name, StoreRoadSign roadSign);
 
+    PoetAnnex save(byte[] data, String name, String module, StoreRoadSign roadSign);
 
     boolean exist(String name);
 

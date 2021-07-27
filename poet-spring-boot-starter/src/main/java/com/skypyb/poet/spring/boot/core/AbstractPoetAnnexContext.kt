@@ -10,6 +10,7 @@ import com.skypyb.poet.spring.boot.core.exception.AnnexOperationException
 import com.skypyb.poet.spring.boot.core.model.PoetAnnex
 import com.skypyb.poet.spring.boot.core.store.PoetAnnexNameGenerator
 import com.skypyb.poet.spring.boot.core.store.PoetAnnexRepository
+import com.skypyb.poet.spring.boot.core.store.StoreRoadSign
 import com.skypyb.poet.spring.boot.core.util.HttpResourceViewUtils
 import java.io.InputStream
 import javax.servlet.http.HttpServletRequest
@@ -54,43 +55,43 @@ abstract class AbstractPoetAnnexContext : PoetAnnexContext, PoetInterceptorChain
                 ?: realName
     }
 
-    override fun save(ins: InputStream, realName: String): PoetAnnex {
+    override fun save(ins: InputStream, realName: String, roadSign: StoreRoadSign): PoetAnnex {
         val name = nameGenerator(realName)
         interceptorChain.doInterception(PoetHandlerInterceptor.Mode.SAVE, name, null)
 
         val result = annexClient.save(ins, name)
         result.realName = realName
-        repository?.save(result)
+        repository?.save(result, roadSign)
         return result
     }
 
-    override fun save(ins: InputStream, realName: String, module: String): PoetAnnex {
+    override fun save(ins: InputStream, realName: String, module: String, roadSign: StoreRoadSign): PoetAnnex {
         val name = nameGenerator(realName)
         interceptorChain.doInterception(PoetHandlerInterceptor.Mode.SAVE, name, module)
 
         val result = annexClient.save(ins, name, module)
         result.realName = realName
-        repository?.save(result)
+        repository?.save(result, roadSign)
         return result
     }
 
-    override fun save(data: ByteArray, realName: String): PoetAnnex {
+    override fun save(data: ByteArray, realName: String, roadSign: StoreRoadSign): PoetAnnex {
         val name = nameGenerator(realName)
         interceptorChain.doInterception(PoetHandlerInterceptor.Mode.SAVE, name, null)
 
         val result = annexClient.save(data, name)
         result.realName = realName
-        repository?.save(result)
+        repository?.save(result, roadSign)
         return result
     }
 
-    override fun save(data: ByteArray, realName: String, module: String): PoetAnnex {
+    override fun save(data: ByteArray, realName: String, module: String, roadSign: StoreRoadSign): PoetAnnex {
         val name = nameGenerator(realName)
         interceptorChain.doInterception(PoetHandlerInterceptor.Mode.SAVE, name, module)
 
         val result = annexClient.save(data, name, module)
         result.realName = realName
-        repository?.save(result)
+        repository?.save(result, roadSign)
         return result
     }
 
