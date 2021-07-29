@@ -4,10 +4,15 @@ import com.skypyb.poet.spring.boot.core.model.DefaultPoetAnnex
 import com.skypyb.poet.spring.boot.core.model.PoetAnnex
 import org.springframework.jdbc.core.BeanPropertyRowMapper
 import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import java.util.*
+
 
 class PostgresPoetAnnexRepository(private val jdbcTemplate: JdbcTemplate) : PoetAnnexRepository {
     var tableName = "poet_annex"
+
+    val namedParameterJdbcTemplate: NamedParameterJdbcTemplate = NamedParameterJdbcTemplate(jdbcTemplate.getDataSource())
+
 
     override fun save(annex: PoetAnnex) {
         save(annex, StoreRoadSign.empty())
@@ -56,10 +61,10 @@ class PostgresPoetAnnexRepository(private val jdbcTemplate: JdbcTemplate) : Poet
                 key AS key,
                 length AS length
             FROM  $tableName
-            WHERE name IN (?)
+            WHERE name IN (:names)
         """
-        val namesString: String = names.joinToString(",") { name -> "'$name'" }
-        return jdbcTemplate.query(sql, arrayOf(namesString), BeanPropertyRowMapper(DefaultPoetAnnex::class.java))
+
+        return namedParameterJdbcTemplate.query(sql, mapOf("names" to names), BeanPropertyRowMapper(DefaultPoetAnnex::class.java))
     }
 
 
@@ -83,8 +88,14 @@ class PostgresPoetAnnexRepository(private val jdbcTemplate: JdbcTemplate) : Poet
     override fun updateInstanceId(names: MutableCollection<String>, instanceId: Long): Int {
         if (names.isEmpty()) return 0
 
-        val namesString: String = names.joinToString(",") { name -> "'$name'" }
-        return jdbcTemplate.update("UPDATE $tableName SET instance_id = ? WHERE name IN (?)", instanceId, namesString);
+        val params = mapOf(
+                "instanceId" to instanceId,
+                "names" to names
+        )
+
+        val sql = "UPDATE $tableName SET instance_id = :instanceId WHERE name IN (:names)";
+
+        return namedParameterJdbcTemplate.update(sql, params);
     }
 
     override fun deleteExpireAnnex(): Int {
@@ -94,7 +105,8 @@ class PostgresPoetAnnexRepository(private val jdbcTemplate: JdbcTemplate) : Poet
     override fun neverExpire(names: MutableCollection<String>): Int {
         if (names.isEmpty()) return 0
 
-        val namesString: String = names.joinToString(",") { name -> "'$name'" }
-        return jdbcTemplate.update("UPDATE $tableName SET expire_time = null WHERE name IN (?)", namesString);
+        val sql = "UPDATE $tableName SET expire_time = null WHERE name IN (:names)";
+
+        return namedParameterJdbcTemplate.update(sql, mapOf("names" to names));
     }
 }

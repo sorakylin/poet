@@ -20,9 +20,9 @@ public interface PoetAnnexRepository {
 
     PoetAnnex findByName(String name);
 
-    List<? extends PoetAnnex> findByNames(Collection<String> names);
+    List<PoetAnnex> findByNames(Collection<String> names);
 
-    List<? extends PoetAnnex> findByRoadSign(@Nullable String mainCategory, @Nullable Long instanceId, @Nullable String instanceModule);
+    List<PoetAnnex> findByRoadSign(@Nullable String mainCategory, @Nullable Long instanceId, @Nullable String instanceModule);
 
     int updateInstanceId(Collection<String> names, Long instanceId);
 

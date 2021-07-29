@@ -4,11 +4,13 @@ import com.skypyb.poet.spring.boot.core.model.DefaultPoetAnnex
 import com.skypyb.poet.spring.boot.core.model.PoetAnnex
 import org.springframework.jdbc.core.BeanPropertyRowMapper
 import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import java.util.*
 import java.util.stream.Collectors
 
 class MySQLPoetAnnexRepository(private val jdbcTemplate: JdbcTemplate) : PoetAnnexRepository {
     var tableName = "poet_annex"
+    val namedParameterJdbcTemplate: NamedParameterJdbcTemplate = NamedParameterJdbcTemplate(jdbcTemplate.getDataSource())
 
     override fun save(annex: PoetAnnex) {
         save(annex, StoreRoadSign.empty())
@@ -50,10 +52,10 @@ class MySQLPoetAnnexRepository(private val jdbcTemplate: JdbcTemplate) : PoetAnn
                 `key` AS key,
                 `length` AS length
             FROM  $tableName
-            WHERE `name` IN (?)
+            WHERE `name` IN (:names)
         """
-        val namesString: String = names.joinToString(",")
-        return jdbcTemplate.query(sql, arrayOf(namesString), BeanPropertyRowMapper(DefaultPoetAnnex::class.java))
+
+        return namedParameterJdbcTemplate.query(sql, mapOf("names" to names), BeanPropertyRowMapper(DefaultPoetAnnex::class.java))
     }
 
     override fun findByRoadSign(mainCategory: String?, instanceId: Long?, instanceModule: String?): List<PoetAnnex> {
