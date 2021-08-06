@@ -28,5 +28,5 @@ public interface PoetAnnexRepository {
 
     int neverExpire(Collection<String> names);
 
-    int deleteExpireAnnex();
+    List<String> findExpireAnnex();
 }

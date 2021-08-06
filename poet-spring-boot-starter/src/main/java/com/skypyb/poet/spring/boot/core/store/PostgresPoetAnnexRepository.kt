@@ -98,8 +98,9 @@ class PostgresPoetAnnexRepository(private val jdbcTemplate: JdbcTemplate) : Poet
         return namedParameterJdbcTemplate.update(sql, params);
     }
 
-    override fun deleteExpireAnnex(): Int {
-        return jdbcTemplate.update("DELETE FROM $tableName WHERE expire_time < now()");
+    override fun findExpireAnnex(): List<String> {
+        val sql = "SELECT name FROM $tableName WHERE expire_time < now()";
+        return jdbcTemplate.queryForList(sql, String::class.java);
     }
 
     override fun neverExpire(names: MutableCollection<String>): Int {

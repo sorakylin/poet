@@ -69,8 +69,8 @@ class MySQLPoetAnnexRepository(private val jdbcTemplate: JdbcTemplate) : PoetAnn
         return 0
     }
 
-    override fun deleteExpireAnnex(): Int {
-        return 0
+    override fun findExpireAnnex(): List<String> {
+        return listOf()
     }
 
     override fun neverExpire(names: MutableCollection<String>): Int {
