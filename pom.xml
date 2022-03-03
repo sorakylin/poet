@@ -9,49 +9,15 @@
         <version>2.0.4.RELEASE</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
+    <packaging>pom</packaging>
 
     <groupId>com.skypyb.poet</groupId>
-    <artifactId>poet-spring-boot-starter</artifactId>
-    <name>poet-spring-boot-starter</name>
+    <artifactId>poet</artifactId>
+    <name>poet</name>
     <version>v3.1.0.RELEASE</version>
 
 
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
-
-    <licenses>
-        <license>
-            <name>The MIT License</name>
-            <url>https://mit-license.org/</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
-    <scm>
-        <tag>master</tag>
-        <url>git@github.com:sorakylin/poet.git</url>
-        <connection>scm:git:git@github.com:sorakylin/poet.git</connection>
-        <developerConnection>scm:git:git@github.com:sorakylin/poet.git</developerConnection>
-    </scm>
-    <developers>
-        <developer>
-            <name>sorakylin</name>
-            <email>sorakylin@gmail.com</email>
-            <url>www.skypyb.com</url>
-        </developer>
-    </developers>
-
     <properties>
-        <module.name>com.skypyb.poet.spring.boot</module.name>
         <java.version>1.8</java.version>
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -59,53 +25,17 @@
         <kotlin.version>1.5.31</kotlin.version>
     </properties>
 
-    <dependencies>
-        <dependency>
-            <groupId>com.skypyb.poet</groupId>
-            <artifactId>poet-core</artifactId>
-            <version>v3.1.0.RELEASE</version>
-        </dependency>
+    <contributors>
+        <contributor>
+            <name>sorakylin</name>
+            <email>sorakylin@gmail.com</email>
+        </contributor>
+    </contributors>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-dependencies</artifactId>
-            <version>${parent.version}</version>
-            <type>pom</type>
-            <scope>import</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-configuration-processor</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jdbc</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-
-        <!-- kotlin -->
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-stdlib-jdk8</artifactId>
-            <version>${kotlin.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-reflect</artifactId>
-            <version>${kotlin.version}</version>
-        </dependency>
-    </dependencies>
-
+    <modules>
+        <module>poet-core</module>
+        <module>poet-spring-boot-starter</module>
+    </modules>
 
     <build>
 
