@@ -1,9 +1,9 @@
 package com.skypyb.poet.spring.boot.autoconfigure
 
-import com.skypyb.poet.spring.boot.core.exception.AnnexAccessException
-import com.skypyb.poet.spring.boot.core.interceptor.PoetHandlerInterceptor
-import com.skypyb.poet.spring.boot.core.interceptor.PoetHandlerInterceptorChain
-import com.skypyb.poet.spring.boot.core.interceptor.PoetInterceptorChainAware
+import com.skypyb.poet.core.exception.AnnexAccessException
+import com.skypyb.poet.spring.boot.interceptor.PoetHandlerInterceptor
+import com.skypyb.poet.spring.boot.interceptor.PoetHandlerInterceptorChain
+import com.skypyb.poet.spring.boot.interceptor.PoetInterceptorChainAware
 import org.springframework.beans.factory.InitializingBean
 import org.springframework.beans.factory.config.BeanPostProcessor
 import org.springframework.context.annotation.Configuration
@@ -32,7 +32,8 @@ open class PoetHandlerInterceptorChainConfiguration : InitializingBean, BeanPost
     }
 }
 
-class StandardInterceptorChain : PoetHandlerInterceptorChain {
+class StandardInterceptorChain :
+    PoetHandlerInterceptorChain {
 
     val standardInterceptors = mutableListOf<PoetHandlerInterceptor>()
 

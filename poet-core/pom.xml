@@ -123,6 +123,10 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
             </plugin>
 
             <!--build-helper-maven-plugin能够指定多个源码目录，通常它被绑定到默认生命周期的generate-sources阶段以添加额外的源码目录-->

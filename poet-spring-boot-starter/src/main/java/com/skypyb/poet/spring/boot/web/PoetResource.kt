@@ -1,10 +1,10 @@
 package com.skypyb.poet.spring.boot.web
 
 import com.skypyb.poet.spring.boot.autoconfigure.PoetProperties
-import com.skypyb.poet.spring.boot.core.PoetAnnexContext
-import com.skypyb.poet.spring.boot.core.exception.AnnexAccessException
-import com.skypyb.poet.spring.boot.core.model.PoetAnnex
-import com.skypyb.poet.spring.boot.core.store.PoetAnnexRepository
+import com.skypyb.poet.spring.boot.PoetAnnexContext
+import com.skypyb.poet.core.exception.AnnexAccessException
+import com.skypyb.poet.core.model.PoetAnnex
+import com.skypyb.poet.spring.boot.store.PoetAnnexRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.context.request.RequestContextHolder

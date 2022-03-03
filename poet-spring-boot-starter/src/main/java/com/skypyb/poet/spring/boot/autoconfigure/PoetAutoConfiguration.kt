@@ -1,11 +1,11 @@
 package com.skypyb.poet.spring.boot.autoconfigure
 
-import com.skypyb.poet.spring.boot.core.DefaultPoetAnnexContext
-import com.skypyb.poet.spring.boot.core.PoetAnnexContext
-import com.skypyb.poet.spring.boot.core.client.*
-import com.skypyb.poet.spring.boot.core.store.MySQLPoetAnnexRepository
-import com.skypyb.poet.spring.boot.core.store.PoetAnnexNameGenerator
-import com.skypyb.poet.spring.boot.core.store.PoetAnnexRepository
+import com.skypyb.poet.core.client.*
+import com.skypyb.poet.spring.boot.DefaultPoetAnnexContext
+import com.skypyb.poet.spring.boot.PoetAnnexContext
+import com.skypyb.poet.spring.boot.store.MySQLPoetAnnexRepository
+import com.skypyb.poet.spring.boot.store.PoetAnnexNameGenerator
+import com.skypyb.poet.spring.boot.store.PoetAnnexRepository
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.InitializingBean
 import org.springframework.beans.factory.annotation.Autowired
@@ -90,7 +90,8 @@ open class PoetAutoConfiguration : InitializingBean {
     @DependsOn("poetAnnexClient")
     @ConditionalOnMissingBean
     open fun poetAnnexClientHttpSupport(@NotNull client: PoetAnnexClient,
-                                        @NotNull poetAccessRouter: PoetAccessRouter): PoetAnnexClientHttpSupport {
+                                        @NotNull poetAccessRouter: PoetAccessRouter
+    ): PoetAnnexClientHttpSupport {
         return if (client is PoetAnnexClientHttpSupport) client else LocalFileServerClient(poetAccessRouter)
     }
 
