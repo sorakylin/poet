@@ -1,6 +1,5 @@
 package com.skypyb.poet.core.util
 
-import org.springframework.util.StringUtils
 
 object HttpResourceViewUtils {
 
@@ -8,11 +7,11 @@ object HttpResourceViewUtils {
     private val MIME_TYPE_MAP = mutableMapOf<String, String>()
 
     fun getContentTypeForSuffix(fileName: String): String {
-        return if (!StringUtils.hasText(fileName)) "" else MIME_TYPE_MAP.getOrDefault(splitSuffix(fileName), "")
+        return if (!StrUtil.hasText(fileName)) "" else MIME_TYPE_MAP.getOrDefault(splitSuffix(fileName), "")
     }
 
     fun splitSuffix(fileName: String): String {
-        if (!StringUtils.hasText(fileName)) return ""
+        if (!StrUtil.hasText(fileName)) return ""
         //未知后缀
         if (!fileName.contains('.')) return "unknown"
         if (fileName.lastIndexOf(".") == 0) return fileName.substring(1)

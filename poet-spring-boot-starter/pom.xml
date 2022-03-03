@@ -3,15 +3,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.0.4.RELEASE</version>
-    </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <parent>
+        <artifactId>poet</artifactId>
+        <groupId>com.skypyb.poet</groupId>
+        <version>v3.1.0.RELEASE</version>
+    </parent>
 
-    <groupId>com.skypyb.poet</groupId>
     <artifactId>poet-spring-boot-starter</artifactId>
     <name>poet-spring-boot-starter</name>
     <version>v3.1.0.RELEASE</version>
@@ -63,15 +62,7 @@
         <dependency>
             <groupId>com.skypyb.poet</groupId>
             <artifactId>poet-core</artifactId>
-            <version>v3.1.0.RELEASE</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-dependencies</artifactId>
             <version>${parent.version}</version>
-            <type>pom</type>
-            <scope>import</scope>
         </dependency>
 
         <dependency>
@@ -114,92 +105,12 @@
 
 
     <build>
-
         <plugins>
-            <!--  应用程序同时使用java和kotlin两种开发语言，则必须在 Java 编译器之前调用 Kotlin 编译器。  -->
-            <!--  根据 maven 的方式，则需要在 maven-compiler-plugin 之前运行 kotlin-maven-plugin  -->
             <plugin>
-                <artifactId>kotlin-maven-plugin</artifactId>
-                <groupId>org.jetbrains.kotlin</groupId>
-                <version>${kotlin.version}</version>
-                <executions>
-                    <execution>
-                        <id>compile</id>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                        <configuration>
-                            <sourceDirs>
-                                <sourceDir>${project.basedir}/src/main/kotlin</sourceDir>
-                                <sourceDir>${project.basedir}/src/main/java</sourceDir>
-                            </sourceDirs>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>test-compile</id>
-                        <goals>
-                            <goal>test-compile</goal>
-                        </goals>
-                        <configuration>
-                            <sourceDirs>
-                                <sourceDir>${project.basedir}/src/test/kotlin</sourceDir>
-                                <sourceDir>${project.basedir}/src/test/java</sourceDir>
-                            </sourceDirs>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.5.1</version>
-                <executions>
-                    <!-- 替换 default-compile, 因为它会被 maven 特别处理 -->
-                    <execution>
-                        <id>default-compile</id>
-                        <phase>none</phase>
-                    </execution>
-                    <!-- 替换 default-testCompile, 因为它会被 maven 特别处理 -->
-                    <execution>
-                        <id>default-testCompile</id>
-                        <phase>none</phase>
-                    </execution>
-                    <execution>
-                        <id>java-compile</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>java-test-compile</id>
-                        <phase>test-compile</phase>
-                        <goals>
-                            <goal>testCompile</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
 
-            <!--build-helper-maven-plugin能够指定多个源码目录，通常它被绑定到默认生命周期的generate-sources阶段以添加额外的源码目录-->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>add-source</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>src/main/kotlin</source>
-                                <source>src/main/java</source>
-                            </sources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
@@ -258,7 +169,8 @@
                                 </goals>
                                 <configuration>
                                     <sourceDirs>
-                                        <sourceDir>${project.basedir}/src/main/java</sourceDir>
+                                        <sourceDir>src/main/java</sourceDir>
+                                        <sourceDir>src/main/java</sourceDir>
                                     </sourceDirs>
                                 </configuration>
                             </execution>
@@ -269,6 +181,7 @@
                                 </goals>
                                 <configuration>
                                     <sourceDirs>
+                                        <sourceDir>src/main/java</sourceDir>
                                         <sourceDir>${project.basedir}/src/test/kotlin</sourceDir>
                                     </sourceDirs>
                                 </configuration>

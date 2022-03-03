@@ -11,7 +11,7 @@ import java.util.*
 class PostgresPoetAnnexRepository(private val jdbcTemplate: JdbcTemplate) : PoetAnnexRepository {
     var tableName = "poet_annex"
 
-    val namedParameterJdbcTemplate: NamedParameterJdbcTemplate = NamedParameterJdbcTemplate(jdbcTemplate.getDataSource())
+    val namedParameterJdbcTemplate: NamedParameterJdbcTemplate = NamedParameterJdbcTemplate(jdbcTemplate.dataSource!!)
 
 
     override fun save(annex: PoetAnnex) {

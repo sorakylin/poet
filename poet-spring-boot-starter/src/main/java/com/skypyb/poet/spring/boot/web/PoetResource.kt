@@ -33,7 +33,7 @@ class PoetResource {
 
     private fun res(): HttpServletResponse {
         val attributes = RequestContextHolder.getRequestAttributes() as ServletRequestAttributes
-        return attributes.response
+        return attributes.response!!
     }
 
     private fun req(): HttpServletRequest {
