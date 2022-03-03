@@ -1,5 +1,6 @@
 package com.skypyb.poet.spring.boot.autoconfigure
 
+import com.skypyb.poet.spring.boot.StoreMode
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.stereotype.Component
 import javax.validation.constraints.NotBlank
@@ -7,6 +8,10 @@ import javax.validation.constraints.NotBlank
 @ConfigurationProperties(prefix = "poet")
 @Component("poetProperties")
 data class PoetProperties(
+
+    //存储模型
+    var storeMode: StoreMode = StoreMode.LOCAL,
+
     //默认储存位置
     var storageLocation: @NotBlank(message = "Storage location not be empty!") String? = null,
 
@@ -26,5 +31,5 @@ data class PoetProperties(
     var pathDelimiter: String = "/",
 
     //储存附件信息的表名
-    var tableName: String = "poet_annex"
+    var tableName: String = "poet_annex",
 )

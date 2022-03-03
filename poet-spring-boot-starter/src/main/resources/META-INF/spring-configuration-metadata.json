@@ -8,6 +8,11 @@
   ],
   "properties": [
     {
+      "name": "poet.storeMode",
+      "sourceType": "com.skypyb.poet.spring.boot.autoconfigure.PoetProperties",
+      "type": "com.skypyb.poet.spring.boot.StoreMode"
+    },
+    {
       "name": "poet.storageLocation",
       "sourceType": "com.skypyb.poet.spring.boot.autoconfigure.PoetProperties",
       "type": "java.lang.String"

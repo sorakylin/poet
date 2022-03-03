@@ -31,7 +31,7 @@ import javax.validation.constraints.NotNull
 @ConditionalOnSingleCandidate(DataSource::class)
 @EnableConfigurationProperties(PoetProperties::class)
 @AutoConfigureAfter(DataSourceAutoConfiguration::class)
-open class PoetAutoConfiguration : InitializingBean {
+class PoetAutoConfiguration : InitializingBean {
 
     @Autowired
     private lateinit var validator: Validator
@@ -47,7 +47,7 @@ open class PoetAutoConfiguration : InitializingBean {
     override fun afterPropertiesSet() {
         val validate = validator.validate(poetProperties)
 
-        if (validate != null && !validate.isEmpty()) {
+        if (validate != null && validate.isNotEmpty()) {
             val message = validate.stream().map { it.message }.collect(Collectors.joining(" | "))
             throw ValidationException(message)
         }
@@ -58,7 +58,7 @@ open class PoetAutoConfiguration : InitializingBean {
 
     @Bean
     @ConditionalOnMissingBean
-    open fun poetAccessRouter(@Nullable slicer: PoetAnnexSlicer?): PoetAccessRouter {
+    fun poetAccessRouter(@Nullable slicer: PoetAnnexSlicer?): PoetAccessRouter {
         val router: PoetAccessRouter = DefaultPoetAccessRouter()
         router.setDefaultModule(poetProperties.defaultModule)
         router.setStorageLocation(poetProperties.storageLocation)
@@ -74,7 +74,7 @@ open class PoetAutoConfiguration : InitializingBean {
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnProperty(name = ["poet.enableDBStore"], havingValue = "true")
-    open fun poetAnnexRepository(@NotNull jdbcTemplate: JdbcTemplate): PoetAnnexRepository {
+    fun poetAnnexRepository(@NotNull jdbcTemplate: JdbcTemplate): PoetAnnexRepository {
         val repository = MySQLPoetAnnexRepository(jdbcTemplate)
         repository.tableName = poetProperties.tableName
         return repository
@@ -82,14 +82,16 @@ open class PoetAutoConfiguration : InitializingBean {
 
     @Bean
     @ConditionalOnMissingBean
-    open fun poetAnnexClient(poetAccessRouter: PoetAccessRouter): PoetAnnexClient {
+    @ConditionalOnProperty(name = ["poet.storeMode"], havingValue = "LOCAL")
+    fun poetAnnexClient(poetAccessRouter: PoetAccessRouter): PoetAnnexClient {
         return LocalFileServerClient(poetAccessRouter)
     }
 
     @Bean
     @DependsOn("poetAnnexClient")
     @ConditionalOnMissingBean
-    open fun poetAnnexClientHttpSupport(@NotNull client: PoetAnnexClient,
+    @ConditionalOnProperty(name = ["poet.storeMode"], havingValue = "LOCAL")
+    fun poetAnnexClientHttpSupport(@NotNull client: PoetAnnexClient,
                                         @NotNull poetAccessRouter: PoetAccessRouter
     ): PoetAnnexClientHttpSupport {
         return if (client is PoetAnnexClientHttpSupport) client else LocalFileServerClient(poetAccessRouter)
@@ -98,7 +100,7 @@ open class PoetAutoConfiguration : InitializingBean {
     @Bean
     @ConditionalOnMissingBean
     @DependsOn("poetAnnexClient", "poetAnnexClientHttpSupport")
-    open fun poetAnnexContext(poetAnnexClient: PoetAnnexClient,
+    fun poetAnnexContext(poetAnnexClient: PoetAnnexClient,
                               poetAnnexClientHttpSupport: PoetAnnexClientHttpSupport,
                               @Nullable poetAnnexRepository: PoetAnnexRepository?,
                               @Nullable nameGenerator: PoetAnnexNameGenerator?): PoetAnnexContext {

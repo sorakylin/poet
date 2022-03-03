@@ -9,7 +9,7 @@ import org.springframework.beans.factory.config.BeanPostProcessor
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-open class PoetHandlerInterceptorChainConfiguration : InitializingBean, BeanPostProcessor {
+class PoetHandlerInterceptorChainConfiguration : InitializingBean, BeanPostProcessor {
 
     private val standardInterceptorChain = StandardInterceptorChain();
 
