@@ -8,7 +8,7 @@ import com.skypyb.poet.core.client.PoetAnnexClient
 import com.skypyb.poet.core.client.PoetAnnexClientHttpSupport
 import com.skypyb.poet.core.exception.AnnexOperationException
 import com.skypyb.poet.core.model.PoetAnnex
-import com.skypyb.poet.spring.boot.store.PoetAnnexNameGenerator
+import com.skypyb.poet.core.client.PoetAnnexNameGenerator
 import com.skypyb.poet.spring.boot.store.PoetAnnexRepository
 import com.skypyb.poet.spring.boot.store.StoreRoadSign
 import com.skypyb.poet.core.util.HttpResourceViewUtils

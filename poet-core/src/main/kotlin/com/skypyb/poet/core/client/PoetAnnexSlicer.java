@@ -1,7 +1,6 @@
 package com.skypyb.poet.core.client;
 
 import com.skypyb.poet.core.util.StrUtil;
-import com.skypyb.poet.spring.boot.store.PoetAnnexNameGenerator;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -28,7 +27,7 @@ public interface PoetAnnexSlicer {
 
     static PoetAnnexSlicer slicer(String delimiter) {
         return (m, n) -> Arrays.stream(new String[]{m, n})
-                .filter(StrUtil::hasText)
+                .filter(StrUtil.INSTANCE::hasText)
                 .map(s -> s.startsWith(delimiter) ? s.substring(1) : s)
                 .map(s -> s.endsWith(delimiter) ? s.substring(s.length() - 1) : s)
                 .collect(Collectors.joining(delimiter))

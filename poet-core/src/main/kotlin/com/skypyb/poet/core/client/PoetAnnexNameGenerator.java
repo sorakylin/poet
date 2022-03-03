@@ -1,4 +1,4 @@
-package com.skypyb.poet.spring.boot.store;
+package com.skypyb.poet.core.client;
 
 import java.util.UUID;
 

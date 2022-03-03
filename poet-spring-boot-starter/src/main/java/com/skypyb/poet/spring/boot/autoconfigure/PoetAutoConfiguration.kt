@@ -4,7 +4,7 @@ import com.skypyb.poet.core.client.*
 import com.skypyb.poet.spring.boot.DefaultPoetAnnexContext
 import com.skypyb.poet.spring.boot.PoetAnnexContext
 import com.skypyb.poet.spring.boot.store.MySQLPoetAnnexRepository
-import com.skypyb.poet.spring.boot.store.PoetAnnexNameGenerator
+import com.skypyb.poet.core.client.PoetAnnexNameGenerator
 import com.skypyb.poet.spring.boot.store.PoetAnnexRepository
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.InitializingBean

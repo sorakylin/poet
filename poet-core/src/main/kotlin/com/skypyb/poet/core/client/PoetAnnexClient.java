@@ -1,7 +1,6 @@
 package com.skypyb.poet.core.client;
 
 import com.skypyb.poet.core.model.PoetAnnex;
-import com.skypyb.poet.spring.boot.store.PoetAnnexNameGenerator;
 
 import javax.annotation.Nullable;
 import java.io.InputStream;

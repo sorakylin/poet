@@ -2,7 +2,7 @@ package com.skypyb.poet.spring.boot.interceptor;
 
 import com.skypyb.poet.core.exception.AnnexAccessException;
 import com.skypyb.poet.spring.boot.PoetAnnexContext;
-import com.skypyb.poet.spring.boot.store.PoetAnnexNameGenerator;
+import com.skypyb.poet.core.client.PoetAnnexNameGenerator;
 import org.springframework.core.Ordered;
 
 import javax.annotation.Nullable;
