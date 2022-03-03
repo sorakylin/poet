@@ -120,7 +120,7 @@ poet:
 
 * 通过 HTTP 端点进行附件操作
 
-    端点可以查看下面的 HTTP 端点说明， 或者进入 `com.skypyb.poet.spring.boot.web.PoetResource` 类查看实现
+    端点可以查看下面的 HTTP 端点说明， 或者进入 `PoetResource` 类查看实现
 
     使用 HTTP 端点时**必须开启** (默认开启)数据库储存模块
 
