@@ -1,0 +1,31 @@
+{
+  "groups": [
+    {
+      "name": "poet",
+      "sourceType": "com.skypyb.poet.cloudstore.tencent.PoetCosProperties",
+      "type": "com.skypyb.poet.cloudstore.tencent.PoetCosProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "poet.tencent.secretId",
+      "sourceType": "com.skypyb.poet.cloudstore.tencent.PoetCosProperties",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "poet.tencent.secretKey",
+      "sourceType": "com.skypyb.poet.cloudstore.tencent.PoetCosProperties",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "poet.tencent.defaultBucket",
+      "sourceType": "com.skypyb.poet.cloudstore.tencent.PoetCosProperties",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "poet.tencent.region",
+      "sourceType": "com.skypyb.poet.cloudstore.tencent.PoetCosProperties",
+      "type": "java.lang.String"
+    }
+  ]
+}

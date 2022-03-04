@@ -19,15 +19,14 @@ import javax.servlet.http.HttpServletResponse
 /**
  * 以本地文件系统作为服务基础来进行附件操作的客户端
  */
-class LocalFileServerClient(router: PoetAccessRouter) : PoetAnnexClient, PoetAnnexClientHttpSupport {
-
-    private val router: PoetAccessRouter = router
+class LocalFileServerClient(private val router: PoetAccessRouter) : PoetAnnexClient, PoetAnnexClientHttpSupport {
 
     //region AnnexClient
 
     override fun save(inputStream: InputStream, name: String) = save(inputStream, name, null)
 
-    override fun save(inputStream: InputStream, name: String, module: String?) = inputStream.use { save(it.readBytes(), name, module) }
+    override fun save(inputStream: InputStream, name: String, module: String?) =
+        inputStream.use { save(it.readBytes(), name, module) }
 
     override fun save(data: ByteArray, name: String) = save(data, name, null)
 
@@ -208,7 +207,10 @@ class LocalFileServerClient(router: PoetAccessRouter) : PoetAnnexClient, PoetAnn
                 } else {
                     length = contentLength - requestStart
                     response.setHeader("Content-length", length.toString())
-                    response.setHeader("Content-Range", "bytes " + requestStart + "-" + (contentLength - 1) + "/" + contentLength)
+                    response.setHeader(
+                        "Content-Range",
+                        "bytes " + requestStart + "-" + (contentLength - 1) + "/" + contentLength
+                    )
                 }
             }
             val out = response.outputStream
@@ -237,7 +239,8 @@ class LocalFileServerClient(router: PoetAccessRouter) : PoetAnnexClient, PoetAnn
         }
     }
 
-    override fun down(key: String, response: HttpServletResponse) = key.split(router.delimiter).last().let { down(key, it, response) }
+    override fun down(key: String, response: HttpServletResponse) =
+        key.split(router.delimiter).last().let { down(key, it, response) }
 
     override fun down(key: String, realName: String, response: HttpServletResponse) {
         val path = Paths.get(router.formatKey(key))
