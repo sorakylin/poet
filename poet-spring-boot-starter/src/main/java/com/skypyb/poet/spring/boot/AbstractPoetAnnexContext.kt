@@ -41,9 +41,9 @@ abstract class AbstractPoetAnnexContext : PoetAnnexContext,
      * @param annexClient     附件基础操作支持
      * @param annexHttpClient 附件Http相关操作支持
      */
-    fun configure(annexClient: PoetAnnexClient, annexHttpClient: PoetAnnexClientHttpSupport) {
+    fun configure(annexClient: PoetAnnexClient, annexHttpClient: PoetAnnexClientHttpSupport?) {
         this.annexClient = annexClient
-        this.annexHttpClient = annexHttpClient
+        this.annexHttpClient = annexHttpClient ?: PoetAnnexClientHttpSupport.NO_SUPPORT
     }
 
     override fun setInterceptorChain(chain: PoetHandlerInterceptorChain) {
@@ -52,8 +52,8 @@ abstract class AbstractPoetAnnexContext : PoetAnnexContext,
 
     private fun nameGenerator(realName: String): String {
         return nameGenerator?.generate()
-                ?.let { StringBuilder(it).append(".").append(HttpResourceViewUtils.splitSuffix(realName)).toString() }
-                ?: realName
+            ?.let { StringBuilder(it).append(".").append(HttpResourceViewUtils.splitSuffix(realName)).toString() }
+            ?: realName
     }
 
     override fun save(ins: InputStream, realName: String, roadSign: StoreRoadSign): PoetAnnex {
@@ -113,7 +113,7 @@ abstract class AbstractPoetAnnexContext : PoetAnnexContext,
      * 如果禁用了DB之类的则会直接报错， 下边的所有方法都不能用
      */
     private fun findAnnex(name: String): PoetAnnex = repository?.findByName(name)
-            ?: throw AnnexOperationException("File($name) does not exist!")
+        ?: throw AnnexOperationException("File($name) does not exist!")
 
     override fun getBytes(name: String): ByteArray {
         interceptorChain.doInterception(PoetHandlerInterceptor.Mode.ACCESS, name, null)

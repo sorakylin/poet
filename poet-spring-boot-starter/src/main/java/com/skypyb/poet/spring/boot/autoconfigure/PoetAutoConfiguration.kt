@@ -35,6 +35,7 @@ class PoetAutoConfiguration : InitializingBean {
 
     @Autowired
     private lateinit var validator: Validator
+
     @Autowired
     private lateinit var poetProperties: PoetProperties
 
@@ -91,8 +92,9 @@ class PoetAutoConfiguration : InitializingBean {
     @DependsOn("poetAnnexClient")
     @ConditionalOnMissingBean
     @ConditionalOnProperty(name = ["poet.storeMode"], havingValue = "LOCAL")
-    fun poetAnnexClientHttpSupport(@NotNull client: PoetAnnexClient,
-                                        @NotNull poetAccessRouter: PoetAccessRouter
+    fun poetAnnexClientHttpSupport(
+        @NotNull client: PoetAnnexClient,
+        @NotNull poetAccessRouter: PoetAccessRouter
     ): PoetAnnexClientHttpSupport {
         return if (client is PoetAnnexClientHttpSupport) client else LocalFileServerClient(poetAccessRouter)
     }
@@ -100,10 +102,12 @@ class PoetAutoConfiguration : InitializingBean {
     @Bean
     @ConditionalOnMissingBean
     @DependsOn("poetAnnexClient", "poetAnnexClientHttpSupport")
-    fun poetAnnexContext(poetAnnexClient: PoetAnnexClient,
-                              poetAnnexClientHttpSupport: PoetAnnexClientHttpSupport,
-                              @Nullable poetAnnexRepository: PoetAnnexRepository?,
-                              @Nullable nameGenerator: PoetAnnexNameGenerator?): PoetAnnexContext {
+    fun poetAnnexContext(
+        poetAnnexClient: PoetAnnexClient,
+        @Nullable poetAnnexClientHttpSupport: PoetAnnexClientHttpSupport?,
+        @Nullable poetAnnexRepository: PoetAnnexRepository?,
+        @Nullable nameGenerator: PoetAnnexNameGenerator?
+    ): PoetAnnexContext {
         val context = DefaultPoetAnnexContext()
         context.configure(poetAnnexClient, poetAnnexClientHttpSupport)
         context.repository = poetAnnexRepository

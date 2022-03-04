@@ -1,5 +1,7 @@
 package com.skypyb.poet.core.client;
 
+import com.skypyb.poet.core.exception.AnnexAccessException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -8,6 +10,33 @@ import javax.servlet.http.HttpServletResponse;
  * 包括下载、预览(指图片)、媒体播放支持
  */
 public interface PoetAnnexClientHttpSupport {
+
+    PoetAnnexClientHttpSupport NO_SUPPORT = new PoetAnnexClientHttpSupport() {
+        @Override
+        public void view(String key, HttpServletResponse response) {
+            throw new AnnexAccessException();
+        }
+
+        @Override
+        public void viewMedia(String key, HttpServletResponse response) {
+            throw new AnnexAccessException();
+        }
+
+        @Override
+        public void viewMedia(String key, HttpServletRequest request, HttpServletResponse response) {
+            throw new AnnexAccessException();
+        }
+
+        @Override
+        public void down(String key, HttpServletResponse response) {
+            throw new AnnexAccessException();
+        }
+
+        @Override
+        public void down(String key, String realName, HttpServletResponse response) {
+            throw new AnnexAccessException();
+        }
+    };
 
     /**
      * 查看文件, 比如预览图片等
