@@ -15,16 +15,6 @@
     <name>poet-core</name>
     <version>v3.1.0.RELEASE</version>
 
-    <properties>
-        <module.name>com.skypyb.poet.core</module.name>
-        <java.version>1.8</java.version>
-        <jdk.version>1.8</jdk.version>
-        <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <kotlin.version>1.5.31</kotlin.version>
-    </properties>
-
     <dependencies>
         <!--  图片处理 -->
         <dependency>
