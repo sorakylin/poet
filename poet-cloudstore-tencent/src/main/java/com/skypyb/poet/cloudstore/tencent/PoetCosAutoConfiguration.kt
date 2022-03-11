@@ -20,8 +20,8 @@ import javax.validation.Validator
 
 
 @Configuration
-@ConditionalOnProperty(name = ["poet.storeMode"], havingValue = "TENCENT")
 @DependsOn("poetProperties")
+@ConditionalOnProperty(name = ["poet.storeMode"], havingValue = "TENCENT")
 @EnableConfigurationProperties(PoetCosProperties::class)
 class PoetCosAutoConfiguration : InitializingBean {
 

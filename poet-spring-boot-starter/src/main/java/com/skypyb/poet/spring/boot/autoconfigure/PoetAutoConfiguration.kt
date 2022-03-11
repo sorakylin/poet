@@ -29,7 +29,6 @@ import javax.validation.constraints.NotNull
 
 @Configuration
 @ConditionalOnSingleCandidate(DataSource::class)
-@EnableConfigurationProperties(PoetProperties::class)
 @AutoConfigureAfter(DataSourceAutoConfiguration::class)
 class PoetAutoConfiguration : InitializingBean {
 
@@ -101,7 +100,7 @@ class PoetAutoConfiguration : InitializingBean {
 
     @Bean
     @ConditionalOnMissingBean
-    @DependsOn("poetAnnexClient", "poetAnnexClientHttpSupport")
+//    @DependsOn("poetAnnexClient", "poetAnnexClientHttpSupport")
     fun poetAnnexContext(
         poetAnnexClient: PoetAnnexClient,
         @Nullable poetAnnexClientHttpSupport: PoetAnnexClientHttpSupport?,
