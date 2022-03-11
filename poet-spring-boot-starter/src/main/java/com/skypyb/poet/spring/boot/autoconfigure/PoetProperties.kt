@@ -13,7 +13,8 @@ data class PoetProperties(
     var storeMode: StoreMode = StoreMode.LOCAL,
 
     //默认储存位置
-    var storageLocation: @NotBlank(message = "Storage location not be empty!") String? = null,
+    @field:NotBlank(message = "Storage location not be empty!")
+    var storageLocation: String? = null,
 
     //是否启用web端点
     var enableWebResource: Boolean = true,
