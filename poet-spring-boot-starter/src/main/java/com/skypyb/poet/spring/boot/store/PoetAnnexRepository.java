@@ -3,6 +3,7 @@ package com.skypyb.poet.spring.boot.store;
 import com.skypyb.poet.core.model.PoetAnnex;
 
 import javax.annotation.Nullable;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -27,6 +28,8 @@ public interface PoetAnnexRepository {
     int updateInstanceId(Collection<String> names, Long instanceId);
 
     int neverExpire(Collection<String> names);
+
+    void setExpire(Collection<String> names, LocalDateTime expireTime);
 
     List<String> findExpireAnnex();
 }

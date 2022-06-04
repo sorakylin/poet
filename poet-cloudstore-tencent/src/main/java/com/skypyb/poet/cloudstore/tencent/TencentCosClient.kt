@@ -1,7 +1,6 @@
 package com.skypyb.poet.cloudstore.tencent
 
 import com.qcloud.cos.COSClient
-import com.qcloud.cos.demo.BucketRefererDemo.bucketName
 import com.qcloud.cos.exception.CosClientException
 import com.qcloud.cos.exception.CosServiceException
 import com.qcloud.cos.model.GetObjectRequest
@@ -45,7 +44,7 @@ class TencentCosClient(
             // 如果确实没办法获取到，则下面这行可以省略，但同时高级接口也没办法使用分块上传了
 //            objectMetadata.setContentLength(inputStreamLength);
 
-            val req = PutObjectRequest(bucketName, key, inputStream, objectMetadata)
+            val req = PutObjectRequest(defaultBucket, key, inputStream, objectMetadata)
             val res = handleWrap { cosClient.putObject(req) }
             res.metadata.contentLength
         }
@@ -71,7 +70,7 @@ class TencentCosClient(
 
     override fun getBytes(key: String): ByteArray {
         return handleWrap {
-            val getObjectRequest = GetObjectRequest(bucketName, key)
+            val getObjectRequest = GetObjectRequest(defaultBucket, key)
             val cosObject = cosClient.getObject(getObjectRequest)
 
             val ins = cosObject.objectContent

@@ -5,13 +5,15 @@ import com.skypyb.poet.core.model.PoetAnnex
 import org.springframework.jdbc.core.BeanPropertyRowMapper
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
+import java.time.LocalDateTime
 import java.util.*
 
 
 class PostgresPoetAnnexRepository(private val jdbcTemplate: JdbcTemplate) : PoetAnnexRepository {
-    var tableName = "poet_annex"
+    private var tableName = "poet_annex"
 
-    val namedParameterJdbcTemplate: NamedParameterJdbcTemplate = NamedParameterJdbcTemplate(jdbcTemplate.dataSource!!)
+    private val namedParameterJdbcTemplate: NamedParameterJdbcTemplate =
+        NamedParameterJdbcTemplate(jdbcTemplate.dataSource!!)
 
 
     override fun save(annex: PoetAnnex) {
@@ -26,9 +28,11 @@ class PostgresPoetAnnexRepository(private val jdbcTemplate: JdbcTemplate) : Poet
             VALUES (?,?,?,?,?,?,?,?,?,?)
         """;
 
-        jdbcTemplate.update(sql,
-                annex.name, annex.realName, annex.suffix, annex.key, annex.length, Date(),
-                roadSign.mainCategory, roadSign.instanceId, roadSign.instanceModule, roadSign.expireTime)
+        jdbcTemplate.update(
+            sql,
+            annex.name, annex.realName, annex.suffix, annex.key, annex.length, Date(),
+            roadSign.mainCategory, roadSign.instanceId, roadSign.instanceModule, roadSign.expireTime
+        )
     }
 
     override fun deleteByName(name: String): Int {
@@ -64,7 +68,11 @@ class PostgresPoetAnnexRepository(private val jdbcTemplate: JdbcTemplate) : Poet
             WHERE name IN (:names)
         """
 
-        return namedParameterJdbcTemplate.query(sql, mapOf("names" to names), BeanPropertyRowMapper(DefaultPoetAnnex::class.java))
+        return namedParameterJdbcTemplate.query(
+            sql,
+            mapOf("names" to names),
+            BeanPropertyRowMapper(DefaultPoetAnnex::class.java)
+        )
     }
 
 
@@ -82,16 +90,19 @@ class PostgresPoetAnnexRepository(private val jdbcTemplate: JdbcTemplate) : Poet
             FROM  $tableName
             WHERE main_category=? AND instance_id=? AND instance_module=?
         """
-        return jdbcTemplate.query(sql, arrayOf(mainCategory, instanceId, instanceModule), BeanPropertyRowMapper(
-            DefaultPoetAnnex::class.java))
+        return jdbcTemplate.query(
+            sql, arrayOf(mainCategory, instanceId, instanceModule), BeanPropertyRowMapper(
+                DefaultPoetAnnex::class.java
+            )
+        )
     }
 
     override fun updateInstanceId(names: MutableCollection<String>, instanceId: Long): Int {
         if (names.isEmpty()) return 0
 
         val params = mapOf(
-                "instanceId" to instanceId,
-                "names" to names
+            "instanceId" to instanceId,
+            "names" to names
         )
 
         val sql = "UPDATE $tableName SET instance_id = :instanceId WHERE name IN (:names)";
@@ -102,6 +113,17 @@ class PostgresPoetAnnexRepository(private val jdbcTemplate: JdbcTemplate) : Poet
     override fun findExpireAnnex(): List<String> {
         val sql = "SELECT name FROM $tableName WHERE expire_time < now()";
         return jdbcTemplate.queryForList(sql, String::class.java);
+    }
+
+
+    override fun setExpire(names: MutableCollection<String>?, expireTime: LocalDateTime?) {
+        names ?: return
+        expireTime ?: return
+        if (names.isEmpty()) return
+
+        val sql = "UPDATE $tableName SET expire_time = :expireTime WHERE name IN (:names)";
+
+        namedParameterJdbcTemplate.update(sql, mapOf("expireTime" to expireTime, "names" to names));
     }
 
     override fun neverExpire(names: MutableCollection<String>): Int {

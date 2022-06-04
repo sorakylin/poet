@@ -5,6 +5,7 @@ import com.skypyb.poet.core.model.PoetAnnex
 import org.springframework.jdbc.core.BeanPropertyRowMapper
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
+import java.time.LocalDateTime
 import java.util.*
 
 class MySQLPoetAnnexRepository(private val jdbcTemplate: JdbcTemplate) : PoetAnnexRepository {
@@ -16,8 +17,10 @@ class MySQLPoetAnnexRepository(private val jdbcTemplate: JdbcTemplate) : PoetAnn
     }
 
     override fun save(annex: PoetAnnex, roadSign: StoreRoadSign) {
-        jdbcTemplate.update("INSERT INTO $tableName(`name`,`real_name`,`suffix`,`key`,`length`,`create_time`) VALUES (?,?,?,?,?,?)",
-                annex.name, annex.realName, annex.suffix, annex.key, annex.length, Date())
+        jdbcTemplate.update(
+            "INSERT INTO $tableName(`name`,`real_name`,`suffix`,`key`,`length`,`create_time`) VALUES (?,?,?,?,?,?)",
+            annex.name, annex.realName, annex.suffix, annex.key, annex.length, Date()
+        )
     }
 
     override fun deleteByName(name: String): Int {
@@ -54,7 +57,11 @@ class MySQLPoetAnnexRepository(private val jdbcTemplate: JdbcTemplate) : PoetAnn
             WHERE `name` IN (:names)
         """
 
-        return namedParameterJdbcTemplate.query(sql, mapOf("names" to names), BeanPropertyRowMapper(DefaultPoetAnnex::class.java))
+        return namedParameterJdbcTemplate.query(
+            sql,
+            mapOf("names" to names),
+            BeanPropertyRowMapper(DefaultPoetAnnex::class.java)
+        )
     }
 
     override fun findByRoadSign(mainCategory: String?, instanceId: Long?, instanceModule: String?): List<PoetAnnex> {
@@ -64,12 +71,16 @@ class MySQLPoetAnnexRepository(private val jdbcTemplate: JdbcTemplate) : PoetAnn
         return listOf();
     }
 
-    override fun updateInstanceId(names: MutableCollection<String>, instanceId: Long): Int {
+    override fun updateInstanceId(names: MutableCollection<String>?, instanceId: Long?): Int {
         return 0
     }
 
     override fun findExpireAnnex(): List<String> {
         return listOf()
+    }
+
+    override fun setExpire(names: MutableCollection<String>?, expireTime: LocalDateTime?) {
+
     }
 
     override fun neverExpire(names: MutableCollection<String>): Int {
