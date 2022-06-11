@@ -8,12 +8,12 @@
     <parent>
         <artifactId>poet</artifactId>
         <groupId>com.skypyb.poet</groupId>
-        <version>v3.1.0.RELEASE</version>
+        <version>v3.1.1.RELEASE</version>
     </parent>
 
     <artifactId>poet-core</artifactId>
     <name>poet-core</name>
-    <version>v3.1.0.RELEASE</version>
+    <version>v3.1.1.RELEASE</version>
 
     <dependencies>
         <!--  图片处理 -->

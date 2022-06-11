@@ -9,7 +9,7 @@
     <groupId>com.skypyb.poet</groupId>
     <artifactId>poet</artifactId>
     <name>poet</name>
-    <version>v3.1.0.RELEASE</version>
+    <version>v3.1.1.RELEASE</version>
     <url>https://github.com/sorakylin/poet</url>
     <description>🎻附件操作 SpringBoot Starter。给项目一键安排上，起飞！</description>
 
