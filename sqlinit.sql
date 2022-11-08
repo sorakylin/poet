@@ -32,5 +32,5 @@ comment on column poet_annex.main_category is '附件所属类别';
 comment on column poet_annex.instance_id is '附件所属的实例ID';
 comment on column poet_annex.instance_module is '附件所属的是这个实例的哪个模块';
 comment on column poet_annex.expire_time is '过期时间，null为不过期';
-comment on table tb_user is 'poet 附件支持';
+comment on table poet_annex is 'poet 附件支持';
 
