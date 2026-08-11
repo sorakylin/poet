@@ -82,7 +82,12 @@ class PoetAutoConfiguration : InitializingBean {
 
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnProperty(name = ["poet.storeMode"], havingValue = "LOCAL")
+    @ConditionalOnProperty(
+        prefix = "poet",
+        name = ["store-mode"],
+        havingValue = "LOCAL",
+        matchIfMissing = true
+    )
     fun poetAnnexClient(poetAccessRouter: PoetAccessRouter): PoetAnnexClient {
         return LocalFileServerClient(poetAccessRouter)
     }
@@ -90,7 +95,12 @@ class PoetAutoConfiguration : InitializingBean {
     @Bean
     @DependsOn("poetAnnexClient")
     @ConditionalOnMissingBean
-    @ConditionalOnProperty(name = ["poet.storeMode"], havingValue = "LOCAL")
+    @ConditionalOnProperty(
+        prefix = "poet",
+        name = ["store-mode"],
+        havingValue = "LOCAL",
+        matchIfMissing = true
+    )
     fun poetAnnexClientHttpSupport(
         @NotNull client: PoetAnnexClient,
         @NotNull poetAccessRouter: PoetAccessRouter
