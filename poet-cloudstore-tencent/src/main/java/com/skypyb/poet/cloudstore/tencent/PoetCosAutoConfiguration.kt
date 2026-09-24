@@ -9,19 +9,22 @@ import com.skypyb.poet.core.client.PoetAnnexClient
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.InitializingBean
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.AutoConfiguration
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.DependsOn
-import javax.validation.ValidationException
-import javax.validation.Validator
+import jakarta.validation.ValidationException
+import jakarta.validation.Validator
 
 
-@Configuration
-@DependsOn("poetProperties")
-@ConditionalOnProperty(name = ["poet.storeMode"], havingValue = "TENCENT")
+@AutoConfiguration(afterName = [
+    "com.skypyb.poet.spring.boot.autoconfigure.PoetAutoConfiguration",
+    "org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration"
+])
+@ConditionalOnBean(PoetAccessRouter::class)
+@ConditionalOnProperty(prefix = "poet", name = ["store-mode"], havingValue = "TENCENT")
 @EnableConfigurationProperties(PoetCosProperties::class)
 class PoetCosAutoConfiguration : InitializingBean {
 

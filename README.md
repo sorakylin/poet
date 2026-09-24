@@ -3,10 +3,10 @@
 ## poet
 这是由 Kotlin 编写的 SpringBoot Starter 附件操作库。 一键集成进你的应用使其能够更便捷的操作附件
 
-[![version](https://img.shields.io/badge/version-v1.1.0.RELEASE-orange.svg)](../)
+[![version](https://img.shields.io/badge/version-v4.1.1.RELEASE-orange.svg)](../)
 [![License](https://img.shields.io/badge/License-MIT-red.svg)](https://mit-license.org/)
-[![Kotlin](https://img.shields.io/badge/Kotlin-1.3.72-green)](https://github.com/JetBrains/kotlin/releases/tag/v1.3.72)
-[![JDK](https://img.shields.io/badge/JDK-1.8-orange)](https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
+[![Kotlin](https://img.shields.io/badge/Kotlin-1.9.25-green)](https://github.com/JetBrains/kotlin/releases/tag/v1.9.25)
+[![JDK](https://img.shields.io/badge/JDK-17%2B-orange)](https://openjdk.org/projects/jdk/17/)
 
 </div>
 <br>
@@ -52,6 +52,8 @@
 
 
 ## 快速开始:
+当前 `v4.1.1.RELEASE` 面向 **Spring Boot 3 / Jakarta / JDK 17+**，以 Boot 3.5.16 为构建基线，三个模块均发布为可直接依赖的普通 JAR。Boot 2 项目继续使用 `v3.1.1.RELEASE`；升级说明、验证范围及本地安装方式见 [BOOT3_MIGRATION.md](BOOT3_MIGRATION.md)。
+
 上面说起来似乎东西不少,  但实际上用默认的组件+傻瓜式配置已经足以满足大部分需求
 
 <br>
@@ -61,7 +63,7 @@
 <dependency>
   <groupId>com.skypyb.poet</groupId>
   <artifactId>poet-spring-boot-starter</artifactId>
-  <version>v1.1.0.RELEASE</version>
+  <version>v4.1.1.RELEASE</version>
 </dependency>
 ```
 <br>
@@ -76,6 +78,8 @@ poet:
   #存储路径 支持windows系统, 如E:\tempfile\annex
   storage-location: /home/static/poet
 ```
+
+默认开启数据库元信息存储，需由宿主配置数据源、数据库驱动和附件表；默认仓库使用 MySQL。PostgreSQL 宿主可以继续提供自定义 `PostgresPoetAnnexRepository` Bean。只用本地文件客户端时可配置 `poet.enable-db-store=false`；如果宿主完全不使用 JDBC，还应排除 `DataSourceAutoConfiguration`，具体示例见升级说明。
 
 
 <br>
@@ -403,7 +407,7 @@ public interface PoetAnnexContext {
 
 
 ## 说在最后
-嘛... 总之无限欢迎PR  
+总之无限欢迎PR  
 如果帮到了你，请点个star~
 
 <br>

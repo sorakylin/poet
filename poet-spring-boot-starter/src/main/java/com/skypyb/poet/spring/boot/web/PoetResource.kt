@@ -11,15 +11,15 @@ import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
 import org.springframework.web.multipart.MultipartFile
 import java.io.IOException
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 
 /**
  * 附件的下载、预览、上传等相关操作的资源层
  * /bs开头的路径为附件相关的业务操作 (增删改查)
  */
 //@RequestMapping(value = "#{poetProperties.webUrlPrefix}")
-@RequestMapping(value = ["\${poet.webUrlPrefix:/poet}"])
+@RequestMapping(value = ["\${poet.web-url-prefix:\${poet.webUrlPrefix:/poet}}"])
 @RestController
 class PoetResource {
 

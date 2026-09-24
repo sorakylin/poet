@@ -1,7 +1,7 @@
 package com.skypyb.poet.cloudstore.tencent
 
 import org.springframework.boot.context.properties.ConfigurationProperties
-import javax.validation.constraints.NotBlank
+import jakarta.validation.constraints.NotBlank
 
 @ConfigurationProperties(prefix = "poet.tencent")
 data class PoetCosProperties(

@@ -13,8 +13,8 @@ import com.skypyb.poet.spring.boot.store.PoetAnnexRepository
 import com.skypyb.poet.spring.boot.store.StoreRoadSign
 import com.skypyb.poet.core.util.HttpResourceViewUtils
 import java.io.InputStream
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 
 /**
  * 附件操作的整体上下文

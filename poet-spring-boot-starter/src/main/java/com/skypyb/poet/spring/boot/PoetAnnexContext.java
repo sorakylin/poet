@@ -6,8 +6,8 @@ import com.skypyb.poet.core.model.PoetAnnex;
 import com.skypyb.poet.spring.boot.store.StoreRoadSign;
 import com.skypyb.poet.spring.boot.store.PoetAnnexRepository;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.InputStream;
 
 /**

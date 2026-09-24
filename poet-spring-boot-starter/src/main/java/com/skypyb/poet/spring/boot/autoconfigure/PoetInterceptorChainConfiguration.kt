@@ -8,7 +8,7 @@ import org.springframework.beans.factory.InitializingBean
 import org.springframework.beans.factory.config.BeanPostProcessor
 import org.springframework.context.annotation.Configuration
 
-@Configuration
+@Configuration(proxyBeanMethods = false)
 class PoetHandlerInterceptorChainConfiguration : InitializingBean, BeanPostProcessor {
 
     private val standardInterceptorChain = StandardInterceptorChain();

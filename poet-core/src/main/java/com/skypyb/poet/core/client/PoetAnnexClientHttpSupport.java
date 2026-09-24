@@ -2,8 +2,8 @@ package com.skypyb.poet.core.client;
 
 import com.skypyb.poet.core.exception.AnnexAccessException;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * 对于附件操作的支持

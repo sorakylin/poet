@@ -1,6 +1,6 @@
 package com.skypyb.poet.core.img;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * 图片处理器统一接口

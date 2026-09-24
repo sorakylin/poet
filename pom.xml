@@ -9,17 +9,18 @@
     <groupId>com.skypyb.poet</groupId>
     <artifactId>poet</artifactId>
     <name>poet</name>
-    <version>v3.1.1.RELEASE</version>
+    <version>v4.1.1.RELEASE</version>
     <url>https://github.com/sorakylin/poet</url>
     <description>🎻附件操作 SpringBoot Starter。给项目一键安排上，起飞！</description>
 
     <properties>
-        <java.version>1.8</java.version>
-        <jdk.version>1.8</jdk.version>
+        <java.version>17</java.version>
+        <jdk.version>${java.version}</jdk.version>
+        <spring-boot.version>3.5.16</spring-boot.version>
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <kotlin.version>1.5.31</kotlin.version>
+        <kotlin.version>1.9.25</kotlin.version>
     </properties>
 
     <contributors>
@@ -41,7 +42,7 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
-                <version>2.6.2</version>
+                <version>${spring-boot.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -61,13 +62,13 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>javax.validation</groupId>
-            <artifactId>validation-api</artifactId>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
             <scope>provided</scope>
         </dependency>
 
@@ -86,7 +87,6 @@
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
             <artifactId>jackson-module-kotlin</artifactId>
-            <version>2.9.4.1</version>
         </dependency>
     </dependencies>
 
@@ -153,37 +153,6 @@
                         </configuration>
                     </plugin>
                     <plugin>
-                        <artifactId>kotlin-maven-plugin</artifactId>
-                        <groupId>org.jetbrains.kotlin</groupId>
-                        <version>${kotlin.version}</version>
-                        <executions>
-                            <execution>
-                                <id>compile</id>
-                                <goals>
-                                    <goal>compile</goal>
-                                </goals>
-                                <configuration>
-                                    <sourceDirs>
-                                        <sourceDir>src/main/java</sourceDir>
-                                        <sourceDir>src/main/java</sourceDir>
-                                    </sourceDirs>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>test-compile</id>
-                                <goals>
-                                    <goal>test-compile</goal>
-                                </goals>
-                                <configuration>
-                                    <sourceDirs>
-                                        <sourceDir>src/main/java</sourceDir>
-                                        <sourceDir>${project.basedir}/src/test/kotlin</sourceDir>
-                                    </sourceDirs>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
                         <version>1.5</version>
@@ -217,7 +186,7 @@
                     <plugin>
                         <groupId>org.jetbrains.dokka</groupId>
                         <artifactId>dokka-maven-plugin</artifactId>
-                        <version>1.6.21</version>
+                        <version>1.9.20</version>
                         <executions>
                             <execution>
                                 <phase>compile</phase>
@@ -231,7 +200,7 @@
                                 <plugin>
                                     <groupId>org.jetbrains.dokka</groupId>
                                     <artifactId>kotlin-as-java-plugin</artifactId>
-                                    <version>1.6.21</version>
+                                    <version>1.9.20</version>
                                 </plugin>
                             </dokkaPlugins>
                         </configuration>
@@ -258,11 +227,12 @@
                         <arg>-Xjsr305=strict</arg>
                     </args>
                     <pluginOptions>
-                        <option>all-open:annotation=javax.persistence.Entity</option>
-                        <option>all-open:annotation=javax.persistence.Embeddable</option>
-                        <option>all-open:annotation=javax.persistence.MappedSuperclass</option>
+                        <option>all-open:annotation=jakarta.persistence.Entity</option>
+                        <option>all-open:annotation=jakarta.persistence.Embeddable</option>
+                        <option>all-open:annotation=jakarta.persistence.MappedSuperclass</option>
                     </pluginOptions>
                     <jvmTarget>${jdk.version}</jvmTarget>
+                    <javaParameters>true</javaParameters>
                 </configuration>
                 <executions>
                     <execution>
@@ -307,10 +277,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.5.1</version>
+                <version>3.14.1</version>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
+                    <release>${java.version}</release>
+                    <parameters>true</parameters>
                 </configuration>
                 <executions>
                     <!-- 替换 default-compile, 因为它会被 maven 特别处理 -->
@@ -338,6 +308,21 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.3.1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.4.2</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.5.6</version>
             </plugin>
         </plugins>
     </build>
