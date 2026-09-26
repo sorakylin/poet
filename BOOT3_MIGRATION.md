@@ -1,5 +1,7 @@
 # Poet v4.1.1.RELEASE：Spring Boot 3 迁移说明
 
+> 历史记录：本文仅对应 Poet v4.1.1.RELEASE / Boot 3.5.16。当前源码已适配 Boot 4.1.1，版本为 v5.1.1.RELEASE，当前接入与执行状态见 [BOOT4_MIGRATION.md](BOOT4_MIGRATION.md)。下文命令、API 包名和验证结果不适用于新版本，也不代表本次执行过构建或测试。
+
 日期：2026-09-24。开发分支：`4.1.1.RELEASE`；Maven 版本沿用原有命名习惯，为 `v4.1.1.RELEASE`。
 
 ## 环境与依赖
@@ -133,4 +135,4 @@ mvn -B -ntp install
 - Web 集成：用 MockMvc + H2 MySQL 模式 + 临时目录执行真实上传、元信息查询、预览、下载、删除。
 - 腾讯扩展：本地模式不装配、腾讯模式装配、驼峰配置、缺少凭据拒绝启动、自定义客户端覆盖。只创建和销毁 SDK 客户端，不发起真实云请求。
 
-未覆盖真实 MySQL/PostgreSQL 服务、真实 COS 上传、反向代理以及宿主 Spring Security 的端到端联调。主项目 `ym-galgame` 仍需按其 Boot 3 迁移方案升级后才能接入本版本。
+上述库级自动化未覆盖真实 MySQL/PostgreSQL 服务、真实 COS 上传、反向代理以及宿主 Spring Security 的端到端联调。后续状态补充（2026-09-27）：用户确认主项目 `ym-galgame` 的 Boot 3.5.16 已手动启动并完成页面、接口验收，作为后续升级的已验收基线；宿主继续使用本历史版本，直至一并切换 Boot 4 和 Poet v5.1.1.RELEASE。

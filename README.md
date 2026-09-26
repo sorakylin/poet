@@ -3,10 +3,10 @@
 ## poet
 这是由 Kotlin 编写的 SpringBoot Starter 附件操作库。 一键集成进你的应用使其能够更便捷的操作附件
 
-[![version](https://img.shields.io/badge/version-v4.1.1.RELEASE-orange.svg)](../)
+[![version](https://img.shields.io/badge/version-v5.1.1.RELEASE-orange.svg)](../)
 [![License](https://img.shields.io/badge/License-MIT-red.svg)](https://mit-license.org/)
-[![Kotlin](https://img.shields.io/badge/Kotlin-1.9.25-green)](https://github.com/JetBrains/kotlin/releases/tag/v1.9.25)
-[![JDK](https://img.shields.io/badge/JDK-17%2B-orange)](https://openjdk.org/projects/jdk/17/)
+[![Kotlin](https://img.shields.io/badge/Kotlin-2.3.21-green)](https://kotlinlang.org/docs/releases.html)
+[![JDK](https://img.shields.io/badge/JDK-21%2B-orange)](https://openjdk.org/projects/jdk/21/)
 
 </div>
 <br>
@@ -52,7 +52,15 @@
 
 
 ## 快速开始:
-当前 `v4.1.1.RELEASE` 面向 **Spring Boot 3 / Jakarta / JDK 17+**，以 Boot 3.5.16 为构建基线，三个模块均发布为可直接依赖的普通 JAR。Boot 2 项目继续使用 `v3.1.1.RELEASE`；升级说明、验证范围及本地安装方式见 [BOOT3_MIGRATION.md](BOOT3_MIGRATION.md)。
+当前源码版本 `v5.1.1.RELEASE` 面向 **Spring Boot 4.1.1 / Jakarta / JDK 21**，使用 Kotlin 2.3.21 与 Jackson 3。三个模块保持普通依赖 JAR 的打包方式。本次已完成源码适配、有效 POM 和依赖树解析，未编译、测试、安装或发布新制品；接入说明和执行状态见 [BOOT4_MIGRATION.md](BOOT4_MIGRATION.md)。
+
+| 宿主环境 | Poet 版本 | 说明 |
+| --- | --- | --- |
+| Spring Boot 4.1.1 / JDK 21 | v5.1.1.RELEASE | 当前适配版本，先生成并安装制品后接入 |
+| Spring Boot 3.5.16 / JDK 17+ | v4.1.1.RELEASE | 已有版本，保留供 Boot 3 宿主使用 |
+| Spring Boot 2 | v3.1.1.RELEASE | 历史版本 |
+
+Poet 自身版本号与 Spring Boot 版本号相互独立；Boot 3 的历史迁移和验证记录保留在 [BOOT3_MIGRATION.md](BOOT3_MIGRATION.md)。
 
 上面说起来似乎东西不少,  但实际上用默认的组件+傻瓜式配置已经足以满足大部分需求
 
@@ -63,7 +71,7 @@
 <dependency>
   <groupId>com.skypyb.poet</groupId>
   <artifactId>poet-spring-boot-starter</artifactId>
-  <version>v4.1.1.RELEASE</version>
+  <version>v5.1.1.RELEASE</version>
 </dependency>
 ```
 <br>
@@ -79,7 +87,7 @@ poet:
   storage-location: /home/static/poet
 ```
 
-默认开启数据库元信息存储，需由宿主配置数据源、数据库驱动和附件表；默认仓库使用 MySQL。PostgreSQL 宿主可以继续提供自定义 `PostgresPoetAnnexRepository` Bean。只用本地文件客户端时可配置 `poet.enable-db-store=false`；如果宿主完全不使用 JDBC，还应排除 `DataSourceAutoConfiguration`，具体示例见升级说明。
+默认开启数据库元信息存储，需由宿主配置数据源、数据库驱动和附件表；默认仓库使用 MySQL。PostgreSQL 宿主可以继续提供自定义 `PostgresPoetAnnexRepository` Bean。只用本地文件客户端时可配置 `poet.enable-db-store=false`；如果宿主完全不使用 JDBC，还应排除 `org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration`，具体示例见 [Boot 4 接入说明](BOOT4_MIGRATION.md)。
 
 
 <br>

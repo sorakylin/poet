@@ -21,7 +21,7 @@ import jakarta.validation.Validator
 
 @AutoConfiguration(afterName = [
     "com.skypyb.poet.spring.boot.autoconfigure.PoetAutoConfiguration",
-    "org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration"
+    "org.springframework.boot.validation.autoconfigure.ValidationAutoConfiguration"
 ])
 @ConditionalOnBean(PoetAccessRouter::class)
 @ConditionalOnProperty(prefix = "poet", name = ["store-mode"], havingValue = "TENCENT")

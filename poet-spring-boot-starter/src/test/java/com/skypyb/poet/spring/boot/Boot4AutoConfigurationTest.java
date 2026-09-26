@@ -1,6 +1,6 @@
 package com.skypyb.poet.spring.boot;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import com.skypyb.poet.core.client.PoetAccessRouter;
 import com.skypyb.poet.core.client.PoetAnnexClient;
 import com.skypyb.poet.core.client.PoetAnnexClientHttpSupport;
@@ -15,7 +15,7 @@ import jakarta.validation.Validator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.boot.test.context.runner.WebApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
@@ -34,7 +34,7 @@ import static org.mockito.Mockito.mock;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-class Boot3AutoConfigurationTest {
+class Boot4AutoConfigurationTest {
 
     @TempDir
     Path storage;
@@ -134,19 +134,20 @@ class Boot3AutoConfigurationTest {
                         "poet.web-url-prefix=/files",
                         "spring.datasource.url=jdbc:h2:mem:poet_web;MODE=MySQL;NON_KEYWORDS=KEY")
                 .run(context -> {
-                    assertThat(context).hasNotFailed().hasSingleBean(PoetResource.class);
+                    assertThat(context).hasNotFailed().hasSingleBean(PoetResource.class)
+                            .hasSingleBean(JsonMapper.class);
                     // 使用内存数据库与临时目录，实际走 MVC、JDBC 仓库和本地附件客户端。
                     context.getBean(JdbcTemplate.class).execute("CREATE TABLE poet_annex ("
                             + "name VARCHAR(255) PRIMARY KEY, real_name VARCHAR(255), suffix VARCHAR(32), "
                             + "`key` VARCHAR(1024), length BIGINT, create_time TIMESTAMP)");
                     MockMvc mvc = MockMvcBuilders.webAppContextSetup(context.getSourceApplicationContext()).build();
-                    byte[] content = "Boot 3 附件".getBytes(StandardCharsets.UTF_8);
+                    byte[] content = "Boot 4 附件".getBytes(StandardCharsets.UTF_8);
                     String json = mvc.perform(multipart("/files/up")
                                     .file(new MockMultipartFile("file", "hello.txt", "text/plain", content))
                                     .param("module", "test"))
                             .andExpect(status().isOk()).andExpect(jsonPath("realName").value("hello.txt"))
                             .andReturn().getResponse().getContentAsString();
-                    String name = context.getBean(ObjectMapper.class).readTree(json).get("name").asText();
+                    String name = context.getBean(JsonMapper.class).readTree(json).get("name").asText();
                     mvc.perform(get("/files/bs/{name}", name)).andExpect(status().isOk())
                             .andExpect(jsonPath("name").value(name));
                     mvc.perform(get("/files/view/{name}", name)).andExpect(status().isOk())
@@ -156,7 +157,7 @@ class Boot3AutoConfigurationTest {
                     mvc.perform(delete("/files/bs/{name}", name)).andExpect(status().isOk());
                     assertThat(context.getBean(PoetAnnexRepository.class).findByName(name)).isNull();
                     assertThat(context.getBean(PoetAnnexClient.class)
-                            .exist(context.getBean(ObjectMapper.class).readTree(json).get("key").asText())).isFalse();
+                            .exist(context.getBean(JsonMapper.class).readTree(json).get("key").asText())).isFalse();
                 });
     }
 
