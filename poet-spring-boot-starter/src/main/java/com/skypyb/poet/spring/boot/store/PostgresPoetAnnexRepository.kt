@@ -91,7 +91,7 @@ class PostgresPoetAnnexRepository(private val jdbcTemplate: JdbcTemplate) : Poet
             WHERE main_category=? AND instance_id=? AND instance_module=?
         """
         return jdbcTemplate.query(
-            sql, arrayOf(mainCategory, instanceId, instanceModule), BeanPropertyRowMapper(
+            sql, arrayOf<Any?>(mainCategory, instanceId, instanceModule), BeanPropertyRowMapper(
                 DefaultPoetAnnex::class.java
             )
         )
@@ -112,7 +112,8 @@ class PostgresPoetAnnexRepository(private val jdbcTemplate: JdbcTemplate) : Poet
 
     override fun findExpireAnnex(): List<String> {
         val sql = "SELECT name FROM $tableName WHERE expire_time < now()";
-        return jdbcTemplate.queryForList(sql, String::class.java);
+        // name 为非空主键，显式校验 JDBC 返回值以保持 List<String> 契约。
+        return jdbcTemplate.queryForList(sql, String::class.java).requireNoNulls();
     }
 
 
